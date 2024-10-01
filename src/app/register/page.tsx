@@ -2,16 +2,10 @@
 
 import React from 'react';
 
-import { Heading, Text, Flex, Button, Grid, Icon, InlineCode, Logo, Background, RevealFx, LetterFx } from '@/once-ui/components';
+import { Heading, Text, Flex, Button, Grid, Icon, InlineCode, Logo, Background, RevealFx, Skeleton } from '@/once-ui/components';
 import Survey from '@/components/survey'
 
 export default function Home() {
-    /**
-     * 	This is the initial consent that needs to be agreed to before the participant starts
-     */
-    const consent = "Here is some consent form of a kind that you need to read and give consent. " +
-        "Dost thou consent?!"
-
 
     return (
         <Flex
@@ -54,7 +48,7 @@ export default function Home() {
 									<span className="font-code">
 										<RevealFx
                                             speed="slow"
-                                            delay={0}
+                                            delay={1}
                                             translateY={0}
                                         >
 											Phish!
@@ -72,30 +66,22 @@ export default function Home() {
                 fillWidth minHeight="0" maxWidth={68}
                 direction="column" alignItems="center" flex={1}>
                 <p>
-                    <LetterFx
-                        speed="medium"
-                        trigger="instant"
-                        charset={ ['X', '@', '$', 'a', 'H', 'z', 'o', '0', 'y', '#', '?', '*', '0', '1', '+'] }
-                    >
-                        {consent}
-                    </LetterFx>
                 </p>
-            </Flex>
-            <Flex
-                position="relative"
-                as="section" overflow="hidden">
-                <Button
-                    href="register"
-                    suffixIcon="chevronRight"
-                    variant="secondary">
-                    Accept
-                </Button>
-                <Button
-                    href="#"
-                    suffixIcon="chevronRight"
-                    variant="secondary">
-                    Decline
-                </Button>
+                <br/>
+                <Flex>
+                    <Button
+                        href="register"
+                        suffixIcon="chevronRight"
+                        variant="secondary">
+                        Accept
+                    </Button>
+                    <Button
+                        href="#"
+                        suffixIcon="chevronRight"
+                        variant="secondary">
+                        Decline
+                    </Button>
+                </Flex>
             </Flex>
             {/* For the footer of the page */}
             <Flex
