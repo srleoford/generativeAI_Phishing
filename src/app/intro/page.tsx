@@ -5,7 +5,7 @@ import React from 'react';
 import { Heading, Text, Flex, Button, Grid, Icon, InlineCode, Logo, Background, RevealFx, Skeleton } from '@/once-ui/components';
 import Survey from '@/components/survey'
 
-export default function Home() {
+export default function IntroPage() {
 	/**
 	 * 	The initial questions are grouped by category. Each category has an ID, title, and an array of questions.
 	 * 		Each question has a question prompt ('questions'), answers ('options'), and response (for input from user)

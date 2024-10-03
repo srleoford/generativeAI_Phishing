@@ -38,7 +38,8 @@ export default function Home() {
                             <Heading
                                 wrap="balance"
                                 variant="display-strong-s"
-                                align="center">
+                                align="center"
+                                paddingTop="xl">
                                 <p>
 									<span className="font-code">
 										<RevealFx
@@ -51,7 +52,7 @@ export default function Home() {
 									</span>
                                 </p>
                                 <p>
-									<span className="font-code">
+                                <span className="font-code">
 										<RevealFx
                                             speed="slow"
                                             delay={0}
@@ -91,7 +92,7 @@ export default function Home() {
                     Accept
                 </Button>
                 <Button
-                    href="#"
+                    href="declinedSurvey"
                     suffixIcon="chevronRight"
                     variant="secondary">
                     Decline

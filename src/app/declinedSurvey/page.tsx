@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Heading, Text, Flex, Button, Grid, Icon, InlineCode, Logo, Background, RevealFx, Skeleton } from '@/once-ui/components';
+import {Heading, Flex, Background, Text} from '@/once-ui/components';
 import Survey from '@/components/survey'
 import RegisterCardWrapper from "@/components/register-form";
 
@@ -46,25 +46,30 @@ export default function RegisterPage() {
                         </Flex>
                     </Flex>
                 </Flex>
-            </Flex>
-            <Flex
-                position="relative"
-                as="section" overflow="hidden"
-                fillWidth minHeight="0" maxWidth={68}
-                direction="column" alignItems="center" flex={1}>
                 <Flex
-                    border="brand-medium"
-                    borderStyle="solid-1"
-                    direction="column"
-                    gap="24"
-                    padding="24"
-                    alignItems="center"
-                    justifyContent="center"
-                    radius="xl"
-                    onSolid="brand-strong"
-                    solid="brand-medium"
-                >
-                    {RegisterCardWrapper()}
+                    as="main"
+                    direction="column" justifyContent="center"
+                    fillWidth fillHeight padding="l" gap="l">
+                    <Flex
+                        mobileDirection="column"
+                        fillWidth gap="24">
+                        <Flex
+                            position="relative"
+                            flex={4} gap="24" marginBottom="104"
+                            direction="column">
+                            <Heading
+                                wrap="balance"
+                                variant="display-strong-s"
+                                align="center">
+                                <Text
+                                    as="p"
+                                    size="l"
+                                    onSolid="brand-medium">
+                                    Thank you for your interest. Have a good day!
+                                </Text>
+                            </Heading>
+                        </Flex>
+                    </Flex>
                 </Flex>
             </Flex>
         </Flex>
