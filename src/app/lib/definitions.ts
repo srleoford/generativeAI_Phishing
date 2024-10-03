@@ -1,14 +1,8 @@
-import { z } from 'zod';
+/**
+ * This file is used for the type definitions to be used for the application
+ */
 
-const RegisterSchema = z.object({
-    email: z.string(),
-    status: z.enum(['engaged', 'disengaged'], {
-        invalid_type_error: "Disengaged! You can no longer participate in the survey"
-    })
-});
-
-const registration = RegisterSchema
-
-export async function register (
-    registerData: RegisterData,
-)
+export type RegistrationData = {
+    email: string;
+    token: string;
+}
