@@ -2,7 +2,6 @@ import React from 'react';
 
 import {Heading, Flex, Background, Text} from '@/once-ui/components';
 import Survey from '@/components/survey'
-import RegisterCardWrapper from "@/components/register-form";
 
 export default function RegisterPage() {
 

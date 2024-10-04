@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Heading, Text, Flex, Button, Grid, Icon, InlineCode, Logo, Background, RevealFx, Skeleton } from '@/once-ui/components';
 import Survey from '@/components/survey'
-import RegisterCardWrapper from "@/components/register-form";
+import { SignUpForm } from "@/app/ui/signup-form";
 
 export default function RegisterPage() {
 
@@ -64,7 +64,7 @@ export default function RegisterPage() {
                     onSolid="brand-strong"
                     solid="brand-medium"
                 >
-                    {RegisterCardWrapper()}
+                    <SignUpForm />
                 </Flex>
             </Flex>
         </Flex>
