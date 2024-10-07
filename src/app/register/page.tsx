@@ -1,11 +1,18 @@
 import React from 'react';
 
 import { Heading, Text, Flex, Button, Grid, Icon, InlineCode, Logo, Background, RevealFx, Skeleton } from '@/once-ui/components';
-import Survey from '@/components/survey'
+import { SignUpForm } from '@/components/signup-form'
 import { SignUpForm } from "@/app/ui/signup-form";
+import { register } from '@/app/actions/actions'
 
 export default function RegisterPage() {
+    async function createUser(formData: FormData) {
+        'use server'
 
+        const rawFormData = {
+            email: formData.get()
+        }
+    }
     return (
         <Flex
             fillWidth paddingTop="l" paddingX="l"
@@ -64,7 +71,7 @@ export default function RegisterPage() {
                     onSolid="brand-strong"
                     solid="brand-medium"
                 >
-                    <SignUpForm />
+                    <SignUpForm register={register}/>
                 </Flex>
             </Flex>
         </Flex>
