@@ -34,6 +34,7 @@ export default function SurveyForm() {
           "type": "radiogroup",
           "name": "question1",
           "title": "What is your age group?",
+          "isRequired": true,
           "choices": [
             {
               "value": "Item 3",
@@ -57,6 +58,7 @@ export default function SurveyForm() {
           "type": "radiogroup",
           "name": "question2",
           "title": "What is the highest level of education you have completed?",
+          "isRequired": true,
           "choices": [
             {
               "value": "Item 1",
@@ -84,6 +86,7 @@ export default function SurveyForm() {
           "type": "radiogroup",
           "name": "question3",
           "title": "What is your current job title or field of work?",
+          "isRequired": true,
           "showCommentArea": true,
           "commentText": "Other (specify) :",
           "choices": [
@@ -105,6 +108,7 @@ export default function SurveyForm() {
           "type": "radiogroup",
           "name": "question4",
           "title": "How would you rate your proficiency in understanding and using the English language?",
+          "isRequired": true,
           "choices": [
             {
               "value": "Item 1",
@@ -138,6 +142,7 @@ export default function SurveyForm() {
           "type": "radiogroup",
           "name": "question5",
           "title": "Do you frequently work with technology (e.g., email, cloud platform) ?",
+          "isRequired": true,
           "choices": [
             {
               "value": "Item 1",
@@ -157,6 +162,7 @@ export default function SurveyForm() {
           "type": "radiogroup",
           "name": "question6",
           "title": "How confident are you in your ability to identify phishing emails or scams?",
+          "isRequired": true,
           "choices": [
             {
               "value": "Item 1",
@@ -180,6 +186,7 @@ export default function SurveyForm() {
           "type": "radiogroup",
           "name": "question7",
           "title": "Have you received any cybersecurity or phishing awareness training in the last 12 months?",
+          "isRequired": true,
           "choices": [
             {
               "value": "Item 1",
@@ -205,6 +212,7 @@ export default function SurveyForm() {
           "type": "radiogroup",
           "name": "question8",
           "title": "How often do you use social media (e.g., Facebook, LinkedIn, Instagram)?",
+          "isRequired": true,
           "choices": [
             {
               "value": "Item 1",
@@ -224,6 +232,7 @@ export default function SurveyForm() {
           "type": "radiogroup",
           "name": "question9",
           "title": "Do you accept friend requests or connect with people you don't personally know on social media?",
+          "isRequired": true,
           "choices": [
             {
               "value": "Item 1",
@@ -243,6 +252,7 @@ export default function SurveyForm() {
           "type": "radiogroup",
           "name": "question10",
           "title": "Do you share personal or work-related information on your social media profiles?",
+          "isRequired": true,
           "choices": [
             {
               "value": "Item 1",
@@ -262,6 +272,7 @@ export default function SurveyForm() {
           "type": "radiogroup",
           "name": "question11",
           "title": "Does your organization conduct regular security training or simulated phishing attacks?",
+          "isRequired": true,
           "choices": [
             {
               "value": "Item 1",
@@ -287,6 +298,7 @@ export default function SurveyForm() {
           "type": "radiogroup",
           "name": "question12",
           "title": "How do you typically respond to urgent emails requesting immediate action (e.g., account lockout, payment issues)?",
+          "isRequired": true,
           "choices": [
             {
               "value": "Item 1",
@@ -306,6 +318,7 @@ export default function SurveyForm() {
           "type": "radiogroup",
           "name": "question13",
           "title": "Are you more likely to trust emails from senior management or authorities without question?",
+          "isRequired": true,
           "choices": [
             {
               "value": "Item 1",
@@ -325,6 +338,7 @@ export default function SurveyForm() {
           "type": "radiogroup",
           "name": "question14",
           "title": "How do you respond to unexpected rewards or offers (e.g., winning a prize, getting a free service)?",
+          "isRequired": true,
           "choices": [
             {
               "value": "Item 1",
@@ -343,12 +357,34 @@ export default function SurveyForm() {
       ]
     }
   ],
+  "showPrevButton": false,
   "requiredText": "(*)",
-  "questionStartIndex": "№1"
+  "questionStartIndex": "1"
 };
     
   const survey = new Model(surveyJson);
   survey.applyTheme(DefaultLight);
+
+  survey.onComplete.add(function (sender, options) {
+  // Display the "Saving..." message (pass a string value to display a custom message)
+  options.showSaveInProgress();
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", "http://localhost:3000");
+  xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+  xhr.onload = xhr.onerror = function () {
+    if (xhr.status == 200) {
+      // Display the "Success" message (pass a string value to display a custom message)
+      options.showSaveSuccess();
+      // Alternatively, you can clear all messages:
+      // options.clearSaveMessages();
+    } else {
+      // Display the "Error" message (pass a string value to display a custom message)
+      options.showSaveError();
+    }
+  };
+  xhr.send(JSON.stringify(sender.data));
+  console.log(JSON.stringify(sender.data));
+});
 
   return <Survey model={survey} />;
 }
