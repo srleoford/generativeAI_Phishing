@@ -1,17 +1,12 @@
+'use client'
+
 import React from 'react';
 
-import { Heading, Text, Flex, Button, Grid, Icon, InlineCode, Logo, Background, RevealFx, Skeleton } from '@/once-ui/components';
-// import { SignUpForm } from '@/components/signup-form'
-import { register } from '@/app/actions/actions'
+import { Heading, Flex, Background } from '@/once-ui/components';
+import { SignupForm } from '@/components/signup-form'
 
 export default function RegisterPage() {
-    async function createUser(formData: FormData) {
-        'use server'
 
-        // const rawFormData = {
-        //     email: formData.get()
-        // }
-    }
     return (
         <Flex
             fillWidth paddingTop="l" paddingX="l"
@@ -67,10 +62,9 @@ export default function RegisterPage() {
                     alignItems="center"
                     justifyContent="center"
                     radius="xl"
-                    onSolid="brand-strong"
-                    solid="brand-medium"
-                >
-                    {/*<SignUpForm register={register} type={"submit"}/>*/}
+                    onBackground="brand-strong"
+                    background="brand-medium">
+                    <SignupForm />
                 </Flex>
             </Flex>
         </Flex>

@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { Heading, Flex, Background, RevealFx } from '@/once-ui/components';
-import { ConsentForm } from "@/components/consent_form"
+import { ConsentForm } from "@/components/consent-form"
 
 
 export default function Home() {

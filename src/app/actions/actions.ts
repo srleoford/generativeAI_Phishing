@@ -2,9 +2,38 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { NewUser } from "@/app/lib/definitions";
 
-export async function register() {
-    return {}
+export async function registerUser (
+    prevState: {
+        message: string;
+    },
+    formData: FormData,
+) {
+    const email = formData.get("email")
+    const user = NewUser.safeParse({ email: email })
+
+    if (user.success) {
+        const { email, token } = user.data
+
+        /** TODO *
+         * Now that the user is validated, check against the DB,
+         * If the user already exists, they shouldn't be allowed to do it again
+         * If the user doesn't exist, create the user, the token, and insert into the DB
+         * Then redirect to the `Introduction` page for the initial survey
+         */
+
+        revalidatePath("/")
+        redirect("/intro")
+        return { message: `Email is valid! Registered new user: ${ email } : ${ token }` }
+    }
+    else {
+
+        return { message: `Did not register user: ${ user.error.errors[1] ? user.error.errors[1].message :
+                user.error.errors[0].message}` }
+    }
+
+    return { message: "Nothing happened." };
 }
 
 /**

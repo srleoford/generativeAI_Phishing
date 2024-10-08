@@ -1,15 +1,40 @@
-'use client'
-
+import { useFormState } from "react-dom";
+import { registerUser } from '@/app/actions/actions'
 import { DefaultButton } from "@/app/ui/button";
-import { register } from '@/app/actions/actions'
+import { Input, Icon } from "@/once-ui/components"
 
-export default function SignUpForm({ register }: { register: any }) {
+
+const initialState = {
+    message: '',
+}
+
+function RegisterButton () {
+
+    return (
+        <DefaultButton
+            href={""}
+            label={"Register"}
+            type={"submit"}
+            name={"register"}
+            value={""}/>
+    )
+}
+
+export function SignupForm () {
+    const [state, formAction] = useFormState(registerUser, initialState)
+
     return (
         <>
-            <form action={register}>
-                <label htmlFor="email">Email</label>
-                <input id="email" name="email" placeholder="user@example.com"/>
-                <DefaultButton label={"Register"} type={"submit"} />
+            <form action={formAction}>
+                <Input
+                    id=""
+                    name="email"
+                    label="Email"
+                    labelAsPlaceholder />
+                <br/>
+                <RegisterButton />
+                <p dangerouslySetInnerHTML={{__html: state?.message}} style={{color: "red"}} aria-live="assertive"
+                   className="sr-only" role="status"/>
             </form>
         </>
     )

@@ -1,4 +1,4 @@
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormState } from "react-dom";
 import { consent } from '@/app/lib/data'
 import { userConsent } from "@/app/actions/actions";
 import { DefaultButton } from "@/app/ui/button"
@@ -22,7 +22,6 @@ function AcceptButton () {
 }
 
 function DeclineButton () {
-    const { pending } = useFormStatus()
 
     return (
         <DefaultButton

@@ -4,7 +4,20 @@
 import { z } from "zod";
 
 export const UserSchema = z.object({
-    email: z.string().email({ message: "Please enter a valid email" }).trim(),
+    email: z.string().email().superRefine((val, ctx) => {
+        if (val == "") {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: `No email address given. Please enter a valid email address: ${val}`
+            })
+        }
+        else if (val == null) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: `Invalid email! Please enter a valid email address: ${val}`
+            })
+        }
+    }),
     token: z.string().optional()
 })
 
