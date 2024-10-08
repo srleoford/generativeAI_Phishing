@@ -1,13 +1,17 @@
 'use server'
 
 import { revalidatePath } from "next/cache";
-import {redirect} from "next/navigation";
-import {boolean} from "zod";
+import { redirect } from "next/navigation";
 
 export async function register() {
     return {}
 }
 
+/**
+ * This action is for the initial page to give consent to the study. This checks the checkboxes for age, understanding,
+ * and explicit participation and will not allow to move forward until all three are checked. Declining will go to
+ * another page that thanks them for their interest.
+ * */
 export async function userConsent (
     prevState: {
         message: string;
@@ -38,7 +42,6 @@ export async function userConsent (
         }
     }
     else {
-        revalidatePath("/")
         redirect("/declinedSurvey")
         return {message: "Thank you for your interest. Have a good day!"}
     }
