@@ -2,14 +2,11 @@
 
 import React from 'react';
 
-import { Heading, Text, Flex, Button, Grid, Icon, InlineCode, Logo, Background, RevealFx, LetterFx } from '@/once-ui/components';
-import { ConsentForm } from "@/app/ui/consent_form"
+import { Heading, Flex, Background, RevealFx } from '@/once-ui/components';
+import { ConsentForm } from "@/components/consent_form"
 
 
 export default function Home() {
-    /**
-     * 	This is the initial consent that needs to be agreed to before the participant starts
-     */
 
     return (
         <Flex
@@ -33,6 +30,9 @@ export default function Home() {
                         position="relative"
                         flex={4} gap="24" marginBottom="104"
                         direction="column">
+                        {/*
+                            Title for the page with EFX
+                        */}
                         <Heading
                             wrap="balance"
                             variant="display-strong-s"
@@ -61,6 +61,10 @@ export default function Home() {
 									</span>
                             </p>
                         </Heading>
+
+                        {/*
+                            This section is for the consent form
+                        */}
                         <Flex
                             position="relative"
                             as="section" overflow="hidden"
@@ -68,23 +72,6 @@ export default function Home() {
                             direction="column" alignItems="flex-start" flex={1}>
                             <ConsentForm />
                         </Flex>
-                    </Flex>
-                    <Flex
-                        position="relative"
-                        as="section" overflow="hidden"
-                        justifyContent="center" flex={1}>
-                        <Button
-                            href="register"
-                            suffixIcon="chevronRight"
-                            variant="secondary">
-                            Accept
-                        </Button>
-                        <Button
-                            href="declinedSurvey"
-                            suffixIcon="chevronRight"
-                            variant="secondary">
-                            Decline
-                        </Button>
                     </Flex>
                 </Flex>
             </Flex>

@@ -1,5 +1,37 @@
-import React, {useState } from 'react'
-import { Checkbox } from "@/once-ui/components";
+import React, { useState } from 'react'
+import { useFormState, useFormStatus } from "react-dom";
+import { userConsent } from "@/app/actions/actions";
+import { DefaultButton } from "@/app/ui/button"
+import { Flex } from '@/once-ui/components'
+
+const initialState = {
+    message: ''
+}
+
+function AcceptButton () {
+
+    return (
+        <DefaultButton
+            href={""}
+            label={"Accept"}
+            type="submit"
+            name={"accept"}
+            value="true"/>
+    )
+}
+
+function DeclineButton () {
+    const { pending } = useFormStatus()
+
+    return (
+        <DefaultButton
+            href={""}
+            label={"Decline"}
+            type="submit"
+            name={"accept"}
+            value="false"/>
+    )
+}
 
 export const consent = [
     {
@@ -115,18 +147,7 @@ export const consent = [
 ]
 
 export function ConsentForm () {
-    const [consented, setConsented] = useState({
-        age: false,
-        understood: false,
-        participate: false
-    })
-
-    const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, checked } = e.target
-        setConsented( (prev) => ({
-            ...prev,
-            [name]: checked }))
-    }
+    const [state, formAction] = useFormState(userConsent, initialState)
 
     return (
         <>
@@ -142,30 +163,38 @@ export function ConsentForm () {
 
             <h2>Answer the following:</h2>
             <br/>
-            <form>
-                <Checkbox
-                    label="I am age 18 or older"
-                    description=""
-                    iconButtonProps={{
-                        onClick: handleCheckboxChange,
-                    }}
-                />
+            <form action={formAction}>
+                <input type="checkbox" name="age" />
+                <label htmlFor="age">I am age 18 or older</label>
                 <br/>
-                <Checkbox
-                    label="I have read and understand the information above"
-                    description=""
-                    iconButtonProps={{
-                        onClick: handleCheckboxChange,
-                    }}
-                />
+
+                <input type="checkbox" name="understood" />
+                <label htmlFor="understood">I have read and understand the information above</label>
                 <br/>
-                <Checkbox
-                    label="I want to participate in this research and continue with the study"
-                    description=""
-                    iconButtonProps={{
-                        onClick: handleCheckboxChange,
-                    }}
-                />
+
+                <input type="checkbox" name="participate" />
+                <label htmlFor="participate">I want to participate in this research and continue with the study</label>
+                <br/> <br/>
+                <Flex
+                    position="relative"
+                    flex={1} gap="24" marginBottom="104"
+                    direction="column">
+                    <Flex
+                        position="relative"
+                        flex={1} gap="24" marginBottom="12"
+                        direction="row">
+                        <AcceptButton/>
+                        <DeclineButton/>
+
+                    </Flex>
+                    <Flex
+                        position="relative"
+                        flex={4} gap="24" marginBottom="104"
+                        direction="row">
+                        <p dangerouslySetInnerHTML={{__html: state?.message}} style={{color: "red"}} aria-live="assertive"
+                           className="sr-only" role="status"/>
+                    </Flex>
+                </Flex>
             </form>
         </>
     )

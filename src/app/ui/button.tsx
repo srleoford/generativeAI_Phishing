@@ -1,14 +1,23 @@
-import { register } from '@/app/actions'
 import { Button } from '@/once-ui/components'
 import React from "react";
 
-export function DefaultButton({ label }: { label: string }, { type }: { type: string }) {
+interface DefaultButtonProps {
+    label: string;
+    href: string;
+    type?: string;
+    name: string;
+    value: string;
+}
+
+export function DefaultButton({ label, href, type, name, value }: DefaultButtonProps) {
     return (
         <Button
-            href="register"
+            href={ href }
             suffixIcon="chevronRight"
             variant="secondary"
-            type={type}>
+            type={ type }
+            name={ name }
+            value={ value }>
             { label }
         </Button>
     )
