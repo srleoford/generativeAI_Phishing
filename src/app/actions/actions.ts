@@ -22,7 +22,6 @@ export async function registerUser (
          * If the user doesn't exist, create the user, the token, and insert into the DB
          * Then redirect to the `Introduction` page for the initial survey
          */
-
         revalidatePath("/")
         redirect("/intro")
         return { message: `Email is valid! Registered new user: ${ email } : ${ token }` }
