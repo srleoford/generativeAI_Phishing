@@ -21,6 +21,7 @@ export async function registerUser (
          * If the user already exists, they shouldn't be allowed to do it again
          * If the user doesn't exist, create the user, the token, and insert into the DB
          * Then redirect to the `Introduction` page for the initial survey
+         * Need to be consistent with everyone else and use AppRouter, not pages or `redirect`
          */
         revalidatePath("/")
         redirect("/intro")

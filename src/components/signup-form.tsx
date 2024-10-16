@@ -1,7 +1,7 @@
 import { useFormState } from "react-dom";
 import { registerUser } from '@/app/actions/actions'
 import { DefaultButton } from "@/app/ui/button";
-import { Input, Icon } from "@/once-ui/components"
+import { Input } from "@/once-ui/components"
 
 
 const initialState = {
