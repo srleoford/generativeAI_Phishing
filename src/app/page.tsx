@@ -2,57 +2,89 @@
 
 import React from 'react';
 
-import { Heading, Text, Flex, Button, Grid, Icon, InlineCode, Logo, Background, RevealFx, Skeleton } from '@/once-ui/components';
-import SurveyForm from '@/components/survey'
+import { Heading, Flex, Background, RevealFx } from '@/once-ui/components';
+import { ConsentForm } from "@/components/consent-form"
+
 
 export default function Home() {
-	return (
-		<Flex
-			fillWidth paddingTop="l" paddingX="l"
-			direction="column" alignItems="center" flex={1}>
-			<Background
-				dots={false}/>
-			<Flex
-				position="relative"
-				as="section" overflow="hidden"
-				fillWidth minHeight="0" maxWidth={68}
-				direction="column" alignItems="center" flex={1}>
-				<Flex
-					as="main"
-					direction="column" justifyContent="center"
-					fillWidth fillHeight padding="l" gap="l">
-					<Flex
-						mobileDirection="column"
-						fillWidth gap="24">
-						<Flex
-							position="relative"
-							flex={4} gap="24" marginBottom="104"
-							direction="column">
-                            <Heading>
-                                This is a Phishing Training AI tool. Please answer the following questions before starting:
-                            </Heading>
-						</Flex>
-					</Flex>
-                    <SurveyForm/>
-					<Grid
-						radius="l"
-						border="neutral-medium"
-						borderStyle="solid-1"
-						columns="repeat(3, 1fr)"
-						tabletColumns="1col"
-						mobileColumns="1col"
-						fillWidth>
-						
-					</Grid>
-				</Flex>
-			</Flex>
-			{/* For the footer of the page */}
-			<Flex
-				as="footer"
-				position="relative"
-				fillWidth paddingX="l" paddingY="m"
-				justifyContent="space-between">
-			</Flex>
-		</Flex>
-	);
+
+    return (
+        <Flex
+            fillWidth paddingTop="l" paddingX="l"
+            direction="column" alignItems="center" flex={1}>
+            <Background
+                dots={false}/>
+            <Flex
+                position="relative"
+                as="section" overflow="hidden"
+                fillWidth minHeight="0" maxWidth={68}
+                direction="column" alignItems="center" flex={1}>
+                {/*
+                    Main section of the webpage
+                */}
+                <Flex
+                    as="main"
+                    direction="column" justifyContent="center"
+                    fillWidth fillHeight padding="l" gap="l">
+                    <Flex
+                        position="relative"
+                        flex={4} gap="24" marginBottom="104"
+                        direction="column">
+                        {/*
+                            Title for the page with EFX
+                        */}
+                        <Heading
+                            wrap="balance"
+                            variant="display-strong-s"
+                            align="center"
+                            paddingTop="xl">
+                            <p>
+									<span className="font-code">
+										<RevealFx
+                                            speed="fast"
+                                            delay={0}
+                                            translateY={0}
+                                        >
+											Go
+										</RevealFx>
+									</span>
+                            </p>
+                            <p>
+                                <span className="font-code">
+										<RevealFx
+                                            speed="slow"
+                                            delay={0}
+                                            translateY={0}
+                                        >
+											Phish!
+										</RevealFx>
+									</span>
+                            </p>
+                        </Heading>
+
+                        {/*
+                            This section is for the consent form
+                        */}
+                        <Flex
+                            position="relative"
+                            as="section" overflow="hidden"
+                            fillWidth minHeight="0" maxWidth={68}
+                            direction="column" alignItems="flex-start" flex={1}>
+                            <ConsentForm />
+                        </Flex>
+                    </Flex>
+                </Flex>
+            </Flex>
+
+            {/*
+                For the footer of the page.
+            */}
+            <Flex
+                as="footer"
+                position="relative"
+                fillWidth paddingX="l" paddingY="m"
+                justifyContent="space-between">
+            </Flex>
+        </Flex>
+    );
 }
