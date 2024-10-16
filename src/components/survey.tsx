@@ -6,9 +6,11 @@ import React from "react";
 //import { Flex, Skeleton } from "@/once-ui/components";
 import { Model } from "survey-core";
 import { DefaultLight  } from "survey-core/themes";
+import { useRouter } from 'next/navigation';
 
 export default function SurveyForm() {
 
+    const router = useRouter();
 	/**
 	 * 	Scores for profiling the user from the results
 	 */
@@ -375,6 +377,7 @@ export default function SurveyForm() {
     if (xhr.status == 200) {
       // Display the "Success" message (pass a string value to display a custom message)
       options.showSaveSuccess();
+      router.push("/instructions");
       // Alternatively, you can clear all messages:
       // options.clearSaveMessages();
     } else {
