@@ -44,7 +44,9 @@ export default function IntroPage() {
 							{/*</InlineCode>*/}
 							<Heading
 								wrap="balance"
-								variant="display-strong-s">
+								variant="display-strong-s"
+								align="center"
+								paddingTop="xl">
 								<p>
 									<span className="font-code">
 										<RevealFx
