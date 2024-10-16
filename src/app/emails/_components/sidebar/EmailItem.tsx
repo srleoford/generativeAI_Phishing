@@ -1,29 +1,32 @@
 'use client'
 
-import { Avatar, Button, Flex, Text, ToggleButton } from '@/once-ui/components'
+import { Avatar, Flex, Text, ToggleButton } from '@/once-ui/components'
 import React from 'react'
 import styles from './SideBar.module.css'
+import { EmailInfo } from '../EmailContainer'
 
 interface EmailItemProps {
-    subject: string,
-    from: string,
-    isSelected: boolean
+    emailInfo: EmailInfo,
+    isSelected: boolean,
+    onSelected: () => void
 }
 
-const EmailItem = () => {
+const EmailItem = (props: EmailItemProps) => {
   return (
     <ToggleButton
-        //onClick={() => {}}
-        // onClick={S}
-        selected={false}
+        onClick={
+            props.onSelected
+        }
+        selected={props.isSelected}
         truncate={true}
         className={styles.singleLineText}
         size="l"
         align="start"
-        width='fit'
+        //width='fill'
         style={{
             padding: "0px",
             borderRadius: "13px",
+            width:"100%"
         }}
     >
         <Flex
@@ -33,9 +36,9 @@ const EmailItem = () => {
             radius="m"
             borderStyle="solid-1"
             padding='8'
-            fillWidth
-            //style={{height:"10%"}}
-            position='relative'
+            //fillWidth
+            style={{width:"100%"}}
+            //position='relative'
         >
             <Avatar
                 size="m"
@@ -44,13 +47,15 @@ const EmailItem = () => {
             <Flex
                 direction='column'
                 gap='4'
+                //fillWidth
+                style={{width:"100%"}}
             >
                 <Text
                     className={styles.singleLineText}
                     variant = "body-strong-xs" 
                     onBackground='neutral-strong'
                 >
-                    🎉 Get Ready to Rock! Join Us for the UTEP Homecoming Pregame Party 🎉
+                    {props.emailInfo.subject}
                 </Text>
 
                 <Text
@@ -58,7 +63,7 @@ const EmailItem = () => {
                     variant = "body-default-xs" 
                     onBackground='neutral-weak'
                 >
-                    UTEP Homecoming - minernation@reach.utep.edu
+                    {props.emailInfo.from}
                 </Text>
             </Flex>
         </Flex>

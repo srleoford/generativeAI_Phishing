@@ -2,80 +2,55 @@
 
 import { Flex } from '@/once-ui/components'
 import React, { useState } from 'react'
-import EmailBoby from './EmailBoby'
-import EmailHeader from './EmailHeader'
-import Options from './Options'
-import emailsContent from '../mocks/emailsContent.json'
-import emailsInfo from '../mocks/emailsInfo.json'
+import Email from './Email'
+import SideBar from './sidebar/SideBar'
 
 export interface EmailInfo {
-  subject: string,
-  date: string,
-  from: string,
-  to: string,
-  cc?: string,
-  bcc?: string
+    subject: string,
+    date: string,
+    from: string,
+    to: string
 }
 
-let emailIndex = 0
+export interface EmailsContent {
+    emails: string[]
+}
 
-const EmailContainer = () => {
+export interface EmailsInfo {
+    emails: EmailInfo[]
+}
 
-  // const [emailIndex, setEmailIndex] = useState(0)
-  let base64String = emailsContent.emails[emailIndex]
-  let decodedString = atob(base64String)
+interface EmailContainerProps {
+    emailsContent: EmailsContent,
+    emailsInfo: EmailsInfo,
+    requireFeedback: boolean
+}
 
-  const [emailContent, setEmailContent] = useState(decodedString)
-  const [emailInfo, setEmailInfo] = useState(emailsInfo.emails[emailIndex])
-  const [dialogStatus, setDialogStatus] = useState(false)
+const EmailContainer = (props: EmailContainerProps) => {
+    const [emailIndex, setEmailIndex] = useState(0)
 
-  const onOptionSelected = () => {
-    setDialogStatus(!dialogStatus)
-  }
-  const onCloseDialog = () => {
-    setDialogStatus(!dialogStatus)
-    if(emailIndex < 5) {
-      emailIndex++
-    } else {
-      emailIndex = 0
-    }
-    setEmailInfo(emailsInfo.emails[emailIndex])
-    base64String = emailsContent.emails[emailIndex]
-    decodedString = atob(base64String)
-    setEmailContent(decodedString)
-  }
-
-  return (
-    <Flex
-        fillWidth
-        fillHeight
-        position="relative"
-        border="brand-strong"
-        borderStyle="solid-1"
-        gap="16"
-        padding="m"
-        radius="xl"
-        // onSolid="brand-strong"
-        // solid="neutral-weak"
-        direction='column'
-        style={{background: "white"}}
-    >
-        <EmailHeader
-            info={emailInfo}
-        />
-
-        <EmailBoby
-            emailContent={emailContent}
-        />
-
-        <Options
-          onClose={onCloseDialog}
-          isDialogOpen={dialogStatus} 
-          onPhishOption={onOptionSelected}
-          onRealOption={onOptionSelected}
-        />
-    </Flex>
-  )
+    return (
+        <Flex
+            fillWidth
+            fillHeight
+            direction='row'
+            gap='xs'
+            alignItems='start'
+        >
+          <SideBar
+            emailsInfo={props.emailsInfo}
+            setEmailIndex={setEmailIndex}
+          />
+    
+          <Email
+            emailsContent={props.emailsContent.emails}
+            emailsInfo={props.emailsInfo.emails}
+            emailIndex={emailIndex}
+            requireFeedback={props.requireFeedback}
+            setEmailIndex={setEmailIndex}
+          />
+        </Flex>
+      )
 }
 
 export default EmailContainer

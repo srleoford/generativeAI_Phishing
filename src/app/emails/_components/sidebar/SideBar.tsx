@@ -1,8 +1,14 @@
 import { Flex, Text } from '@/once-ui/components'
 import React from 'react'
 import EmailItem from './EmailItem'
+import { EmailsInfo } from '../EmailContainer'
 
-const SideBar = () => {
+interface SideBarProps {
+    emailsInfo: EmailsInfo,
+    setEmailIndex: (index: number) => void
+}
+
+const SideBar = (props: SideBarProps) => {
   return (
     <Flex
         gap='4'
@@ -27,17 +33,26 @@ const SideBar = () => {
 
         <Flex 
             fillWidth
-            height="1"
+            direction='column'
+            //height="1"
             solid="neutral-strong"/>
 
-        <EmailItem/>
-        <EmailItem/>
-        <EmailItem/>       
-        <EmailItem/>
-        <EmailItem/>
-        <EmailItem/>        
-        <EmailItem/>
-
+        {
+            props.emailsInfo.emails.map((element, index) => {
+                return (
+                    <EmailItem
+                        key={index}
+                        emailInfo={element}
+                        isSelected={false}
+                        onSelected={
+                            () => {
+                                props.setEmailIndex(index)
+                            }
+                        }
+                    />
+                )
+            })
+        }
     </Flex>
   )
 }
