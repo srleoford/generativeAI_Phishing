@@ -3,6 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { NewUser } from "@/app/lib/definitions";
+import { db } from "@/app/lib/database"; // Hypothetical database module
+import { createToken } from "@/app/lib/tokenizer"; // tokenizer module
+
 
 export async function registerUser (
     prevState: {
@@ -14,7 +17,7 @@ export async function registerUser (
     const user = NewUser.safeParse({ email: email })
 
     if (user.success) {
-        const { email, token } = user.data
+        const { email } = user.data
 
         /** TODO *
          * Now that the user is validated, check against the DB,
@@ -23,6 +26,27 @@ export async function registerUser (
          * Then redirect to the `Introduction` page for the initial survey
          * Need to be consistent with everyone else and use AppRouter, not pages or `redirect`
          */
+        
+        // Check if user already exists in the database
+        const existingUser = await db.user.findUnique({
+            where: { email }
+        });
+
+        if (existingUser) {
+            return { message: `User with email ${email} already exists.` };
+        }
+
+        // If user doesn't exist, create a new user
+        const token = createToken(email); // Creating a unqiue token based on emails
+        const newUser = await db.user.create({
+            data: {
+                email,
+                token,
+                createdAt: new Date(),
+            }
+        });
+    
+
         revalidatePath("/")
         redirect("/intro")
         return { message: `Email is valid! Registered new user: ${ email } : ${ token }` }
