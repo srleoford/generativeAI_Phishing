@@ -3,8 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { NewUser } from "@/app/lib/definitions";
-import { db } from "@/app/lib/database"; // Hypothetical database module
+import { insertUser } from "@/app/utils/pinecone";
 import { createToken } from "@/app/lib/tokenizer"; // tokenizer module
+
 
 
 export async function registerUser (
@@ -27,32 +28,38 @@ export async function registerUser (
          * Need to be consistent with everyone else and use AppRouter, not pages or `redirect`
          */
         
-        // Check if user already exists in the database
-        const existingUser = await db.user.findUnique({
-            where: { email }
-        });
-
-        if (existingUser) {
-            return { message: `User with email ${email} already exists.` };
-        }
+        // // Check if user already exists in the database
+        // const existingUser = await db.user.findUnique({
+        //     where: { email }
+        // });
+        //
+        // if (existingUser) {
+        //     return { message: `User with email ${email} already exists.` };
+        // }
 
         // If user doesn't exist, create a new user
-        const token = createToken(email); // Creating a unqiue token based on emails
-        const newUser = await db.user.create({
-            data: {
-                email,
-                token,
-                createdAt: new Date(),
-            }
-        });
-    
+        const token = createToken(email); // Creating a unique token based on emails
+        // const newUser = await db.user.create({
+        //     data: {
+        //         email,
+        //         token,
+        //         createdAt: new Date(),
+        //     }
+        // });
 
-        revalidatePath("/")
-        redirect("/intro")
-        return { message: `Email is valid! Registered new user: ${ email } : ${ token }` }
+        if (await insertUser(email, token)) {
+            // revalidatePath("/")
+            redirect("/intro")
+            return { message: `Email is valid! Registered new user: ${ email } : ${ token }` }
+        }
+        else {
+            // revalidatePath("/")
+            redirect("/declinedSurvey")
+            return { message: `User already exists: ${ email }. Unfortunately, you cannot participate in
+            this survey. Thank you for your interest!` }
+        }
     }
     else {
-
         return { message: `Did not register user: ${ user.error.errors[1] ? user.error.errors[1].message :
                 user.error.errors[0].message}` }
     }

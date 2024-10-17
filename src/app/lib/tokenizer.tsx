@@ -1,4 +1,4 @@
-// lib/auth.ts
+
 
 export function createToken(email: string): string {
     const randomValues = crypto.getRandomValues(new Uint8Array(16));

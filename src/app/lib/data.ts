@@ -1,5 +1,8 @@
-
-
+/**
+ * This is for the consent form. This is constructed as an array of objects and each object represents a section
+ * of the document (i.e., paragraphs, subsection, etc.). This will help to enable any edits to the form without
+ * disrupting the functionality.
+ */
 export const consent = [
     {
         id: "section1",
