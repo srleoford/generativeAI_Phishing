@@ -4,7 +4,7 @@ import emailsBodyContentProfiling from './mocks/emailsContentProfiling.json'
 import emailsDataProfiling from './mocks/emailsInfoProfiling.json'
 import emailsBodyContent from './mocks/emailsContent.json'
 import emailsData from './mocks/emailsInfo.json'
-import { PreventNavigation } from '@/components/PreventNavigation'
+// import { PreventNavigation } from '@/components/PreventNavigation'
 import { ResponseRoute } from '../api/phases/route'
 import EmailContainer from './_components/EmailContainer'
 
@@ -78,6 +78,7 @@ const EmailsPage = async () => {
         direction='row'
         gap='xs'
         alignItems="center"
+        position='absolute'
     >
       <Background
         position='absolute'
