@@ -69,7 +69,7 @@ export const insertUser = async(userEmail: string, token: string) =>{
         }
         else {
             pc.describeIndex(indexName)
-            await index.namespace(userEmail).upsert(userRecord)
+            await index.upsert(userRecord)
             return true
         }
     }
