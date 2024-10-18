@@ -1,17 +1,15 @@
-'use client'
+'use server'
 
 import { Pinecone } from "@pinecone-database/pinecone";
-import * as dotenv from 'dotenv'
-
-dotenv.config()
 
 // Default values for Pinecone such as the default vector for user creation, Pinecone API, etc.
 const defaultVector = [0,1,2,3]
-const api_key = process.env.PINECONE_API_KEY
+const api_key = "4222d20a-ce07-4185-97c5-70a29a4ba9a6"
+const indexName = "users"
 
 // Need to fix this
 const pc = new Pinecone({
-    apiKey: "4222d20a-ce07-4185-97c5-70a29a4ba9a6"
+    apiKey: api_key
 });
 
 const hasIndex = async (index: string) => {
@@ -52,22 +50,25 @@ const hasNamespace = async (index: string, namespace: string) => {
  */
 export const insertUser = async(userEmail: string, token: string) =>{
     // Constants for the function
-    const indexName = process.env.PINECONE_INDEX
+    console.log(`Index name is ${indexName}`)
 
     try {
         // Get the Pinecone index
         const index = await hasIndex(indexName) ? pc.index(indexName) : "";
 
-        const userRecord = {
-            id: userEmail,
-            values: [0,0,0,0],
-            metadata: { email: userEmail, token: token }
-        }
+        const userRecord = [
+            {
+                id: userEmail,
+                values: defaultVector,
+                metadata: { email: userEmail, token: token }
+            }
+        ]
 
         if (await hasNamespace(indexName, userEmail)) {
             return false
         }
         else {
+            pc.describeIndex(indexName)
             await index.namespace(userEmail).upsert(userRecord)
             return true
         }

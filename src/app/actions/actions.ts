@@ -27,33 +27,14 @@ export async function registerUser (
          * Then redirect to the `Introduction` page for the initial survey
          * Need to be consistent with everyone else and use AppRouter, not pages or `redirect`
          */
-        
-        // // Check if user already exists in the database
-        // const existingUser = await db.user.findUnique({
-        //     where: { email }
-        // });
-        //
-        // if (existingUser) {
-        //     return { message: `User with email ${email} already exists.` };
-        // }
 
-        // If user doesn't exist, create a new user
-        const token = createToken(email); // Creating a unique token based on emails
-        // const newUser = await db.user.create({
-        //     data: {
-        //         email,
-        //         token,
-        //         createdAt: new Date(),
-        //     }
-        // });
+        const token = createToken(email);
 
         if (await insertUser(email, token)) {
-            // revalidatePath("/")
             redirect("/intro")
             return { message: `Email is valid! Registered new user: ${ email } : ${ token }` }
         }
         else {
-            // revalidatePath("/")
             redirect("/declinedSurvey")
             return { message: `User already exists: ${ email }. Unfortunately, you cannot participate in
             this survey. Thank you for your interest!` }
