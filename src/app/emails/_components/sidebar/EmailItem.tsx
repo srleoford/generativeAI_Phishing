@@ -25,8 +25,8 @@ const EmailItem = (props: EmailItemProps) => {
         //width='fill'
         style={{
             padding: "0px",
-            borderRadius: "13px",
-            width:"100%"
+            borderRadius: "8px",
+            width:"100%",
         }}
     >
         <Flex
@@ -36,9 +36,10 @@ const EmailItem = (props: EmailItemProps) => {
             radius="m"
             borderStyle="solid-1"
             padding='8'
-            //fillWidth
-            style={{width:"100%"}}
-            //position='relative'
+            fillWidth
+            style={{
+                width:"100%"
+            }}
         >
             <Avatar
                 size="m"
@@ -47,15 +48,19 @@ const EmailItem = (props: EmailItemProps) => {
             <Flex
                 direction='column'
                 gap='4'
-                //fillWidth
+                fillWidth
                 style={{width:"100%"}}
             >
                 <Text
                     className={styles.singleLineText}
                     variant = "body-strong-xs" 
                     onBackground='neutral-strong'
+                    style={{width:"100%"}}
                 >
-                    {props.emailInfo.subject}
+                    {props.emailInfo.subject} 
+                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
+                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                 </Text>
 
                 <Text

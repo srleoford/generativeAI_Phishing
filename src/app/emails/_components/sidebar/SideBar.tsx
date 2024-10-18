@@ -1,10 +1,11 @@
 import { Flex, Text } from '@/once-ui/components'
 import React from 'react'
 import EmailItem from './EmailItem'
-import { EmailsInfo } from '../EmailContainer'
+import { EmailInfo } from '../EmailContainer'
 
 interface SideBarProps {
-    emailsInfo: EmailsInfo,
+    emailsInfo: EmailInfo[],
+    emailIndex: number,
     setEmailIndex: (index: number) => void
 }
 
@@ -38,12 +39,12 @@ const SideBar = (props: SideBarProps) => {
             solid="neutral-strong"/>
 
         {
-            props.emailsInfo.emails.map((element, index) => {
+            props.emailsInfo.map((element, index) => {
                 return (
                     <EmailItem
                         key={index}
                         emailInfo={element}
-                        isSelected={false}
+                        isSelected={index===props.emailIndex}
                         onSelected={
                             () => {
                                 props.setEmailIndex(index)

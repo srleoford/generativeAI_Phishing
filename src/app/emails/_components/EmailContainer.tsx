@@ -27,7 +27,10 @@ interface EmailContainerProps {
 }
 
 const EmailContainer = (props: EmailContainerProps) => {
+    const size = props.emailsInfo.emails.length
     const [emailIndex, setEmailIndex] = useState(0)
+    const [emailsInfo, setEmailsInfo] = useState(props.emailsInfo.emails)
+    const [emailsContent, setEmailsContent] = useState(props.emailsContent.emails)
 
     return (
         <Flex
@@ -38,16 +41,20 @@ const EmailContainer = (props: EmailContainerProps) => {
             alignItems='start'
         >
           <SideBar
-            emailsInfo={props.emailsInfo}
+            emailsInfo={emailsInfo}
+            emailIndex={emailIndex}
             setEmailIndex={setEmailIndex}
           />
     
           <Email
-            emailsContent={props.emailsContent.emails}
-            emailsInfo={props.emailsInfo.emails}
+            total={size}
+            emailsContent={emailsContent}
+            emailsInfo={emailsInfo}
             emailIndex={emailIndex}
             requireFeedback={props.requireFeedback}
             setEmailIndex={setEmailIndex}
+            setEmailsInfo={setEmailsInfo}
+            setEmailsContent={setEmailsContent}
           />
         </Flex>
       )

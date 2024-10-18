@@ -5,47 +5,48 @@ import EmailHeader from './EmailHeader'
 import Options from './Options'
 import { useRouter } from 'next/navigation'
 import ProgressBar from './ProgressBar'
-import { EmailInfo, EmailsContent, EmailsInfo } from './EmailContainer'
+import { EmailInfo } from './EmailContainer'
 
 interface EmailProps {
+  total: number,
   emailsContent: string[],
   emailsInfo: EmailInfo[],
   emailIndex: number,
   requireFeedback: boolean,
-  setEmailIndex: (index: number) => void
+  setEmailIndex: (index: number) => void,
+  setEmailsInfo: (emails: EmailInfo[]) => void
+  setEmailsContent: (emails: string[]) => void
 }
 
 let progress = 0
 
-const Email = ({emailsContent, emailsInfo, emailIndex, requireFeedback, setEmailIndex}: EmailProps) => {
+const Email = (props: EmailProps) => {
   const router = useRouter()
-  // const [emailIndex, setEmailIndex] = useState(0)
-  let base64String = emailsContent[emailIndex]
-  let decodedString = atob(base64String)
-
-  const [emailContent, setEmailContent] = useState(decodedString)
-  const [emailInfo, setEmailInfo] = useState(emailsInfo[emailIndex])
   const [dialogStatus, setDialogStatus] = useState(false)
 
-  const counter = (size: number) => {
-    if(emailIndex < size - 1) {
-      setEmailIndex(emailIndex + 1)
-      progress++
-    } else {
+  const changeEmail = () => {
+    // const size = props.emailsInfo.length
+
+    if(props.emailsInfo.length === 1) {
       router.push("/instructions")
+    } else {
+      const newEmailsContent = [...props.emailsContent]
+      const newEmailsInfo = [...props.emailsInfo]
+
+      newEmailsInfo.splice(props.emailIndex, 1)
+      newEmailsContent.splice(props.emailIndex, 1)
+      props.setEmailsInfo(newEmailsInfo)
+      props.setEmailsContent(newEmailsContent)
+
+      if (props.emailIndex > 0) {
+        props.setEmailIndex(props.emailIndex - 1)
+      }
+      progress++
     }
   }
 
-  const changeEmail = () => {
-    counter(emailsContent.length)
-    // setEmailInfo(emailsInfo[emailIndex])
-    // base64String = emailsContent[emailIndex]
-    // decodedString = atob(base64String)
-    // setEmailContent(decodedString)
-  }
-
   const onOptionSelected = () => {
-    if (requireFeedback) {
+    if (props.requireFeedback) {
       setDialogStatus(!dialogStatus)
     } else {
       changeEmail()
@@ -55,9 +56,6 @@ const Email = ({emailsContent, emailsInfo, emailIndex, requireFeedback, setEmail
     setDialogStatus(!dialogStatus)
     changeEmail()
   }
-
-  const valueTest = emailsInfo[emailIndex]
-  const valueTest2 = atob(emailsContent[emailIndex])
 
   return (
     <Flex
@@ -77,11 +75,11 @@ const Email = ({emailsContent, emailsInfo, emailIndex, requireFeedback, setEmail
       }}
     >
         <EmailHeader
-            info={valueTest}
+            info={props.emailsInfo[props.emailIndex]}
         />
 
         <EmailBoby
-            emailContent={valueTest2}
+            emailContent={atob(props.emailsContent[props.emailIndex])}
         />
 
         <Options
@@ -90,7 +88,7 @@ const Email = ({emailsContent, emailsInfo, emailIndex, requireFeedback, setEmail
           onPhishOption={onOptionSelected}
           onRealOption={onOptionSelected}
         />
-        <ProgressBar index={progress} total={emailsContent.length} />
+        <ProgressBar index={progress} total={props.total} />
     </Flex>
   )
 }
