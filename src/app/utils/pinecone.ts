@@ -1,80 +1,21 @@
-'use server'
-
 import { Pinecone } from "@pinecone-database/pinecone";
 
-// Default values for Pinecone such as the default vector for user creation, Pinecone API, etc.
-const defaultVector = [0,1,2,3]
-const api_key = "4222d20a-ce07-4185-97c5-70a29a4ba9a6"
-const indexName = "users"
+const pineconeClient = new Pinecone({apiKey: process.env.PINECONE_API_KEY});
 
-// Need to fix this
-const pc = new Pinecone({
-    apiKey: api_key
-});
 
-const hasIndex = async (index: string) => {
+// upsert user data into Pinecone
+export async function upsertUserToPinecone(email: string, token: string) {
+    const vector = Array.from({ length: 50 }, () => Math.random()); // Random vector
 
-    // Is the there an index name
-    if (index === '') {
-        return false
-    }
+    // Get the index
+    const pineconeIndex = pineconeClient.Index(process.env.PINECONE_INDEX || 'users');
 
-    // Retrieve the list of indexes to check if expected index exists
-    const indexes = (await pc.listIndexes())?.indexes;
-    if (!indexes || indexes.filter(i => i.name === index).length !== 1) {
-        return false
-    }
-    else
-        return true
-}
-
-/**
- * This checks if there exists a namespace i.e., user inserted into the Pinecone DB
- * @param index
- * @param namespace
- * @requires index exists in DB, namespace != ""
- */
-const hasNamespace = async (index: string, namespace: string) => {
-    const { namespaces } = await pc.index(index).describeIndexStats()
-    return namespaces.hasOwnProperty(namespace)
-}
-
-/**
- * This will upsert into Pinecone DB for new users. The namespace will be the user's email. This requires to be vectors
- * inserted into the record as well, so any non-zero default values are fine since it doesn't matter until the initial
- * survey is finished.
- * @param indexName
- * @param userEmail
- * @param token
- * @requires userEmail != "" && userEmail not in DB, indexName != "" && token != ""
- */
-export const insertUser = async(userEmail: string, token: string) =>{
-    // Constants for the function
-    console.log(`Index name is ${indexName}`)
-
-    try {
-        // Get the Pinecone index
-        const index = await hasIndex(indexName) ? pc.index(indexName) : "";
-
-        const userRecord = [
-            {
-                id: userEmail,
-                values: defaultVector,
-                metadata: { email: userEmail, token: token }
-            }
-        ]
-
-        if (await hasNamespace(indexName, userEmail)) {
-            return false
+    // Upsert the user's vector into Pinecone
+    await pineconeIndex.upsert([
+        {
+            id: email, // email as unique ID
+            values: vector, // vector to store
+            metadata: { token }, // token associated with the user
         }
-        else {
-            pc.describeIndex(indexName)
-            await index.upsert(userRecord)
-            return true
-        }
-    }
-    catch (error) {
-        console.error(error)
-        return false
-    }
+    ])
 }

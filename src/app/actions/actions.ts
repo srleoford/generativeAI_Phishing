@@ -3,8 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { NewUser } from "@/app/lib/definitions";
-import { insertUser } from "@/app/utils/pinecone";
-import { createToken } from "@/app/lib/tokenizer"; // tokenizer module
+import { createToken } from "@/app/lib/tokenizer"; // Tokenizer module
+import { upsertUserToPinecone } from "../utils/pinecone"; // Import Pinecone functionality
 
 
 
@@ -14,35 +14,45 @@ export async function registerUser (
     },
     formData: FormData,
 ) {
-    const email = formData.get("email")
-    const user = NewUser.safeParse({ email: email })
+    const email = formData.get("email") as string;
+    const user = NewUser.safeParse({ email });
 
     if (user.success) {
-        const { email } = user.data
+        const { email } = user.data;
 
-        /** TODO *
-         * Now that the user is validated, check against the DB,
-         * If the user already exists, they shouldn't be allowed to do it again
-         * If the user doesn't exist, create the user, the token, and insert into the DB
-         * Then redirect to the `Introduction` page for the initial survey
-         * Need to be consistent with everyone else and use AppRouter, not pages or `redirect`
-         */
+        //Initialize Pinecone
+        const pineconeClient = await initPinecone();
 
+        //Check if the user already exists in the Pinecone index
+        const pineconeIndex = pineconeClient.Index(process.env.PINECONE_INDEX || 'users');
+        const existingUserQuery = await pineconeIndex.query({
+            vector: Array.from({ length: 50 }, () => 0), //Dummy vector for now every user will have a random vector associated ->for this next sprint I want to organize them to have more order for metadata 
+            topK: 1, 
+            filter: { "email": email }, //Check for an exact email match
+            namespace: "registered-users"
+        });
+
+        if (existingUserQuery.matches && existingUserQuery.matches.length > 0) {
+            return { message: `User with email ${email} already exists.` };
+        }
+
+        //Create a token for the user
         const token = createToken(email);
 
-        if (await insertUser(email, token)) {
-            redirect("/intro")
-            return { message: `Email is valid! Registered new user: ${ email } : ${ token }` }
-        }
-        else {
-            redirect("/declinedSurvey")
-            return { message: `User already exists: ${ email }. Unfortunately, you cannot participate in
-            this survey. Thank you for your interest!` }
-        }
-    }
-    else {
+        //Upsert the new user data into Pinecone
+        await upsertUserToPinecone(email, token);
+
+        //Revalidate path and redirect to the introduction page
+        revalidatePath("/");
+        redirect("/intro");
+
+        //Return success message
+        return { message: `Email is valid! Registered new user: ${ email } with token: ${ token }` };
+    } else {
+        // Handle invalid email
+
         return { message: `Did not register user: ${ user.error.errors[1] ? user.error.errors[1].message :
-                user.error.errors[0].message}` }
+                user.error.errors[0].message}` };
     }
 
     return { message: "Nothing happened." };
