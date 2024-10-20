@@ -3,7 +3,7 @@
 import { Pinecone } from "@pinecone-database/pinecone";
 
 // Default values for Pinecone such as the default vector for user creation, Pinecone API, etc.
-const defaultVector = [0,1,2,3]
+const defaultVector = [0,1,2,3,3,2,1,2,3,3,2,3,2,1,2,3,2,3,2]
 const api_key = "4222d20a-ce07-4185-97c5-70a29a4ba9a6"
 const indexName = "users"
 
@@ -64,14 +64,11 @@ export const insertUser = async(userEmail: string, token: string) =>{
             }
         ]
 
-        if (await hasNamespace(indexName, userEmail)) {
-            return false
-        }
-        else {
-            pc.describeIndex(indexName)
-            await index.upsert(userRecord)
-            return true
-        }
+        // This needs to check if the user exists before inserting. If not, `redirect("/declinedSurvey")` or some
+        // other page.
+        pc.describeIndex(indexName)
+        await index.upsert(userRecord)
+        return true
     }
     catch (error) {
         console.error(error)
