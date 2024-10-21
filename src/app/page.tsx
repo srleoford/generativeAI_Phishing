@@ -1,7 +1,6 @@
 "use client";
 
 import React from 'react';
-
 import { Heading, Flex, Background, RevealFx } from '@/once-ui/components';
 import { ConsentForm } from "@/components/consent-form"
 

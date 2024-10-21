@@ -3,6 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { NewUser } from "@/app/lib/definitions";
+import { insertUser } from "@/app/utils/pinecone";
+import { createToken } from "@/app/lib/tokenizer"; // tokenizer module
+
+
 
 export async function registerUser (
     prevState: {
@@ -14,20 +18,29 @@ export async function registerUser (
     const user = NewUser.safeParse({ email: email })
 
     if (user.success) {
-        const { email, token } = user.data
+        const { email } = user.data
 
         /** TODO *
          * Now that the user is validated, check against the DB,
          * If the user already exists, they shouldn't be allowed to do it again
          * If the user doesn't exist, create the user, the token, and insert into the DB
          * Then redirect to the `Introduction` page for the initial survey
+         * Need to be consistent with everyone else and use AppRouter, not pages or `redirect`
          */
-        revalidatePath("/")
-        redirect("/intro")
-        return { message: `Email is valid! Registered new user: ${ email } : ${ token }` }
+
+        const token = createToken(email);
+
+        if (await insertUser(email, token)) {
+            redirect("/intro")
+            return { message: `Email is valid! Registered new user: ${ email } : ${ token }` }
+        }
+        else {
+            redirect("/declinedSurvey")
+            return { message: `User already exists: ${ email }. Unfortunately, you cannot participate in
+            this survey. Thank you for your interest!` }
+        }
     }
     else {
-
         return { message: `Did not register user: ${ user.error.errors[1] ? user.error.errors[1].message :
                 user.error.errors[0].message}` }
     }
