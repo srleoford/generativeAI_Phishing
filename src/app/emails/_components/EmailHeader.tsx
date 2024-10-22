@@ -2,6 +2,7 @@ import { Avatar, Flex, Text } from '@/once-ui/components'
 import React from 'react'
 import { EmailInfo } from './EmailContainer'
 
+// EmailInfo from Email or EmailContainer
 interface EmailHeaderinfo {
     info: EmailInfo
 }
