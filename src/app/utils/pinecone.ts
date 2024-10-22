@@ -7,7 +7,7 @@ import { Pinecone } from "@pinecone-database/pinecone";
 dotenv.config();
 
 // Default values for Pinecone such as the default vector for user creation, Pinecone API, etc.
-const defaultVector = [0,1,2,3,3,2,1,2,3,3,2,3,2,1,2,3,2,3,2]
+const defaultVector = [0,1,2,3,3,2,1,2,3,3,2,3,2,1,2,3,2,3,3]
 const api_key = process.env.PINECONE_API_KEY
 const indexName = process.env.PINECONE_INDEX
 
