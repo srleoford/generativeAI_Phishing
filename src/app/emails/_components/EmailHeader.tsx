@@ -1,6 +1,6 @@
 import { Avatar, Flex, Text } from '@/once-ui/components'
 import React from 'react'
-import { EmailInfo } from './Email'
+import { EmailInfo } from './EmailContainer'
 
 interface EmailHeaderinfo {
     info: EmailInfo
