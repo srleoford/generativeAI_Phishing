@@ -2,6 +2,7 @@ import { Avatar, Flex, Text, ToggleButton } from '@/once-ui/components'
 import React from 'react'
 import { EmailData } from './EmailContainer'
 
+// EmailInfo from Email or EmailContainer
 interface EmailHeaderinfo {
     info: EmailData
     senderClicked: boolean,
