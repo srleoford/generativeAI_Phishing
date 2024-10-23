@@ -61,7 +61,7 @@ const hasNamespace = async (index: string, namespace: string) => {
  * @param token
  * @requires userEmail != "" && userEmail not in DB, indexName != "" && token != ""
  */
-export const insertUser = async (userEmail: string, token: string) =>{
+export const insertUser = async (userEmail: string, token: string) => {
     // Constants for the function
     // console.log(`Index name is ${indexName}`)
 
