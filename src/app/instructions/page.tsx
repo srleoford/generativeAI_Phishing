@@ -1,10 +1,26 @@
+"use client"
 import { Background, Flex, Text } from '@/once-ui/components'
 import React from 'react'
 import { phase1Body, phase1Title, phase2Title, phase3Title, phase2Body, phase3Body } from './constants';
 import InstructionsBody from './_components/InstructionsBody';
 import { ResponseRoute } from '../api/phases/route';
+import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 const InstructionsPage = async () => {
+  //If the token does not exist or
+  //If the survey has not been submitted
+  //It will redirect to consent form
+  const token = Cookies.get('userToken');
+  const surveySubmitted = Cookies.get("surveySubmitted");
+  console.log(token);
+  console.log(surveySubmitted);
+  if (!token || !surveySubmitted)
+  {
+    const router = useRouter(); 
+    router.push("/")
+  }
+  
   let title, body: string
 
   let data = await fetch('http://localhost:3000/api/phases', {cache: 'no-store'})

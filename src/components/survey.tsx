@@ -7,6 +7,7 @@ import React from "react";
 import { Model } from "survey-core";
 import { DefaultLight  } from "survey-core/themes";
 import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 export default function SurveyForm() {
 
@@ -377,6 +378,7 @@ export default function SurveyForm() {
     if (xhr.status == 200) {
       // Display the "Success" message (pass a string value to display a custom message)
       options.showSaveSuccess();
+      Cookies.set("surveySubmitted","true")
       router.push("/instructions");
       // Alternatively, you can clear all messages:
       // options.clearSaveMessages();

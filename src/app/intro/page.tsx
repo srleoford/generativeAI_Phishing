@@ -1,12 +1,22 @@
 "use client";
 
 import React from 'react';
-
 import { Heading, Text, Flex, Button, Grid, Icon, InlineCode, Logo, Background, RevealFx, Skeleton } from '@/once-ui/components';
 import Survey from '@/components/survey'
+import Cookies from 'js-cookie';
+import { useRouter } from 'next/navigation';
 
 export default function IntroPage() {
-
+	//Gets the cookie containing the token, if it can't find it it will redirect to consent form
+	//If the form has already been submitted, it will redirect to consent form
+	const token = Cookies.get('userToken');
+	const surveySubmitted = Cookies.get("surveySubmitted");
+	console.log(token);
+	if (!token || surveySubmitted === "true")
+	{
+		const router = useRouter(); 
+		router.push("/")
+	}
 	return (
 		<Flex
 			fillWidth paddingTop="l" paddingX="l"

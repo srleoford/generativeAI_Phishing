@@ -3,10 +3,15 @@
 import React from 'react';
 import { Heading, Flex, Background, RevealFx } from '@/once-ui/components';
 import { ConsentForm } from "@/components/consent-form"
+import Cookies from 'js-cookie';
+import { ResponseRoute } from '../api/phases/route';
 
-
-export default function Home() {
-
+export default async function Home() {
+    Cookies.remove('userToken'); 
+    Cookies.remove('surveySubmitted');
+    let data = await fetch('http://localhost:3000/api/phases', {cache: 'no-store'})
+    let response: ResponseRoute = await data.json()
+    console.log(response.route)
     return (
         <Flex
             fillWidth paddingTop="l" paddingX="l"
