@@ -42,7 +42,7 @@ const userEmail = "user@example.com";
 const token = "ajlkjd=d=dlnd=--ddde-e"
 
 const pc = new Pinecone({
-    apiKey: api_key,
+    apiKey: "72832cbe-f5c5-4dbf-aac6-a9b2e30b2bf4",
 })
 
 const hasIndex = async (index: string) => {
@@ -61,6 +61,7 @@ const hasIndex = async (index: string) => {
         return true
 }
 
+
 if (await hasIndex(indexName)) {
     const index = pc.index(indexName);
     const records = [
@@ -75,4 +76,8 @@ if (await hasIndex(indexName)) {
     const { namespaces } = await pc.index(indexName).describeIndexStats()
     let result = namespaces.hasOwnProperty(userEmail)
     console.log("Namespaces? ", result)
+
+    // Query the vector and update the value somehow
+    result = await index.query([userEmail])
+    console.log(result)
 }
