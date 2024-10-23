@@ -18,6 +18,7 @@ const surveyStart = 0
 const blockOne = 14
 const blockTwo = 19
 const blockThree = 24
+const blockSize = 5
 
 // Need to fix this
 const pc = new Pinecone({
@@ -97,40 +98,42 @@ export const insertUser = async (userEmail: string, token: string) =>{
  * NOTE: This will replace the entire vector, so the size must match and old values need to be preserved. This needs
  * to be structured some way
  *
- * Idea #1: Give the method an index and vector (array of values) and splice the array:
+ * Give the method an index and vector (array of values) and splice the array:
  * [\old(first half)] + [new vector] + [\old(rest of vector)]
- *
- * Idea #2: Grab the vector from the DB, create a new vector that inserts preserved old values and new values, then
- * update the record with the newly created vector
- *
- * Idea #3: Have a sparse vector to store some of these values
  *
  * @param userEmail
  * @param vector
  * @parm block
- *
+ * @requires indexName == existing index in DB
+ * @requires userEmail == existing record in DB
+ * @requires block == blockOne || blockTwo || blockThree
+ * @requires vector == type Array[number] && vector.length == 5
+ * @ensures \result == \old(array[0:block] + vector + \old(array[block + blockSize:\old(array.length)]
  */
-export const updateVector = async (userEmail: string, indexName: string, vector: any, block: number) => {
-    // Grab the vector to update
-    let oldVector = await pc.index(indexName).fetch([userEmail])
-    let newVector = oldVector.records[userEmail].values[0:block].concat(vector).concat(oldVector[block+block:])
-
+export const updateBlockScores = async (userEmail: string, indexName: string, vector: any, block: number) => {
     try {
         // Get the Pinecone index
         const index = await hasIndex(indexName) ? pc.index(indexName) : "";
 
-        const newVector = [
-            {
-                id: userEmail,
-                values: defaultVector,
-                metadata: { email: userEmail, token: token }
-            }
-        ]
+        if (index !== "") {
+            // Grab the existing record
+            let oldVector = await pc.index(indexName).fetch([userEmail])
+            // console.log(`The plan is to insert vector ${vector} into ${oldVector.records[userEmail].values.toString()} at block ${block}`)
 
-        // This needs to check if the user exists before inserting. If not, `redirect("/declinedSurvey")` or some
-        // other page.
-        pc.describeIndex(indexName)
-        await index.upsert(userRecord)
+            let oldBegVector = oldVector.records[userEmail].values.splice(0, block)
+            let oldEndVector = oldVector.records[userEmail].values.splice(blockSize)
+            // console.log(`First half: ${oldBegVector}, Last half at ${block + 5}: ${oldEndVector}`)
+            let newVector = oldBegVector.concat(...vector, ...oldEndVector)
+            // console.log(`New vector: ${newVector}`)
+
+            await index.update({
+                id: userEmail,
+                values: newVector,
+            })
+        }
+        else {
+            return false
+        }
         return true
     }
     catch (error) {
