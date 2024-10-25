@@ -6,6 +6,8 @@ import Options from './Options'
 import { useRouter } from 'next/navigation'
 import ProgressBar from './ProgressBar'
 import { EmailInfo } from './EmailContainer'
+import { cookies } from '../../../../node_modules/next/headers';
+import { setCompletedCookie } from '@/app/utils/cookies'
 
 interface EmailProps {
   total: number,
@@ -28,6 +30,7 @@ const Email = (props: EmailProps) => {
     // const size = props.emailsInfo.length
 
     if(props.emailsInfo.length === 1) {
+      setCompletedCookie()
       router.push("/instructions")
     } else {
       const newEmailsContent = [...props.emailsContent]

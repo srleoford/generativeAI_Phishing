@@ -1,11 +1,8 @@
-"use client"
 import { useFormState } from "react-dom";
 import { registerUser } from '@/app/actions/actions'
 import { DefaultButton } from "@/app/ui/button";
 import { Input } from "@/once-ui/components"
-import Cookies from 'js-cookie';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { setRegisterCookies } from "@/app/utils/cookies";
 
 const initialState = {
     message: '',
@@ -25,18 +22,7 @@ function RegisterButton () {
 
 export function SignupForm () {
     const [state, formAction] = useFormState(registerUser, initialState)
-
-    const messageContent = state?.message || "";
-    const router = useRouter(); 
-    useEffect(() => {
-        if (messageContent) {
-            Cookies.remove('userToken'); 
-            Cookies.remove('surveySubmitted');
-            const token = messageContent.split(" ").pop();
-            Cookies.set('userToken', token); 
-            router.push('/intro');
-        }
-      }, [messageContent, state?.isSuccess, router]);
+    setRegisterCookies(state)
 
     return (
         <>
