@@ -49,6 +49,7 @@ export const handleNavigation =  (page: string) => {
                 Cookies.set('phase_1','not_started')
                 Cookies.set('phase_2','not_started')
                 Cookies.set('phase_3','not_started')
+                Cookies.remove('surveyAnswers')
     
                 const postData = {
                     newRoute: "phase_1"
@@ -172,5 +173,32 @@ export const setCompletedCookie = () => {
     }
     if (phase_3_status == 'started'){
         Cookies.set('phase_3','completed')
+    }
+}
+
+export const loadPreviousAnswers = (survey) => {
+    const answers = Cookies.get('surveyAnswers')
+    if (answers) {
+        const questionsAnswered = JSON.parse(answers);
+
+        // Loop through each question and set the answer if it exists in questionsAnswered
+        survey.getAllQuestions().forEach((question) => {
+          if (questionsAnswered[question.name]) {
+            survey.setValue(question.name, questionsAnswered[question.name]);
+          }
+        });
+
+        //Sets the current page according to the number of questions they have answered so far. They only get saved when going to the Next page.
+        switch (Object.keys(questionsAnswered).length) {
+            case survey.pages[0].elements.length:
+                survey.currentPage = survey.pages[1]
+                break
+            case survey.pages[0].elements.length + survey.pages[1].elements.length:
+                survey.currentPage = survey.pages[2]
+                break
+            case survey.pages[0].elements.length + survey.pages[1].elements.length + survey.pages[2].elements.length:
+                survey.currentPage = survey.pages[3]
+                break
+        }
     }
 }

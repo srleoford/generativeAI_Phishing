@@ -8,6 +8,8 @@ import { Model } from "survey-core";
 import { DefaultLight  } from "survey-core/themes";
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
+import { loadPreviousAnswers } from '@/app/utils/cookies'
+import { useEffect } from 'react';
 
 export default function SurveyForm() {
 
@@ -40,19 +42,19 @@ export default function SurveyForm() {
           "isRequired": true,
           "choices": [
             {
-              "value": "Item 3",
+              "value": "Item 1",
               "text": "18-30"
             },
             {
-              "value": "Item 4",
+              "value": "Item 2",
               "text": "31-50"
             },
             {
-              "value": "Item 5",
+              "value": "Item 3",
               "text": "51-60"
             },
             {
-              "value": "Item 6",
+              "value": "Item 4",
               "text": "61 or older"
             }
           ]
@@ -368,6 +370,15 @@ export default function SurveyForm() {
   const survey = new Model(surveyJson);
   survey.applyTheme(DefaultLight);
 
+  useEffect(() => {
+          loadPreviousAnswers(survey)
+    }, []);
+
+  survey.onCurrentPageChanged.add(function (sender, options) {
+      Cookies.set('surveyAnswers',JSON.stringify(sender.data))
+      console.log(Cookies.get('surveyAnswers'))
+  });
+
   survey.onComplete.add(function (sender, options) {
   // Display the "Saving..." message (pass a string value to display a custom message)
   options.showSaveInProgress();
@@ -376,12 +387,9 @@ export default function SurveyForm() {
   xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
   xhr.onload = xhr.onerror = function () {
     if (xhr.status == 200) {
-      // Display the "Success" message (pass a string value to display a custom message)
-      options.showSaveSuccess();
+      //options.showSaveSuccess();
       Cookies.set("surveySubmitted","true")
       router.push("/instructions");
-      // Alternatively, you can clear all messages:
-      // options.clearSaveMessages();
     } else {
       // Display the "Error" message (pass a string value to display a custom message)
       options.showSaveError();
