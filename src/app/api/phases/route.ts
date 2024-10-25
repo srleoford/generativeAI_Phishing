@@ -19,7 +19,6 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET() {
-    console.log(route);
     return NextResponse.json({route: route}, {status: 200})
 }
 

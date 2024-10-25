@@ -23,141 +23,145 @@ export const setRegisterCookies = (state) =>{
 }
 
 export const handleNavigation =  (page: string) => {
-    if (typeof window !== 'undefined'){
-        const router = useRouter(); 
-        const phase_1_status = Cookies.get('phase_1')
-        const phase_2_status = Cookies.get('phase_2')
-        const phase_3_status = Cookies.get('phase_3')
-        const token = Cookies.get('userToken');
-        const surveySubmitted = Cookies.get("surveySubmitted");
-        //Just for debugging
-        console.log(
-            `Phase 1 Status: ${phase_1_status}`,
-            `Phase 2 Status: ${phase_2_status}`,
-            `Phase 3 Status: ${phase_3_status}`,
-            `User Token: ${token}`,
-            `Survey Submitted: ${surveySubmitted}`,
-            `Page: ${page}`
-        );
+    const router = useRouter(); 
+    const phase_1_status = Cookies.get('phase_1')
+    const phase_2_status = Cookies.get('phase_2')
+    const phase_3_status = Cookies.get('phase_3')
+    const token = Cookies.get('userToken');
+    const surveySubmitted = Cookies.get("surveySubmitted");
+    //Just for debugging
+    console.log(
+        `Phase 1 Status: ${phase_1_status}`,
+        `Phase 2 Status: ${phase_2_status}`,
+        `Phase 3 Status: ${phase_3_status}`,
+        `User Token: ${token}`,
+        `Survey Submitted: ${surveySubmitted}`,
+        `Page: ${page}`
+    );
     
-        switch(page)
-        {
-            case 'consent':
-                //Removes all cookies and sets the Email Phase back to 1
-                Cookies.remove('userToken'); 
-                Cookies.set('surveySubmitted', 'false');
-                Cookies.set('phase_1','not_started')
-                Cookies.set('phase_2','not_started')
-                Cookies.set('phase_3','not_started')
-                Cookies.remove('surveyAnswers')
+    switch(page)
+    {
+        case 'consent':
+            //Removes all cookies and sets the Email Phase back to 1
+            Cookies.remove('userToken'); 
+            Cookies.set('surveySubmitted', 'false');
+            Cookies.set('phase_1','not_started')
+            Cookies.set('phase_2','not_started')
+            Cookies.set('phase_3','not_started')
+            Cookies.remove('surveyAnswers')
     
-                const postData = {
-                    newRoute: "phase_1"
-                }
+            const postData = {
+                newRoute: "phase_1"
+            }
                 
-                fetch(
-                    'http://localhost:3000/api/phases',
-                    {
-                      method: 'POST',
-                      body: JSON.stringify(postData),
-                      cache: 'no-store'
-                    }
-                )
-            break;
-    
-            case 'survey':
-                //Gets the cookie containing the token, if it can't find it it will redirect to consent form
-                //If the form has already been submitted, it will redirect to consent form
-                console.log(token);
-                if (!token || surveySubmitted === "true")
+            fetch(
+                'http://localhost:3000/api/phases',
                 {
-                    router.push("/")
+                    method: 'POST',
+                    body: JSON.stringify(postData),
+                    cache: 'no-store'
                 }
-            break;
+            )
+        break;
+
+        case 'register':
+            if (token)
+            {
+                router.push("/")
+            }
+        break
+    
+        case 'survey':
+            //Gets the cookie containing the token, if it can't find it it will redirect to consent form
+            //If the form has already been submitted, it will redirect to consent form
+            console.log(token);
+            if (!token || surveySubmitted === "true")
+            {
+                router.push("/")
+            }
+        break;
             
-            case 'phase_1_instructions':
-                //Checks if navigation happened
-                if (!token || surveySubmitted === "false" || phase_1_status != 'not_started'
-                || phase_2_status != 'not_started' || phase_3_status != 'not_started'){
+        case 'phase_1_instructions':
+            //Checks if navigation happened
+            if (!token || surveySubmitted === "false" || phase_1_status != 'not_started'
+            || phase_2_status != 'not_started' || phase_3_status != 'not_started'){
 
-                    //If enters this block it means they did not refresh the page, instead they pressed the back/forward buttons or typed the address directly
-                    if (!(token && surveySubmitted === "true" && phase_1_status == 'started'
-                        && phase_2_status == 'not_started' && phase_3_status == 'not_started')) {
+                //If enters this block it means they did not refresh the page, instead they pressed the back/forward buttons or typed the address directly
+                if (!(token && surveySubmitted === "true" && phase_1_status == 'started'
+                    && phase_2_status == 'not_started' && phase_3_status == 'not_started')) {
                         
-                        router.push("/")
-                    }
+                    router.push("/")
                 }
-                else {
-                    //They entered this page when they should and it is the first time they see it
-                    Cookies.set('phase_1','started')
-                }
-            break;
+            }
+            else {
+                //They entered this page when they should and it is the first time they see it
+                Cookies.set('phase_1','started')
+            }
+        break;
     
-            case 'phase_2_instructions':
-                //Checks if navigation happened
-                if (!token || surveySubmitted === "false" || phase_1_status != 'completed'
-                || phase_2_status != 'not_started' || phase_3_status != 'not_started'){
+        case 'phase_2_instructions':
+            //Checks if navigation happened
+            if (!token || surveySubmitted === "false" || phase_1_status != 'completed'
+            || phase_2_status != 'not_started' || phase_3_status != 'not_started'){
 
-                    //If enters this block it means they did not refresh the page, instead they pressed the back/forward buttons or typed the address directly
-                    if (!(token && surveySubmitted === "true" && phase_1_status == 'completed'
-                        && phase_2_status == 'started' && phase_3_status == 'not_started')) {
+                //If enters this block it means they did not refresh the page, instead they pressed the back/forward buttons or typed the address directly
+                if (!(token && surveySubmitted === "true" && phase_1_status == 'completed'
+                    && phase_2_status == 'started' && phase_3_status == 'not_started')) {
                         
-                        router.push("/")
-                    }
+                    router.push("/")
                 }
-                else {
-                    //They entered this page when they should and it is the first time they see it
-                    Cookies.set('phase_2','started')
-                }
-            break;
+            }
+            else {
+                //They entered this page when they should and it is the first time they see it
+                Cookies.set('phase_2','started')
+            }
+        break;
     
-            case 'phase_3_instructions':
-                //Checks if navigation happened
-                if (!token || surveySubmitted === "false" || phase_1_status != 'completed'
-                || phase_2_status != 'completed' || phase_3_status != 'not_started'){
+        case 'phase_3_instructions':
+            //Checks if navigation happened
+            if (!token || surveySubmitted === "false" || phase_1_status != 'completed'
+            || phase_2_status != 'completed' || phase_3_status != 'not_started'){
 
-                    //If enters this block it means they did not refresh the page, instead they pressed the back/forward buttons or typed the address directly
-                    if (!(token && surveySubmitted === "true" && phase_1_status == 'completed'
-                        && phase_2_status == 'completed' && phase_3_status == 'started')) {
+                //If enters this block it means they did not refresh the page, instead they pressed the back/forward buttons or typed the address directly
+                if (!(token && surveySubmitted === "true" && phase_1_status == 'completed'
+                    && phase_2_status == 'completed' && phase_3_status == 'started')) {
                         
-                        router.push("/")
-                    }
-                }
-                else {
-                    //They entered this page when they should and it is the first time they see it
-                    Cookies.set('phase_3','started')
-                }
-            break;
-    
-            case 'phase_1_emails':
-            //Phase 1 has to be started in order to classify emails
-                if (!token || surveySubmitted === false || phase_1_status != 'started'
-                || phase_2_status != 'not_started' || phase_3_status != 'not_started'){
                     router.push("/")
-                    break
                 }
-            break;
+            }
+            else {
+                //They entered this page when they should and it is the first time they see it
+                Cookies.set('phase_3','started')
+            }
+        break;
     
-            case 'phase_2_emails':
-            //Phase 1 must be completed, phase 2 must be started and phase 3 not started
-                if (!token || surveySubmitted === false || phase_1_status != 'completed'
-                || phase_2_status != 'started' || phase_3_status != 'not_started'){
-                    router.push("/")
-                    break
-                }
-            break;
+        case 'phase_1_emails':
+        //Phase 1 has to be started in order to classify emails
+            if (!token || surveySubmitted === false || phase_1_status != 'started'
+            || phase_2_status != 'not_started' || phase_3_status != 'not_started'){
+                router.push("/")
+                break
+            }
+        break;
     
-            case 'phase_3_emails':
-            //Phase 1 must be completed, phase 2 must be completed and phase 3 started
-                if (!token || surveySubmitted === false || phase_1_status != 'completed'
-                || phase_2_status != 'completed' || phase_3_status != 'started'){
-                    router.push("/")
-                    break
-                }
-            break;
-        }
+        case 'phase_2_emails':
+        //Phase 1 must be completed, phase 2 must be started and phase 3 not started
+            if (!token || surveySubmitted === false || phase_1_status != 'completed'
+            || phase_2_status != 'started' || phase_3_status != 'not_started'){
+                router.push("/")
+                break
+            }
+        break;
+    
+        case 'phase_3_emails':
+        //Phase 1 must be completed, phase 2 must be completed and phase 3 started
+            if (!token || surveySubmitted === false || phase_1_status != 'completed'
+            || phase_2_status != 'completed' || phase_3_status != 'started'){
+                router.push("/")
+                break
+            }
+        break;
     }
-
 }
 
 export const setCompletedCookie = () => {

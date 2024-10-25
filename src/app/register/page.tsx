@@ -3,19 +3,11 @@
 import React from 'react';
 import { Heading, Flex, Background } from '@/once-ui/components';
 import { SignupForm } from '@/components/signup-form'
-import Cookies from 'js-cookie';
-import { useRouter } from 'next/navigation';
+import { handleNavigation } from '@/app/utils/cookies'
 
 export default function RegisterPage() {
-    //Gets the cookie containing the token, if a token has already been created, it means the user is navigating back and will send
-    //them to the consent form
-    const token = Cookies.get('userToken');
-    console.log(token);
-    if (token)
-    {
-        const router = useRouter(); 
-        router.push("/")
-    }
+    handleNavigation('register')
+
     return (
         <Flex
             fillWidth paddingTop="l" paddingX="l"
@@ -73,7 +65,7 @@ export default function RegisterPage() {
                     radius="xl"
                     onBackground="brand-strong"
                     background="brand-medium">
-                    <SignupForm />
+                    <SignupForm suppressHydrationWarning />
                 </Flex>
             </Flex>
         </Flex>
