@@ -1,0 +1,40 @@
+{
+    "emails": [
+        {
+            "subject": "Recent login to your Yelp",
+            "date": "Sep 23, 2024, 1:25 AM",
+            "from": "yelphelp@gmail.com",
+            "to": "Destiny"
+        },
+        {
+            "subject": "Important: Your Dropbox Account Storage Limit Has Been Reached – Action Required",
+            "date": "Nov 23, 2024, 11:25 AM",
+            "from": "dropboxsupport@example.com",
+            "to": "Destiny"
+        },
+        {
+            "subject": "Apple Payment Information",
+            "date": "Dec 23, 2024, 10:35 AM",
+            "from": "devteam@appleevents.com",
+            "to": "Destiny"
+        },
+        {
+            "subject": "Exclusive Deals for Prime Members",
+            "date": "Jan 23, 2024, 1:25 AM",
+            "from": "offers@amazonprime.com",
+            "to": "Destiny"
+        },
+        {
+            "subject": "Unlock Early Access: New Collection Just for You",
+            "date": "Sep 23, 2024, 1:25 AM",
+            "from": "memberexclusive@nike.com",
+            "to": "Destiny"
+        },
+        {
+            "subject": "Get Ready to Rock! Join Us for the UTEP Homecoming Pregame Party",
+            "date": "Oct 23, 2024, 5:25 AM",
+            "from": "UTEP Homecoming - minernation@reach.utep.edu",
+            "to": "Destiny"
+        }
+    ]
+}
