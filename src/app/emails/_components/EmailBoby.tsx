@@ -1,21 +1,63 @@
-import { Flex, Text } from '@/once-ui/components'
-import React from 'react'
+import { Flex } from '@/once-ui/components'
+import React, { useEffect, useState } from 'react'
+import parse, { attributesToProps, domToReact, Element } from 'html-react-parser';
+import type { DOMNode, HTMLReactParserOptions } from 'html-react-parser';
 
 interface EmailBobyProps {
-    emailContent: string
+    emailContent: string,
+    onHoverOverLink: () => void,
+    onLinkClicked: () => void
 }
 
 const EmailBoby = (props: EmailBobyProps) => {
+  const [isClient, setIsClient] = useState(false)
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    event.preventDefault();
+    props.onLinkClicked()
+  }
+  
+  const handleMouseEnter = (event: React.MouseEvent<HTMLElement>) => {
+    props.onHoverOverLink()
+  }
+  
+  const options: HTMLReactParserOptions = {
+    replace(domNode: DOMNode) {
+      if (domNode instanceof Element && domNode.name==="head") {
+        return <></>
+      }
+  
+      if (domNode instanceof Element && domNode.name==="body") {
+        return <>{domToReact(domNode.children as DOMNode[], options)}</>
+      }
+  
+      if (domNode instanceof Element && domNode.name==="a") {
+        const props = attributesToProps(domNode.attribs)
+        return <a 
+          onMouseEnter={handleMouseEnter}
+          onClick={handleClick} 
+          {...props}
+        >
+          {domToReact(domNode.children as DOMNode[], options)}
+        </a>
+      }
+    },
+  }
+ 
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
   return (
     <Flex
         fillWidth
         fillHeight
         overflowY="scroll"
         direction="column"
-        //justifyContent="start"
+        // justifyContent="start"
         // as="body"
     >        
-        <div dangerouslySetInnerHTML={{ __html: props.emailContent }} />
+        {isClient ? parse(props.emailContent, options) : ""}
     </Flex>
   )
 }

@@ -3,10 +3,10 @@
 import { Avatar, Flex, Text, ToggleButton } from '@/once-ui/components'
 import React from 'react'
 import styles from './SideBar.module.css'
-import { EmailInfo } from '../EmailContainer'
+import { EmailData } from '../EmailContainer'
 
 interface EmailItemProps {
-    emailInfo: EmailInfo,
+    emailInfo: EmailData,
     isSelected: boolean,
     onSelected: () => void
 }
