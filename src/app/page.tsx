@@ -1,12 +1,12 @@
-"use client";
-
+'use client'
 import React from 'react';
 import { Heading, Flex, Background, RevealFx } from '@/once-ui/components';
 import { ConsentForm } from "@/components/consent-form"
+import { handleNavigation } from "@/app/utils/cookies"
 
-
-export default function Home() {
-
+export default async function Home() {
+    handleNavigation('consent')
+    
     return (
         <Flex
             fillWidth paddingTop="l" paddingX="l"

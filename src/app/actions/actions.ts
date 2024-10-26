@@ -6,8 +6,6 @@ import { NewUser } from "@/app/lib/definitions";
 import { insertUser } from "@/app/utils/pinecone";
 import { createToken } from "@/app/lib/tokenizer"; // tokenizer module
 
-
-
 export async function registerUser (
     prevState: {
         message: string;
@@ -31,7 +29,7 @@ export async function registerUser (
         const token = createToken(email);
 
         if (await insertUser(email, token)) {
-            redirect("/intro")
+            //redirect("/intro")
             return { message: `Email is valid! Registered new user: ${ email } : ${ token }` }
         }
         else {

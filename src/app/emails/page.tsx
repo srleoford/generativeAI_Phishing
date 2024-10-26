@@ -4,17 +4,11 @@ import emailsBodyContentProfiling from './mocks/emailsContentProfiling.json'
 import emailsDataProfiling from './mocks/emailsInfoProfiling.json'
 import emailsBodyContent from './mocks/emailsContent.json'
 import emailsData from './mocks/emailsInfo.json'
-// import { PreventNavigation } from '@/components/PreventNavigation'
 import { ResponseRoute } from '../api/phases/route'
 import EmailContainer from './_components/EmailContainer'
+import HandlePhasesNavigation from '@/components/cookies-email-phases'
 
 const EmailsPage = async () => {
-  // useEffect(() => {
-  //   window.history.pushState(null, document.title, window.location.href);
-  //   window.addEventListener('popstate', function(event) {
-  //     window.history.pushState(null, document.title, window.location.href);
-  //   });
-  // }, [location]);
 
   let data = await fetch('http://localhost:3000/api/phases', {cache: 'no-store'})
   let response: ResponseRoute = await data.json()
@@ -89,6 +83,7 @@ const EmailsPage = async () => {
         emailsInfo={emailsInfo}
         requireFeedback={requireFeedback}
       />
+      <HandlePhasesNavigation route={response.route + '_emails'} />
     </Flex>
   )
 }

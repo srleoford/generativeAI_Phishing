@@ -1,11 +1,11 @@
 "use client";
-
 import React from 'react';
-
 import { Heading, Text, Flex, Button, Grid, Icon, InlineCode, Logo, Background, RevealFx, Skeleton } from '@/once-ui/components';
 import Survey from '@/components/survey'
+import { handleNavigation } from "@/app/utils/cookies";
 
 export default function IntroPage() {
+	handleNavigation('survey')
 
 	return (
 		<Flex

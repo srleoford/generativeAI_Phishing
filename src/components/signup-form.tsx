@@ -2,7 +2,7 @@ import { useFormState } from "react-dom";
 import { registerUser } from '@/app/actions/actions'
 import { DefaultButton } from "@/app/ui/button";
 import { Input } from "@/once-ui/components"
-
+import { setRegisterCookies } from "@/app/utils/cookies";
 
 const initialState = {
     message: '',
@@ -22,6 +22,7 @@ function RegisterButton () {
 
 export function SignupForm () {
     const [state, formAction] = useFormState(registerUser, initialState)
+    setRegisterCookies(state)
 
     return (
         <>
@@ -33,9 +34,10 @@ export function SignupForm () {
                     labelAsPlaceholder />
                 <br/>
                 <RegisterButton />
-                <p dangerouslySetInnerHTML={{__html: state?.message}} style={{color: "red"}} aria-live="assertive"
-                   className="sr-only" role="status"/>
+                 <p dangerouslySetInnerHTML={{__html: state?.message}} style={{color: "red"}} aria-live="assertive"
+                   className="sr-only" role="status"/> 
             </form>
         </>
+        
     )
 }

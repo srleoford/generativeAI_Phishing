@@ -1,11 +1,12 @@
 'use client'
 
 import React from 'react';
-
 import { Heading, Flex, Background } from '@/once-ui/components';
 import { SignupForm } from '@/components/signup-form'
+import { handleNavigation } from '@/app/utils/cookies'
 
 export default function RegisterPage() {
+    handleNavigation('register')
 
     return (
         <Flex
@@ -64,7 +65,7 @@ export default function RegisterPage() {
                     radius="xl"
                     onBackground="brand-strong"
                     background="brand-medium">
-                    <SignupForm />
+                    <SignupForm suppressHydrationWarning />
                 </Flex>
             </Flex>
         </Flex>
