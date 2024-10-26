@@ -1,10 +1,10 @@
 import { Flex, Text } from '@/once-ui/components'
 import React from 'react'
 import EmailItem from './EmailItem'
-import { EmailInfo } from '../EmailContainer'
+import { EmailData } from '../EmailContainer'
 
 interface SideBarProps {
-    emailsInfo: EmailInfo[],
+    emailsInfo: EmailData[],
     emailIndex: number,
     setEmailIndex: (index: number) => void
 }

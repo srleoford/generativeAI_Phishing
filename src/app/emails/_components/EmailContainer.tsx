@@ -5,32 +5,24 @@ import React, { useState } from 'react'
 import Email from './Email'
 import SideBar from './sidebar/SideBar'
 
-export interface EmailInfo {
+export interface EmailData {
+    body: string,
     subject: string,
     date: string,
     from: string,
-    to: string
-}
-
-export interface EmailsContent {
-    emails: string[]
-}
-
-export interface EmailsInfo {
-    emails: EmailInfo[]
+    to: string,
+    emailType: string
 }
 
 interface EmailContainerProps {
-    emailsContent: EmailsContent,
-    emailsInfo: EmailsInfo,
+    emailsData: EmailData[],
     requireFeedback: boolean
 }
 
 const EmailContainer = (props: EmailContainerProps) => {
-    const size = props.emailsInfo.emails.length
+    const size = props.emailsData.length
     const [emailIndex, setEmailIndex] = useState(0)
-    const [emailsInfo, setEmailsInfo] = useState(props.emailsInfo.emails)
-    const [emailsContent, setEmailsContent] = useState(props.emailsContent.emails)
+    const [emailsData, setEmailsData] = useState(props.emailsData)
 
     return (
         <Flex
@@ -41,20 +33,18 @@ const EmailContainer = (props: EmailContainerProps) => {
             alignItems='start'
         >
           <SideBar
-            emailsInfo={emailsInfo}
+            emailsInfo={emailsData}
             emailIndex={emailIndex}
             setEmailIndex={setEmailIndex}
           />
     
           <Email
             total={size}
-            emailsContent={emailsContent}
-            emailsInfo={emailsInfo}
+            emailsInfo={emailsData}
             emailIndex={emailIndex}
             requireFeedback={props.requireFeedback}
             setEmailIndex={setEmailIndex}
-            setEmailsInfo={setEmailsInfo}
-            setEmailsContent={setEmailsContent}
+            setEmailsInfo={setEmailsData}
           />
         </Flex>
       )

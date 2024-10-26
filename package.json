@@ -15,6 +15,7 @@
 		"classnames": "^2.5.1",
 		"dotenv": "^16.4.5",
 		"js-cookie": "^3.0.5",
+		"html-react-parser": "^5.1.18",
 		"jsonwebtoken": "^9.0.2",
 		"next": "^14.2.14",
 		"next-auth": "^4.24.8",
