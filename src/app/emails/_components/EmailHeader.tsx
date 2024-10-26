@@ -1,16 +1,13 @@
-import { Avatar, Flex, Text, ToggleButton } from '@/once-ui/components'
+import { Avatar, Flex, Text } from '@/once-ui/components'
 import React from 'react'
-import { EmailData } from './EmailContainer'
+import { EmailInfo } from './EmailContainer'
 
 // EmailInfo from Email or EmailContainer
 interface EmailHeaderinfo {
-    info: EmailData
-    senderClicked: boolean,
-    sender: string,
-    onSenderClick: () => void
+    info: EmailInfo
 }
 
-const EmailHeader = ({info, senderClicked, sender, onSenderClick}: EmailHeaderinfo) => {
+const EmailHeader = ({info}: EmailHeaderinfo) => {
   return (
     <Flex
         fillWidth
@@ -44,13 +41,10 @@ const EmailHeader = ({info, senderClicked, sender, onSenderClick}: EmailHeaderin
                 <Flex
                     fillWidth
                     justifyContent="space-between">
-                    <ToggleButton
-                        onClick={onSenderClick}
-                        selected={senderClicked}
-                        size="s"
-                        label={sender}
-                        align="center"
-                    />
+                    <Text 
+                        variant = "body-strong-s" onBackground='neutral-strong'>
+                        {info.from}
+                    </Text>
                     <Text 
                         variant = "body-default-s">
                         {info.date}
