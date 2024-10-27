@@ -1,4 +1,6 @@
 import { EmailData } from "../_components/EmailContainer"
+import Cookies from "js-cookie"
+import { submitAnswers } from "@/app/utils/pinecone";
 
 export interface EmailAnswer {
     mouseHoverOverLinks: boolean,
@@ -32,9 +34,19 @@ export function emptyEmailAnswer(): EmailAnswer {
 let emailAnswer = emptyEmailAnswer()
 let answers: EmailAnswer[] = []
 
-export function sendEmailAnswers() {
-    console.log(answers)
-    answers = []
+/**
+ * Pass in the email of the user to update in the metadata of the record in the DB
+ * @requires Cookies.get("email") !== "" && Cookies.get("email") in DB
+ * @ensures the email with the answers is passed to Pinecone to store
+ */
+export async function sendEmailAnswers() {
+    //This should grab the email from the cookie to be used for insertion
+    const email = Cookies.get("email");
+    console.log(`Sending answers of user ${email} to DB`)
+
+    /** TODO: This needs to grab the email answers as 'block#-email#': 'phish' or 'real' */
+    const result = await submitAnswers("users", email, [])
+    return result
 }
 
 export function resetAnswers() {
