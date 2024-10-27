@@ -10,13 +10,15 @@ export const setRegisterCookies = (state) =>{
     //It extracts the token from the success message, this could change if message is modified
     useEffect(() => {
         if (messageContent) {
-            Cookies.remove('userToken'); 
             Cookies.set('surveySubmitted', 'false');
             Cookies.set('phase_1','not_started')
             Cookies.set('phase_2','not_started')
             Cookies.set('phase_3','not_started')
             const token = messageContent.split(" ").pop();
             Cookies.set('userToken', token); 
+            const regex = /Registered new user: (.+?) : /;
+            const email = messageContent.match(regex)?.[1];
+            Cookies.set('email', email)
             router.push('/intro');
         }
       }, [messageContent, state?.isSuccess, router]);
@@ -28,6 +30,7 @@ export const handleNavigation =  (page: string) => {
     const phase_2_status = Cookies.get('phase_2')
     const phase_3_status = Cookies.get('phase_3')
     const token = Cookies.get('userToken');
+    const email = Cookies.get('email');
     const surveySubmitted = Cookies.get("surveySubmitted");
     //Just for debugging
     console.log(
@@ -44,6 +47,7 @@ export const handleNavigation =  (page: string) => {
         case 'consent':
             //Removes all cookies and sets the Email Phase back to 1
             Cookies.remove('userToken'); 
+            Cookies.remove('email'); 
             Cookies.set('surveySubmitted', 'false');
             Cookies.set('phase_1','not_started')
             Cookies.set('phase_2','not_started')
@@ -75,6 +79,7 @@ export const handleNavigation =  (page: string) => {
             //Gets the cookie containing the token, if it can't find it it will redirect to consent form
             //If the form has already been submitted, it will redirect to consent form
             console.log(token);
+            console.log(email)
             if (!token || surveySubmitted === "true")
             {
                 router.push("/")
