@@ -21,7 +21,7 @@ const hasIndex = async (index: string) => {
 
     // Retrieve the list of indexes to check if expected index exists
     const indexes = (await pc.listIndexes())?.indexes;
-    if (!indexes || indexes.filter(i => i.name === index).length !== 1) {
+    if (!indexes || indexes.filter((i: { name: string; }) => i.name === index).length !== 1) {
         return false
     }
     else
@@ -63,7 +63,9 @@ export const insertUser = async(userEmail: string, token: string) =>{
                 metadata: { email: userEmail, token: token }
             }
         ]
-
+        if (await hasNamespace(indexName, userEmail)) {
+            return redirect("/declinedSurvey");
+        }
         // This needs to check if the user exists before inserting. If not, `redirect("/declinedSurvey")` or some
         // other page.
         pc.describeIndex(indexName)
