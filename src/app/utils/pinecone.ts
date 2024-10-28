@@ -1,12 +1,13 @@
 'use server'
 
 import { Pinecone } from "@pinecone-database/pinecone";
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation'
 
 // Default values for Pinecone such as the default vector for user creation, Pinecone API, etc.
 const defaultVector = [0,1,2,3,3,2,1,2,3,3,2,3,2,1,2,3,2,3,2]
 const api_key = "4222d20a-ce07-4185-97c5-70a29a4ba9a6"
 const indexName = "users"
+const router = useRouter()
 
 // Need to fix this
 const pc = new Pinecone({
@@ -81,7 +82,7 @@ export const insertUser = async(userEmail: string, token: string) =>{
             }
         ]
         if (await userExists(indexName, userEmail)) {
-            return redirect("/declinedSurvey");
+            return router.push("/declinedSurvey");
         }
         // This needs to check if the user exists before inserting. If not, `redirect("/declinedSurvey")` or some
         // other page.
