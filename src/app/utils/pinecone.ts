@@ -70,8 +70,6 @@ export const userExists = async (index: string, userEmail: string): Promise<bool
  * @requires userEmail != "" && userEmail not in DB, indexName != "" && token != ""
  */
 export const insertUser = async(userEmail: string, token: string) =>{
-    // Constants for the function
-    console.log(`Index name is ${indexName}`)
 
     try {
         // Get the Pinecone index
