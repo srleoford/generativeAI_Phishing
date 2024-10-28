@@ -2,6 +2,7 @@
 
 import { Pinecone } from "@pinecone-database/pinecone";
 import dotenv from 'dotenv'
+import { useRouter } from 'next/navigation'
 
 dotenv.config();
 
@@ -9,6 +10,7 @@ dotenv.config();
 const defaultVector = new Array(14).fill(0).map(() => Math.random() * 10).map(x => x.toFixed(1));
 const api_key = process.env.PINECONE_API_KEY
 const indexName = process.env.PINECONE_INDEX
+const router = useRouter()
 
 // Need to fix this
 const pc = new Pinecone({
@@ -24,7 +26,7 @@ const hasIndex = async (index: string) => {
 
     // Retrieve the list of indexes to check if expected index exists
     const indexes = (await pc.listIndexes())?.indexes;
-    if (!indexes || indexes.filter(i => i.name === index).length !== 1) {
+    if (!indexes || indexes.filter((i: { name: string; }) => i.name === index).length !== 1) {
         return false
     }
     else
@@ -41,6 +43,23 @@ const hasNamespace = async (index: string, namespace: string) => {
     const { namespaces } = await pc.index(index).describeIndexStats()
     return namespaces.hasOwnProperty(namespace)
 }
+
+/**
+ * This checks if a user with the given userEmail exists in a specified index.
+ * @param index
+ * @param userEmail
+ * @returns resolves to true if the user exists, otherwise false.
+ */
+export const userExists = async (index: string, userEmail: string): Promise<boolean> => {
+    try {
+        // Fetch the user by email from the specified index
+        const result = await pc.index(index).fetch([userEmail]);
+        return result && result.records[userEmail] !== undefined;
+    } catch (error) {
+        console.error(`Error checking user existence by user email in index ${index}:`, error);
+        return false;
+    }
+};
 
 /**
  * This will upsert into Pinecone DB for new users. The namespace will be the user's email. This requires to be vectors
@@ -67,6 +86,9 @@ export const insertUser = async(userEmail: string, token: string) =>{
             }
         ]
 
+        if (await userExists(indexName, userEmail)) {
+            return router.push("/declinedSurvey");
+        }
         // This needs to check if the user exists before inserting. If not, `redirect("/declinedSurvey")` or some
         // other page.
         pc.describeIndex(indexName)
