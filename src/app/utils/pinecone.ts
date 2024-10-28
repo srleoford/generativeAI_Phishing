@@ -87,12 +87,15 @@ export const insertSurveyData = async(surveyData: string, email: string, token: 
         // Get the Pinecone index
         const index = await hasIndex(indexName) ? pc.index(indexName) : "";
         console.log(email)
+
+        //Do a query to see if the user email exists
         const queryResponse = await index.query({
             id: email,
             topK: 1,
             includeValues: true,
         });
-        console.log(queryResponse)
+
+        //If the query response is successfull  then create a record to update the survey data.
         if (queryResponse){
             const userRecord = [
                 {
@@ -101,7 +104,7 @@ export const insertSurveyData = async(surveyData: string, email: string, token: 
                     metadata: { email: email, token: token, surveyAnswers: surveyData}
                 }
             ]
-            await index.upsert(userRecord)
+            await index.upsert(userRecord) //Insert record
         }
         
         else{
