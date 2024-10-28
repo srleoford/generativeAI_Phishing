@@ -2,7 +2,7 @@
 
 import { Pinecone } from "@pinecone-database/pinecone";
 import dotenv from 'dotenv'
-import { useRouter } from 'next/navigation'
+import { redirect } from 'next/navigation'
 
 dotenv.config();
 
@@ -10,7 +10,6 @@ dotenv.config();
 const defaultVector = new Array(14).fill(0).map(() => Math.random() * 10).map(x => x.toFixed(1));
 const api_key = process.env.PINECONE_API_KEY
 const indexName = process.env.PINECONE_INDEX
-const router = useRouter()
 
 // Need to fix this
 const pc = new Pinecone({
@@ -87,7 +86,7 @@ export const insertUser = async(userEmail: string, token: string) =>{
         ]
 
         if (await userExists(indexName, userEmail)) {
-            return router.push("/declinedSurvey");
+            return redirect("/declinedSurvey");
         }
         // This needs to check if the user exists before inserting. If not, `redirect("/declinedSurvey")` or some
         // other page.
