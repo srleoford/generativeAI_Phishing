@@ -77,7 +77,7 @@ export const insertUser = async(userEmail: string, token: string) =>{
 }
 
 
-export const insertSurveyData = async(surveyData: string, email: string)=> {
+export const insertSurveyData = async(surveyData: string, email: string, token: string)=> {
     try {
 
         if (!surveyData || email === '') {
@@ -87,22 +87,21 @@ export const insertSurveyData = async(surveyData: string, email: string)=> {
         // Get the Pinecone index
         const index = await hasIndex(indexName) ? pc.index(indexName) : "";
         console.log(email)
-        const queryResponse = await index.namespace('Default').query({
+        const queryResponse = await index.query({
             id: email,
-            topK: 10,
-            includeValues: false,
+            topK: 1,
+            includeValues: true,
         });
         console.log(queryResponse)
         if (queryResponse){
-            console.log("adding values") 
-            
-            const upsertResponse = await index.namespace('Default').upsert({
-                id: email,
-                metadata: {
-                    surveyData: surveyData,
-                },
-            });
-            return upsertResponse ? true : false
+            const userRecord = [
+                {
+                    id: email,
+                    values: defaultVector,
+                    metadata: { email: email, token: token, surveyAnswers: surveyData}
+                }
+            ]
+            await index.upsert(userRecord)
         }
         
         else{

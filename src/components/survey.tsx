@@ -392,6 +392,7 @@ export default function SurveyForm() {
       if (xhr.status == 200) {
         //options.showSaveSuccess();
         Cookies.set("surveySubmitted","true")
+        insertSurveyData(JSON.stringify(sender.data), Cookies.get('email'), Cookies.get('userToken'))
         router.push("/instructions");
       } else {
         // Display the "Error" message (pass a string value to display a custom message)
@@ -399,7 +400,6 @@ export default function SurveyForm() {
       }
   };
   xhr.send(JSON.stringify(sender.data));
-  insertSurveyData(JSON.stringify(sender.data), Cookies.get('email'))
   console.log(JSON.stringify(sender.data));
 });
 
