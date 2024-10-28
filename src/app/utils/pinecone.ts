@@ -1,11 +1,14 @@
 'use server'
 
 import { Pinecone } from "@pinecone-database/pinecone";
+import dotenv from 'dotenv'
+
+dotenv.config();
 
 // Default values for Pinecone such as the default vector for user creation, Pinecone API, etc.
-const defaultVector = [0,1,2,3,3]
-const api_key = "70be2ee3-fb42-4ce8-af7b-27b184b487a4"
-const indexName = "users"
+const defaultVector = new Array(14).fill(0).map(() => Math.random() * 10).map(x => x.toFixed(1));
+const api_key = process.env.PINECONE_API_KEY
+const indexName = process.env.PINECONE_INDEX
 
 // Need to fix this
 const pc = new Pinecone({
