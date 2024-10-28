@@ -10,6 +10,8 @@ import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import { loadPreviousAnswers } from '@/app/utils/cookies'
 import { useEffect } from 'react';
+import { insertSurveyData } from '@/app/utils/pinecone'
+
 
 export default function SurveyForm() {
 
@@ -380,23 +382,45 @@ export default function SurveyForm() {
   });
 
   survey.onComplete.add(function (sender, options) {
-  // Display the "Saving..." message (pass a string value to display a custom message)
-  options.showSaveInProgress();
-  const xhr = new XMLHttpRequest();
-  xhr.open("POST", "http://localhost:3000");
-  xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
-  xhr.onload = xhr.onerror = function () {
-    if (xhr.status == 200) {
-      //options.showSaveSuccess();
-      Cookies.set("surveySubmitted","true")
-      router.push("/instructions");
-    } else {
-      // Display the "Error" message (pass a string value to display a custom message)
-      options.showSaveError();
-    }
+
+    console.log(sender.data)
+    // Display the "Saving..." message (pass a string value to display a custom message)
+    options.showSaveInProgress();
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "http://localhost:3000");
+    xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+    xhr.onload = xhr.onerror = function () {
+      if (xhr.status == 200) {
+        //options.showSaveSuccess();
+        Cookies.set("surveySubmitted","true")
+
+        const selectedChoicesText = {};
+
+        survey.getAllQuestions().forEach((question) => {
+          // Only process questions with choices (checkbox, radiogroup, dropdown)
+          if (question.choices && question.value) {
+            const selectedValues = Array.isArray(question.value) ? question.value : [question.value];
+
+            // Map selected values to their corresponding text
+            const texts = selectedValues.map(value => {
+              const choice = question.choices.find(choice => choice.value === value);
+              return choice ? choice.text : value;
+            });
+
+            // If only one choice was selected, store as a string; otherwise, store as an array
+            selectedChoicesText[question.name] = texts.length === 1 ? texts[0] : texts;
+          }
+        });
+
+        console.log(JSON.stringify(selectedChoicesText));
+        insertSurveyData(JSON.stringify(selectedChoicesText), Cookies.get('email'), Cookies.get('userToken'))
+        router.push("/instructions");
+      } else {
+        // Display the "Error" message (pass a string value to display a custom message)
+        options.showSaveError();
+      }
   };
   xhr.send(JSON.stringify(sender.data));
-  console.log(JSON.stringify(sender.data));
 });
 
   return <Survey model={survey} />;
