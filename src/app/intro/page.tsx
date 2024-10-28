@@ -5,7 +5,7 @@ import Survey from '@/components/survey'
 import { handleNavigation } from "@/app/utils/cookies";
 
 export default function IntroPage() {
-	//handleNavigation('survey')
+	handleNavigation('survey')
 
 	return (
 		<Flex

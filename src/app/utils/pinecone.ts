@@ -102,8 +102,7 @@ export const insertSurveyData = async(surveyData: string, email: string, token: 
         if (queryResponse){
             await index.update({
                 id: email,
-                metadata: { surveyAnswers: surveyData,
-                },
+                metadata: { surveyAnswers: surveyData}
             });
         }
         
