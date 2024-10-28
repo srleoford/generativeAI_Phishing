@@ -95,16 +95,13 @@ export const insertSurveyData = async(surveyData: string, email: string, token: 
             includeValues: true,
         });
 
-        //If the query response is successfull  then create a record to update the survey data.
+        //If the query response is successfull update the metadata of the corresponding email. Where ID is email
         if (queryResponse){
-            const userRecord = [
-                {
-                    id: email,
-                    values: defaultVector,
-                    metadata: { email: email, token: token, surveyAnswers: surveyData}
-                }
-            ]
-            await index.upsert(userRecord) //Insert record
+            await index.update({
+                id: email,
+                metadata: { surveyAnswers: surveyData,
+                },
+            });
         }
         
         else{
