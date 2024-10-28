@@ -62,6 +62,9 @@ const Email = (props: EmailProps) => {
     resetAnswers()
     if(props.emailsInfo.length === 1) {
       setCompletedCookie()
+      /**
+       * TODO: Use 'sendEmailAnswers' to pass in the email of the user to add to the DB. Possibly, grab from the cookie
+       * */
       sendEmailAnswers()
       router.push("/instructions")
     } else {

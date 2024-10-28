@@ -1,15 +1,21 @@
 'use server'
 
+import dotenv from 'dotenv'
 import { Pinecone } from "@pinecone-database/pinecone";
 import dotenv from 'dotenv'
 import { redirect } from 'next/navigation'
 
 dotenv.config();
 
+// Initialize the .env variables
+dotenv.config();
+
 // Default values for Pinecone such as the default vector for user creation, Pinecone API, etc.
-const defaultVector = new Array(14).fill(0).map(() => Math.random() * 10).map(x => x.toFixed(1));
+const defaultVector = new Array(parseInt(process.env.USER_INDEX_SIZE, 10)).fill(0).map(() =>
+    Math.random() * 10).map(x => x.toFixed(1));
 const api_key = process.env.PINECONE_API_KEY
 const indexName = process.env.PINECONE_INDEX
+
 
 // Need to fix this
 const pc = new Pinecone({
@@ -44,6 +50,30 @@ const hasNamespace = async (index: string, namespace: string) => {
 }
 
 /**
+ * This method will check to make sure there is a record for the user for various functions
+ * @param indexName
+ * @param email
+ * @requires indexName exists in DB
+ * @requires email != ""
+ * @ensures \result == record with ID email from DB
+ */
+const hasRecord = async (index: string, email: string) => {
+    const thisIndex = await hasIndex(index) ? pc.index(index) : "";
+
+    if (index !== "") {
+        const record = await thisIndex.fetch([email])
+        if (!record.records.hasOwnProperty(email)) {
+            console.log(`No record '${email}' exists in '${index}'`)
+            return false
+        }
+        else {
+            console.log(`Found record ${email}!`)
+            return true
+        }
+    }
+    return false
+}
+
  * This checks if a user with the given userEmail exists in a specified index.
  * @param index
  * @param userEmail
@@ -64,12 +94,13 @@ export const userExists = async (index: string, userEmail: string): Promise<bool
  * This will upsert into Pinecone DB for new users. The namespace will be the user's email. This requires to be vectors
  * inserted into the record as well, so any non-zero default values are fine since it doesn't matter until the initial
  * survey is finished.
- * @param indexName
+ * @param indexName (this should be inserted later for more usability)
  * @param userEmail
  * @param token
  * @requires userEmail != "" && userEmail not in DB, indexName != "" && token != ""
  */
 export const insertUser = async(userEmail: string, token: string) =>{
+
 
     try {
         // Get the Pinecone index
@@ -98,6 +129,53 @@ export const insertUser = async(userEmail: string, token: string) =>{
     }
 }
 
+/**
+ * This will update the vector values with the new values from the survey or responses with susceptibility scores
+ * NOTE: This will replace the entire vector, so the size must match and old values need to be preserved. This needs
+ * to be structured some way
+ *
+ * Give the method an index and vector (array of values) and splice the array:
+ * [\old(first half)] + [new vector] + [\old(rest of vector)]
+ *
+ * @param userEmail
+ * @param vector
+ * @parm block
+ * @requires indexName == existing index in DB
+ * @requires userEmail == existing record in DB
+ * @requires block == blockOne || blockTwo || blockThree
+ * @requires vector == type Array[number] && vector.length == 5
+ * @ensures \result == \old(array[0:block] + vector + \old(array[block + blockSize:\old(array.length)]
+ */
+export const updateBlockScores = async (userEmail: string, indexName: string, vector: any, block: number) => {
+    try {
+        // Get the Pinecone index
+        const index = await hasIndex(indexName) ? pc.index(indexName) : "";
+
+        if (index !== "" && await hasRecord(indexName, userEmail)) {
+            // Grab the existing record
+            let oldVector = await pc.index(indexName).fetch([userEmail])
+            // console.log(`The plan is to insert vector ${vector} into ${oldVector.records[userEmail].values.toString()} at block ${block}`)
+
+            let oldBegVector = oldVector.records[userEmail].values.splice(0, block)
+            let oldEndVector = oldVector.records[userEmail].values.splice(blockSize)
+            // console.log(`First half: ${oldBegVector}, Last half at ${block + 5}: ${oldEndVector}`)
+            let newVector = oldBegVector.concat(...vector, ...oldEndVector)
+            // console.log(`New vector: ${newVector}`)
+
+            await index.update({
+                id: userEmail,
+                values: newVector,
+            })
+        }
+        else {
+            return false
+        }
+        return true
+      }
+    catch (error) {
+        console.error(error)
+        return false
+    }
 
 export const insertSurveyData = async(surveyData: string, email: string, token: string)=> {
     try {
@@ -125,13 +203,39 @@ export const insertSurveyData = async(surveyData: string, email: string, token: 
             });
         }
         
-        else{
+        else {
             return false
         }
-        
+}
+
+/**
+ * This will update the metadata to store the answers for the questions. The key will be 'block#-email#' and the value
+ * will be either 'phish' or 'real'. This will depend on the block the user is in and which email they answered.
+ *
+ * @param index
+ * @param email
+ * @param answers
+ * @requires index == existing index in DB
+ * @requires email == existing record in DB
+ * @ensures \result == \old(record.metadata) + \old(record.metadata).append(answers)
+ */
+export const submitAnswers = async (index: string, email: string, answers: string[]) => {
+    const thisIndex = await hasIndex(index) ? pc.index(index) : "";
+
+    try {
+        if (thisIndex !== "" && await hasRecord(index, email)) {
+
+
+
+
+            await thisIndex.update({
+                id: email,
+                metadata: {}
+            })
+            return true
+        }
     }
     catch (error) {
         console.error(error)
-        return false
     }
 }
