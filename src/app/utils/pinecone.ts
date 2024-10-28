@@ -2,14 +2,14 @@
 
 import dotenv from 'dotenv'
 import { Pinecone } from "@pinecone-database/pinecone";
-import {list} from "postcss";
 
 // Initialize the .env variables
 dotenv.config();
 
 // Default values for Pinecone such as the default vector for user creation, Pinecone API, etc.
 // Vector will need 14 values for the initial survey and 15 for the susceptibility scores (5 for each block)
-const defaultVector = new Array(29).fill(0).map(() => Math.random() * 10).map(x => x.toFixed(1));
+const defaultVector = new Array(parseInt(process.env.USER_INDEX_SIZE, 10)).fill(0).map(() =>
+    Math.random() * 10).map(x => x.toFixed(1));
 const api_key = process.env.PINECONE_API_KEY
 const indexName = process.env.PINECONE_INDEX
 
@@ -193,5 +193,8 @@ export const submitAnswers = async (index: string, email: string, answers: strin
             })
             return true
         }
+    }
+    catch (error) {
+        console.error(error)
     }
 }
