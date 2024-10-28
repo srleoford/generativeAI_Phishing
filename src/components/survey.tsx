@@ -10,6 +10,8 @@ import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import { loadPreviousAnswers } from '@/app/utils/cookies'
 import { useEffect } from 'react';
+import { insertSurveyData } from '@/app/utils/pinecone'
+
 
 export default function SurveyForm() {
 
@@ -380,22 +382,24 @@ export default function SurveyForm() {
   });
 
   survey.onComplete.add(function (sender, options) {
-  // Display the "Saving..." message (pass a string value to display a custom message)
-  options.showSaveInProgress();
-  const xhr = new XMLHttpRequest();
-  xhr.open("POST", "http://localhost:3000");
-  xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
-  xhr.onload = xhr.onerror = function () {
-    if (xhr.status == 200) {
-      //options.showSaveSuccess();
-      Cookies.set("surveySubmitted","true")
-      router.push("/instructions");
-    } else {
-      // Display the "Error" message (pass a string value to display a custom message)
-      options.showSaveError();
-    }
+    console.log(sender.data)
+    // Display the "Saving..." message (pass a string value to display a custom message)
+    options.showSaveInProgress();
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "http://localhost:3000");
+    xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+    xhr.onload = xhr.onerror = function () {
+      if (xhr.status == 200) {
+        //options.showSaveSuccess();
+        Cookies.set("surveySubmitted","true")
+        router.push("/instructions");
+      } else {
+        // Display the "Error" message (pass a string value to display a custom message)
+        options.showSaveError();
+      }
   };
   xhr.send(JSON.stringify(sender.data));
+  insertSurveyData(JSON.stringify(sender.data), Cookies.get('email'))
   console.log(JSON.stringify(sender.data));
 });
 

@@ -3,8 +3,8 @@
 import { Pinecone } from "@pinecone-database/pinecone";
 
 // Default values for Pinecone such as the default vector for user creation, Pinecone API, etc.
-const defaultVector = [0,1,2,3,3,2,1,2,3,3,2,3,2,1,2,3,2,3,2]
-const api_key = "4222d20a-ce07-4185-97c5-70a29a4ba9a6"
+const defaultVector = [0,1,2,3,3]
+const api_key = "70be2ee3-fb42-4ce8-af7b-27b184b487a4"
 const indexName = "users"
 
 // Need to fix this
@@ -69,6 +69,46 @@ export const insertUser = async(userEmail: string, token: string) =>{
         pc.describeIndex(indexName)
         await index.upsert(userRecord)
         return true
+    }
+    catch (error) {
+        console.error(error)
+        return false
+    }
+}
+
+
+export const insertSurveyData = async(surveyData: string, email: string)=> {
+    try {
+
+        if (!surveyData || email === '') {
+            return false;
+        }
+    
+        // Get the Pinecone index
+        const index = await hasIndex(indexName) ? pc.index(indexName) : "";
+        console.log(email)
+        const queryResponse = await index.namespace('Default').query({
+            id: email,
+            topK: 10,
+            includeValues: false,
+        });
+        console.log(queryResponse)
+        if (queryResponse){
+            console.log("adding values") 
+            
+            const upsertResponse = await index.namespace('Default').upsert({
+                id: email,
+                metadata: {
+                    surveyData: surveyData,
+                },
+            });
+            return upsertResponse ? true : false
+        }
+        
+        else{
+            return false
+        }
+        
     }
     catch (error) {
         console.error(error)
