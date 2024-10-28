@@ -86,7 +86,7 @@ export const insertUser = async(userEmail: string, token: string) =>{
         ]
 
         if (await userExists(indexName, userEmail)) {
-            return redirect("/declinedSurvey");
+            return false;
         }
         // This needs to check if the user exists before inserting. If not, `redirect("/declinedSurvey")` or some
         // other page.
