@@ -1,11 +1,14 @@
 'use server'
 
 import { Pinecone } from "@pinecone-database/pinecone";
+import dotenv from 'dotenv'
+
+dotenv.config();
 
 // Default values for Pinecone such as the default vector for user creation, Pinecone API, etc.
-const defaultVector = [0,1,2,3,3,2,1,2,3,3,2,3,2,1,2,3,2,3,2]
-const api_key = "4222d20a-ce07-4185-97c5-70a29a4ba9a6"
-const indexName = "users"
+const defaultVector = new Array(14).fill(0).map(() => Math.random() * 10).map(x => x.toFixed(1));
+const api_key = process.env.PINECONE_API_KEY
+const indexName = process.env.PINECONE_INDEX
 
 // Need to fix this
 const pc = new Pinecone({
@@ -69,6 +72,44 @@ export const insertUser = async(userEmail: string, token: string) =>{
         pc.describeIndex(indexName)
         await index.upsert(userRecord)
         return true
+    }
+    catch (error) {
+        console.error(error)
+        return false
+    }
+}
+
+
+export const insertSurveyData = async(surveyData: string, email: string, token: string)=> {
+    try {
+
+        if (!surveyData || email === '') {
+            return false;
+        }
+    
+        // Get the Pinecone index
+        const index = await hasIndex(indexName) ? pc.index(indexName) : "";
+        console.log(email)
+
+        //Do a query to see if the user email exists
+        const queryResponse = await index.query({
+            id: email,
+            topK: 1,
+            includeValues: true,
+        });
+
+        //If the query response is successfull update the metadata of the corresponding email. Where ID is email
+        if (queryResponse){
+            await index.update({
+                id: email,
+                metadata: { surveyAnswers: surveyData}
+            });
+        }
+        
+        else{
+            return false
+        }
+        
     }
     catch (error) {
         console.error(error)
