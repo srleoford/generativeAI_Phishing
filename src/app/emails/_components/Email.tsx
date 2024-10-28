@@ -5,9 +5,11 @@ import EmailHeader from './EmailHeader'
 import Options, { FeedbackMessage } from './Options'
 import { useRouter } from 'next/navigation'
 import ProgressBar from './ProgressBar'
-import { cookies } from '../../../../node_modules/next/headers';
+import { saveFeatures } from '@/app/utils/pinecone'
 import { setCompletedCookie } from '@/app/utils/cookies'
 import { EmailData } from './EmailContainer'
+import Cookies from 'js-cookie';
+
 import { resetAnswers, sendEmailAnswers, setClickingBehavior, setEmail, setHoverOverLink, setResponse, setSenderInteraction, setTimeSpent } from '../models/emailAnswer'
 
 interface EmailProps {
@@ -61,6 +63,8 @@ const Email = (props: EmailProps) => {
   const changeEmail = () => {
     resetAnswers()
     if(props.emailsInfo.length === 1) {
+      saveFeatures(Cookies.get('email'),
+      '{"features":[{"phase1":{"feature1":"test","feature2":"test","feature3":"test"}},{"phase2":{"feature1":"test","feature2":"test","feature3":"test"}},{"phase3":{"feature1":"test","feature2":"test","feature3":"test"}}]}')
       setCompletedCookie()
       sendEmailAnswers()
       router.push("/instructions")

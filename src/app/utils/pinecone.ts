@@ -75,3 +75,42 @@ export const insertUser = async(userEmail: string, token: string) =>{
         return false
     }
 }
+
+/**
+ * It will update the user record as they progress through the email phases.
+ * When they go to Phase 2, it will save the answers from Phase 1, and so on.
+ * @param userEmail
+ * @param features
+ * @requires userEmail != "" && userEmail not in DB, indexName != "" && token != ""
+ */
+export const saveFeatures = async(userEmail: string, features: string) =>{
+    try {
+        // Get the Pinecone index
+        const index = await hasIndex(indexName) ? pc.index(indexName) : "";
+        const queryResponse = await index.query({
+            id: userEmail,
+            topK: 1,
+            includeValues: true,
+            includeMetadata: true
+        });
+
+        if (queryResponse.matches.length == 1) {
+            console.log(queryResponse.matches[0])
+            const metadata = queryResponse.matches[0].metadata
+            const userRecord = [
+                {
+                    id: userEmail,
+                    values: defaultVector,
+                    metadata: { email: userEmail, token: metadata.token, features: features }
+                }
+            ]
+    
+            await index.upsert(userRecord)
+            return true
+        }
+    }
+    catch (error) {
+        console.error(error)
+        return false
+    }
+}
