@@ -10,7 +10,7 @@ export const setRegisterCookies = (state) => {
     //If a user is inserted successfully, sets up the userToken cookie and initializes the others
     //It extracts the token from the success message, this could change if message is modified
     useEffect(() => {
-        if (messageContent) {
+        if (messageContent && messageContent.includes('Registered new user')) {
             Cookies.set('surveySubmitted', 'false');
             Cookies.set('phase_1','not_started')
             Cookies.set('phase_2','not_started')
@@ -79,8 +79,6 @@ export const handleNavigation =  (page: string) => {
         case 'survey':
             //Gets the cookie containing the token, if it can't find it it will redirect to consent form
             //If the form has already been submitted, it will redirect to consent form
-            console.log(token);
-            console.log(email)
             if (!token || surveySubmitted === "true")
             {
                 router.push("/")

@@ -1,9 +1,7 @@
 'use server'
 
-import dotenv from 'dotenv'
 import { Pinecone } from "@pinecone-database/pinecone";
 import dotenv from 'dotenv'
-import { redirect } from 'next/navigation'
 
 dotenv.config();
 
@@ -73,7 +71,7 @@ const hasRecord = async (index: string, email: string) => {
     }
     return false
 }
-
+/**
  * This checks if a user with the given userEmail exists in a specified index.
  * @param index
  * @param userEmail
@@ -176,7 +174,7 @@ export const updateBlockScores = async (userEmail: string, indexName: string, ve
         console.error(error)
         return false
     }
-
+}
 export const insertSurveyData = async(surveyData: string, email: string, token: string)=> {
     try {
 
@@ -206,6 +204,11 @@ export const insertSurveyData = async(surveyData: string, email: string, token: 
         else {
             return false
         }
+    }
+    catch (error) {
+        console.error(error)
+        return false
+    }
 }
 
 /**
@@ -224,10 +227,6 @@ export const submitAnswers = async (index: string, email: string, answers: strin
 
     try {
         if (thisIndex !== "" && await hasRecord(index, email)) {
-
-
-
-
             await thisIndex.update({
                 id: email,
                 metadata: {}
