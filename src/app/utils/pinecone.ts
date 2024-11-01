@@ -3,8 +3,6 @@
 import { Pinecone } from "@pinecone-database/pinecone";
 import dotenv from 'dotenv'
 
-dotenv.config();
-
 // Initialize the .env variables
 dotenv.config();
 
