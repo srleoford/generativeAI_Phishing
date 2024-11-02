@@ -1,6 +1,7 @@
 'use client'
 
 import { Avatar, Flex, Text, ToggleButton } from '@/once-ui/components'
+import { ColorScheme, ColorWeight } from '@/once-ui/types'
 import React from 'react'
 import styles from './SideBar.module.css'
 import { EmailData } from '../EmailContainer'
@@ -11,7 +12,22 @@ interface EmailItemProps {
     onSelected: () => void
 }
 
+interface Background {
+    onBackground?: `${ColorScheme}-${ColorWeight}`,
+    background?: `${ColorScheme}-${ColorWeight}`
+}
+
 const EmailItem = (props: EmailItemProps) => {
+    let background: Background = {
+        onBackground: undefined,
+        background: undefined
+    }
+    if(props.emailInfo.interactions.isCorrect !== undefined) {
+        background = {
+            onBackground: "success-strong", 
+            background: "success-medium"
+        }
+    }
   return (
     <ToggleButton
         onClick={
@@ -37,6 +53,8 @@ const EmailItem = (props: EmailItemProps) => {
             borderStyle="solid-1"
             padding='8'
             fillWidth
+            onBackground={background.onBackground}
+            background={background.background}
             style={{
                 width:"100%"
             }}

@@ -1,13 +1,22 @@
-import { Avatar, Flex, Text } from '@/once-ui/components'
+import { Avatar, Flex, Text, ToggleButton } from '@/once-ui/components'
 import React from 'react'
-import { EmailInfo } from './EmailContainer'
+import { EmailData } from './EmailContainer'
+import Cookies from "js-cookie"
 
-// EmailInfo from Email or EmailContainer
 interface EmailHeaderinfo {
-    info: EmailInfo
+    info: EmailData
+    onSenderClick: () => void
 }
 
-const EmailHeader = ({info}: EmailHeaderinfo) => {
+export const emailHide = "Click to view sender"
+
+const EmailHeader = ({info, onSenderClick}: EmailHeaderinfo) => {
+    const email = Cookies.get("email")
+    const senderClicked = !info.interactions.senderInteraction
+    let sender = emailHide
+    if(info.interactions.senderInteraction) {
+        sender = info.from
+    }
   return (
     <Flex
         fillWidth
@@ -41,18 +50,22 @@ const EmailHeader = ({info}: EmailHeaderinfo) => {
                 <Flex
                     fillWidth
                     justifyContent="space-between">
-                    <Text 
-                        variant = "body-strong-s" onBackground='neutral-strong'>
-                        {info.from}
-                    </Text>
+                    <ToggleButton
+                        onClick={onSenderClick}
+                        selected={senderClicked}
+                        size="s"
+                        label={sender}
+                        align="center"
+                    />
                     <Text 
                         variant = "body-default-s">
                         {info.date}
                     </Text>
                 </Flex>
                 <Text 
+                    suppressHydrationWarning
                     variant = "body-default-s" >
-                    {"To:" + info.to}
+                    {"To: " + email}
                 </Text>
             </Flex>
         </Flex>

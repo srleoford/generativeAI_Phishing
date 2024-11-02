@@ -2,6 +2,7 @@
 
 import { Button, Dialog, Flex } from '@/once-ui/components'
 import React from 'react'
+import { EmailData } from './EmailContainer'
 
 export interface FeedbackMessage {
   title: string,
@@ -9,6 +10,7 @@ export interface FeedbackMessage {
 }
 
 export interface OptionsProps {
+  email: EmailData,
   feedbackMessage: FeedbackMessage,
   onClose: () => void,
   isDialogOpen: boolean,
@@ -17,6 +19,7 @@ export interface OptionsProps {
 }
 
 const Options = (props: OptionsProps) => {
+  const isDisable = props.email.interactions.isCorrect !== undefined
   return (
     <Flex
         direction='row'
@@ -47,6 +50,7 @@ const Options = (props: OptionsProps) => {
             variant="primary"
             size="l"
             label="Phish"
+            disabled={isDisable}
             />
         <Button
             onClick={
@@ -55,6 +59,7 @@ const Options = (props: OptionsProps) => {
             variant="primary"
             size="l"
             label="Real"
+            disabled={isDisable}
             />
     </Flex>
   )
