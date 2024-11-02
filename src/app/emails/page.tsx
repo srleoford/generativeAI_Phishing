@@ -4,6 +4,7 @@ import HandlePhasesNavigation from '@/components/cookies-email-phases'
 import { ResponseRoute } from '../api/phases/route'
 import EmailContainer, { EmailData } from './_components/EmailContainer'
 import { DatasetEmail } from '../api/dataset/route'
+import { emptyEmailAnswer } from './models/emailAnswer'
 
 const EmailsPage = async () => {
 
@@ -19,8 +20,8 @@ const EmailsPage = async () => {
       subject: email.subject,
       date: "Nov 23, 2024, 11:25 AM",
       from: email.sender,
-      to: "userEmail@utep.com",
-      emailType: email.emailtype
+      emailType: email.emailtype,
+      interactions: emptyEmailAnswer()
     }
   ))
   let requireFeedback = false

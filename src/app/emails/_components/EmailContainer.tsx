@@ -4,14 +4,15 @@ import { Flex } from '@/once-ui/components'
 import React, { useState } from 'react'
 import Email from './Email'
 import SideBar from './sidebar/SideBar'
+import { EmailAnswer } from '../models/emailAnswer'
 
 export interface EmailData {
     body: string,
     subject: string,
     date: string,
     from: string,
-    to: string,
-    emailType: string
+    emailType: string,
+    interactions : EmailAnswer,
 }
 
 interface EmailContainerProps {
@@ -20,7 +21,6 @@ interface EmailContainerProps {
 }
 
 const EmailContainer = (props: EmailContainerProps) => {
-    const size = props.emailsData.length
     const [emailIndex, setEmailIndex] = useState(0)
     const [emailsData, setEmailsData] = useState(props.emailsData)
 
@@ -39,11 +39,9 @@ const EmailContainer = (props: EmailContainerProps) => {
           />
     
           <Email
-            total={size}
             emailsInfo={emailsData}
             emailIndex={emailIndex}
             requireFeedback={props.requireFeedback}
-            setEmailIndex={setEmailIndex}
             setEmailsInfo={setEmailsData}
           />
         </Flex>
