@@ -1,5 +1,5 @@
-import { Flex, Text } from '@/once-ui/components'
-import React from 'react'
+import { Accordion, Flex, Text } from '@/once-ui/components'
+import React, { useState } from 'react'
 import EmailItem from './EmailItem'
 import { EmailData } from '../EmailContainer'
 
@@ -10,6 +10,7 @@ interface SideBarProps {
 }
 
 const SideBar = (props: SideBarProps) => {
+    const [isReadOpen, setIsReadOpen] = useState(false)
   return (
     <Flex
         gap='4'
@@ -32,28 +33,55 @@ const SideBar = (props: SideBarProps) => {
             Inbox
         </Text>
 
-        <Flex 
-            fillWidth
-            direction='column'
-            //height="1"
-            solid="neutral-strong"/>
-
-        {
-            props.emailsInfo.map((element, index) => {
-                return (
-                    <EmailItem
-                        key={index}
-                        emailInfo={element}
-                        isSelected={index===props.emailIndex}
-                        onSelected={
-                            () => {
-                                props.setEmailIndex(index)
-                            }
+        <Accordion
+            title="Unread - Unsolved"
+            open
+        >
+            {
+                props.emailsInfo.map((element, index) => {
+                    if(element.interactions.isCorrect === undefined) {
+                        return (
+                            <EmailItem
+                                key={index}
+                                emailInfo={element}
+                                isSelected={index===props.emailIndex}
+                                onSelected={
+                                    () => {
+                                        props.setEmailIndex(index)
+                                    }
+                                }
+                            />
+                        )
+                    }
+                })
+            }
+        </Accordion>
+        <Accordion
+            title="Read - Solved"
+            open={isReadOpen}
+        >
+            {
+                props.emailsInfo.map((element, index) => {
+                    if(element.interactions.isCorrect !== undefined) {
+                        if(!isReadOpen) {
+                            setIsReadOpen(true)
                         }
-                    />
-                )
-            })
-        }
+                        return (
+                            <EmailItem
+                                key={index}
+                                emailInfo={element}
+                                isSelected={index===props.emailIndex}
+                                onSelected={
+                                    () => {
+                                        props.setEmailIndex(index)
+                                    }
+                                }
+                            />
+                        )
+                    }
+                })
+            }
+        </Accordion>
     </Flex>
   )
 }
