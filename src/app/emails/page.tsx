@@ -16,6 +16,7 @@ const EmailsPage = async () => {
 
   let emailsContent: EmailData[] = emailsResponse.map(email => (
     {
+      id: email.emailId,
       body: email.email,
       subject: email.subject,
       date: "Nov 23, 2024, 11:25 AM",
@@ -80,7 +81,7 @@ const EmailsPage = async () => {
       
       <EmailContainer
         emailsData={emailsContent}
-        requireFeedback={requireFeedback}
+        phase={routeResponse.route}
       />
       <HandlePhasesNavigation route={routeResponse.route + '_emails'} />
     </Flex>

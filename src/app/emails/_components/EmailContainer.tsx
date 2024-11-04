@@ -22,7 +22,7 @@ interface EmailContainerProps {
 }
 
 const EmailContainer = (props: EmailContainerProps) => {
-    const [emailIndex, setEmailIndex] = useState(0)
+    const [emailIndex, setEmailIndex] = useState(-1)
     const [emailsData, setEmailsData] = useState(props.emailsData)
 
     return (
@@ -38,13 +38,15 @@ const EmailContainer = (props: EmailContainerProps) => {
             emailIndex={emailIndex}
             setEmailIndex={setEmailIndex}
           />
-    
-          <Email
-            emailsInfo={emailsData}
-            emailIndex={emailIndex}
-            phase={props.phase}
-            setEmailsInfo={setEmailsData}
-          />
+          {emailIndex > -1 && (
+            <Email
+              emailsInfo={emailsData}
+              emailIndex={emailIndex}
+              phase={props.phase}
+              setEmailsInfo={setEmailsData}
+            />
+          )}
+
         </Flex>
       )
 }
