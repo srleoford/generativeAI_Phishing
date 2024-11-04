@@ -3,6 +3,7 @@
 import { Pinecone } from "@pinecone-database/pinecone";
 import dotenv from 'dotenv'
 import { EmailData } from "../emails/_components/EmailContainer";
+import { createSusceptibilityScoring } from "@/app/utils/susceptibilityScoring";
 
 // Initialize the .env variables
 dotenv.config();
@@ -169,7 +170,7 @@ export const updateBlockScores = async (userEmail: string, indexName: string, ve
             return false
         }
         return true
-      }
+    }
     catch (error) {
         console.error(error)
         return false
@@ -181,7 +182,7 @@ export const insertSurveyData = async(surveyData: string, email: string, token: 
         if (!surveyData || email === '') {
             return false;
         }
-    
+
         // Get the Pinecone index
         const index = await hasIndex(indexName) ? pc.index(indexName) : "";
         console.log(email)
@@ -200,7 +201,7 @@ export const insertSurveyData = async(surveyData: string, email: string, token: 
                 metadata: { surveyAnswers: surveyData}
             });
         }
-        
+
         else {
             return false
         }
@@ -232,11 +233,26 @@ export const submitAnswers = async (
         }
     ))
 
+    const vector = []
     emailInteractions.forEach((interaction) => {
-        console.log(`Answer: ${typeof interaction}, ID: ${interaction.emailId}, Correct? ${interaction.interactions["isCorrect"]}`);
+        vector.push(interaction.interactions.isCorrect ? 1 : 0)
     })
 
     const jsonString = JSON.stringify(emailInteractions)
+
+    // emailInteractions.forEach((interaction) => {
+    //     console.log(`Answer: ${typeof interaction}, ID: ${interaction.emailId}, Correct?
+    //     ${interaction.interactions["choice"]}=${interaction.interactions["isCorrect"]}`);
+    // })
+
+    const scores = await createSusceptibilityScoring(answers)
+    const sparseIndices = [1,2,3,4,5]
+    const sparseValues = []
+
+    for (const key in scores) {
+        const { score, stat } = scores[key]
+        sparseValues.push(score)
+    }
 
 
     try {
@@ -244,8 +260,12 @@ export const submitAnswers = async (
             await thisIndex.namespace(phaseNameSpace).upsert([
                 {
                     id: token,
-                    values: [10.1, 5, 8, 1.2, 7.5], // temporal vector embedding
-                    metadata: { results: jsonString }
+                    values: vector,
+                    sparseValues: {
+                        'indices': sparseIndices,
+                        'values': sparseValues
+                    },
+                    metadata: { results: jsonString, scores: JSON.stringify(scores) },
                 }
             ])
         }
