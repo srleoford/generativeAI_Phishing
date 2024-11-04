@@ -6,7 +6,7 @@ import Options, { FeedbackMessage } from './Options'
 import { useRouter } from 'next/navigation'
 import ProgressBar from './ProgressBar'
 import { cookies } from '../../../../node_modules/next/headers';
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie"
 import { setCompletedCookie } from '@/app/utils/cookies'
 import { EmailData } from './EmailContainer'
 import { sendEmailAnswers, setClickingBehavior, setHoverOverLink, setResponse, setSenderInteraction, setTimeSpent } from '../models/emailAnswer'
@@ -58,7 +58,7 @@ export default function Email(props: EmailProps) {
           body: "This answer was correct because...."
         }
       )
-      setResponse(true, props.emailIndex, [props.emailsInfo, props.setEmailsInfo])
+      setResponse(true, answerType, props.emailIndex, [props.emailsInfo, props.setEmailsInfo])
     } else {
       setFeedbackMessage(
         {
@@ -66,7 +66,7 @@ export default function Email(props: EmailProps) {
           body: "This answer was incorrect because...."
         }
       )
-      setResponse(false, props.emailIndex, [props.emailsInfo, props.setEmailsInfo])
+      setResponse(false, answerType, props.emailIndex, [props.emailsInfo, props.setEmailsInfo])
     }
   }
 

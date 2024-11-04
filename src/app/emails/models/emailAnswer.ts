@@ -9,6 +9,7 @@ export interface EmailAnswer {
     timeSpent: number,
     senderInteraction: boolean,
     openingAttachments: boolean,
+    choice: string,
     isCorrect?: boolean
 }
 
@@ -19,6 +20,7 @@ export function emptyEmailAnswer(): EmailAnswer {
         timeSpent: 0,
         senderInteraction: false,
         openingAttachments: false,
+        choice: "",
         isCorrect: undefined
     }
 }
@@ -73,8 +75,9 @@ export function setOpeningAttachments(emailIndex: number, emailsState: [EmailDat
     newEmailsData[emailIndex].interactions.openingAttachments = true
     emailsState[1](newEmailsData)
 }
-export function setResponse(response: boolean, emailIndex: number, emailsState: [EmailData[], Dispatch<SetStateAction<EmailData[]>>]) {
+export function setResponse(response: boolean, choice: string, emailIndex: number, emailsState: [EmailData[], Dispatch<SetStateAction<EmailData[]>>]) {
     const newEmailsData = [...emailsState[0]]
     newEmailsData[emailIndex].interactions.isCorrect = response
+    newEmailsData[emailIndex].interactions.choice = choice
     emailsState[1](newEmailsData)
 }

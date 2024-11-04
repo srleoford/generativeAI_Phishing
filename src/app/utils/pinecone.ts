@@ -232,6 +232,10 @@ export const submitAnswers = async (
         }
     ))
 
+    emailInteractions.forEach((interaction) => {
+        console.log(`Answer: ${typeof interaction}, ID: ${interaction.emailId}, Correct? ${interaction.interactions["isCorrect"]}`);
+    })
+
     const jsonString = JSON.stringify(emailInteractions)
 
 
