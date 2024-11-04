@@ -71,6 +71,7 @@ export default function Email(props: EmailProps) {
   }
 
   const onOptionSelected = (type: string) => {
+    // Capturing the time spent in seconds
     timeElapse = new Date().getTime() - startTime
     let timeInSeconds = timeElapse / 1000
     setTimeSpent(timeInSeconds, props.emailIndex, [props.emailsInfo, props.setEmailsInfo])
