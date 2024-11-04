@@ -2,6 +2,7 @@
 
 import { Pinecone } from "@pinecone-database/pinecone";
 import dotenv from 'dotenv'
+import { EmailData } from "../emails/_components/EmailContainer";
 
 // Initialize the .env variables
 dotenv.config();
@@ -11,6 +12,7 @@ const defaultVector = new Array(parseInt(process.env.USER_INDEX_SIZE, 10)).fill(
     Math.random() * 10).map(x => x.toFixed(1));
 const api_key = process.env.PINECONE_API_KEY
 const indexName = process.env.PINECONE_INDEX
+const resultsIndexName: string = process.env.RESULTS_INDEX || "default"
 
 
 // Need to fix this
@@ -213,23 +215,35 @@ export const insertSurveyData = async(surveyData: string, email: string, token: 
  * This will update the metadata to store the answers for the questions. The key will be 'block#-email#' and the value
  * will be either 'phish' or 'real'. This will depend on the block the user is in and which email they answered.
  *
- * @param index
- * @param email
  * @param answers
- * @requires index == existing index in DB
- * @requires email == existing record in DB
  * @ensures \result == \old(record.metadata) + \old(record.metadata).append(answers)
  */
-export const submitAnswers = async (index: string, email: string, answers: string[]) => {
-    const thisIndex = await hasIndex(index) ? pc.index(index) : "";
+export const submitAnswers = async (
+    token: string,
+    phaseNameSpace: string,
+    answers: EmailData[]
+) => {
+    const thisIndex = await hasIndex(resultsIndexName) ? pc.index(resultsIndexName) : ""
+
+    const emailInteractions = answers.map(answer => (
+        {
+            emailId: answer.id,
+            interactions: answer.interactions
+        }
+    ))
+
+    const jsonString = JSON.stringify(emailInteractions)
+
 
     try {
-        if (thisIndex !== "" && await hasRecord(index, email)) {
-            await thisIndex.update({
-                id: email,
-                metadata: {}
-            })
-            return true
+        if (thisIndex !== "") {
+            await thisIndex.namespace(phaseNameSpace).upsert([
+                {
+                    id: token,
+                    values: [10.1, 5, 8, 1.2, 7.5], // temporal vector embedding
+                    metadata: { results: jsonString }
+                }
+            ])
         }
     }
     catch (error) {

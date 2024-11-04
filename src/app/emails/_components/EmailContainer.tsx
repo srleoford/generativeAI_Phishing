@@ -7,6 +7,7 @@ import SideBar from './sidebar/SideBar'
 import { EmailAnswer } from '../models/emailAnswer'
 
 export interface EmailData {
+    id: number,
     body: string,
     subject: string,
     date: string,
@@ -17,7 +18,7 @@ export interface EmailData {
 
 interface EmailContainerProps {
     emailsData: EmailData[],
-    requireFeedback: boolean
+    phase: string
 }
 
 const EmailContainer = (props: EmailContainerProps) => {
@@ -41,7 +42,7 @@ const EmailContainer = (props: EmailContainerProps) => {
           <Email
             emailsInfo={emailsData}
             emailIndex={emailIndex}
-            requireFeedback={props.requireFeedback}
+            phase={props.phase}
             setEmailsInfo={setEmailsData}
           />
         </Flex>

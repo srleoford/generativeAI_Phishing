@@ -6,6 +6,7 @@ import Options, { FeedbackMessage } from './Options'
 import { useRouter } from 'next/navigation'
 import ProgressBar from './ProgressBar'
 import { cookies } from '../../../../node_modules/next/headers';
+import Cookies from 'js-cookie';
 import { setCompletedCookie } from '@/app/utils/cookies'
 import { EmailData } from './EmailContainer'
 import { sendEmailAnswers, setClickingBehavior, setHoverOverLink, setResponse, setSenderInteraction, setTimeSpent } from '../models/emailAnswer'
@@ -13,7 +14,7 @@ import { sendEmailAnswers, setClickingBehavior, setHoverOverLink, setResponse, s
 interface EmailProps {
   emailsInfo: EmailData[],
   emailIndex: number,
-  requireFeedback: boolean,
+  phase: string,
   setEmailsInfo: Dispatch<SetStateAction<EmailData[]>>
 }
 
@@ -22,6 +23,7 @@ let startTime = new Date().getTime()
 let timeElapse = 0
 
 export default function Email(props: EmailProps) {
+  const token  = Cookies.get("userToken")
 
   const router = useRouter()
   const [dialogStatus, setDialogStatus] = useState(false)
@@ -34,11 +36,11 @@ export default function Email(props: EmailProps) {
     progress++
     if(props.emailsInfo.length === progress) {
       setCompletedCookie()
-      /**
-       * TODO: Use 'sendEmailAnswers' to pass in the email of the user to add to the DB. Possibly, grab from the cookie
-       * */
-      sendEmailAnswers(props.emailsInfo)
-      console.log(props.emailsInfo)
+      sendEmailAnswers(
+        token,
+        props.phase, 
+        props.emailsInfo
+      )
       router.push("/instructions")
     } else {
       startTime = new Date().getTime()
@@ -74,7 +76,7 @@ export default function Email(props: EmailProps) {
     setResultAnswer(
       props.emailsInfo[props.emailIndex].emailType, type
     )
-    if (props.requireFeedback) {
+    if (props.phase === "phase_2") {
       setDialogStatus(!dialogStatus)
     } else {
       completeEmail()
