@@ -233,22 +233,21 @@ export const submitAnswers = async (
         }
     ))
 
+    // Stores the values for each correct answer
     const vector = []
     emailInteractions.forEach((interaction) => {
         vector.push(interaction.interactions.isCorrect ? 1 : 0)
     })
 
+    //stores the interactions for insertion into metadata
     const jsonString = JSON.stringify(emailInteractions)
 
-    // emailInteractions.forEach((interaction) => {
-    //     console.log(`Answer: ${typeof interaction}, ID: ${interaction.emailId}, Correct?
-    //     ${interaction.interactions["choice"]}=${interaction.interactions["isCorrect"]}`);
-    // })
-
+    // Creates the indices and values for the sparse vector for susceptibility scores
     const scores = await createSusceptibilityScoring(answers)
     const sparseIndices = [1,2,3,4,5]
     const sparseValues = []
 
+    // Pushes the value for each observation point's score
     for (const key in scores) {
         const { score, stat } = scores[key]
         sparseValues.push(score)
