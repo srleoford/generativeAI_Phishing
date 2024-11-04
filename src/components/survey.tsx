@@ -15,7 +15,7 @@ import { insertSurveyData } from '@/app/utils/pinecone'
 
 export default function SurveyForm() {
 
-    const router = useRouter();
+  const router = useRouter();
 	/**
 	 * 	Scores for profiling the user from the results
 	 */
@@ -422,6 +422,19 @@ export default function SurveyForm() {
   };
   xhr.send(JSON.stringify(sender.data));
 });
-
-  return <Survey model={survey} />;
+  const fillSurveyWithRandomChoices = () => {
+    survey.getAllQuestions().forEach((question) => {
+        if (question.getType() === "radiogroup") {
+            const choices = question.choices;
+            const randomIndex = Math.floor(Math.random() * choices.length);
+            question.value = choices[randomIndex].value;
+        }
+    });
+  };
+  return (
+    <div>
+        <button onClick={fillSurveyWithRandomChoices}>Fill Survey with Random Choices</button>
+        <Survey model={survey} />
+    </div>
+  );
 }
