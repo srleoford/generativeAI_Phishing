@@ -9,6 +9,7 @@ export interface EmailAnswer {
     timeSpent: number,
     senderInteraction: boolean,
     openingAttachments: boolean,
+    choice: string,
     isCorrect?: boolean
 }
 
@@ -19,6 +20,7 @@ export function emptyEmailAnswer(): EmailAnswer {
         timeSpent: 0,
         senderInteraction: false,
         openingAttachments: false,
+        choice: "",
         isCorrect: undefined
     }
 }
@@ -29,17 +31,18 @@ let currentEmail: EmailData
 
 /**
  * Pass in the email of the user to update in the metadata of the record in the DB
- * @requires Cookies.get("email") !== "" && Cookies.get("email") in DB
  * @ensures the email with the answers is passed to Pinecone to store
  */
-export async function sendEmailAnswers(emails: EmailData[]) {
-    //This should grab the email from the cookie to be used for insertion
-    const email = Cookies.get("email");
-    console.log(`Sending answers of user ${email} to DB`)
-
-    /** TODO: This needs to grab the email answers as 'block#-email#': 'phish' or 'real' */
-    const result = await submitAnswers("users", email, [])
-    return result
+export function sendEmailAnswers(
+    token: string,
+    phaseNameSpace: string,
+    answers: EmailData[]
+) {
+    submitAnswers(
+        token,
+        phaseNameSpace,
+        answers
+    )
 }
 
 export function resetAnswers() {
@@ -72,8 +75,9 @@ export function setOpeningAttachments(emailIndex: number, emailsState: [EmailDat
     newEmailsData[emailIndex].interactions.openingAttachments = true
     emailsState[1](newEmailsData)
 }
-export function setResponse(response: boolean, emailIndex: number, emailsState: [EmailData[], Dispatch<SetStateAction<EmailData[]>>]) {
+export function setResponse(response: boolean, choice: string, emailIndex: number, emailsState: [EmailData[], Dispatch<SetStateAction<EmailData[]>>]) {
     const newEmailsData = [...emailsState[0]]
     newEmailsData[emailIndex].interactions.isCorrect = response
+    newEmailsData[emailIndex].interactions.choice = choice
     emailsState[1](newEmailsData)
 }

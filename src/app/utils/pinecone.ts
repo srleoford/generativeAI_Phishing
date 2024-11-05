@@ -2,6 +2,8 @@
 
 import { Pinecone } from "@pinecone-database/pinecone";
 import dotenv from 'dotenv'
+import { EmailData } from "../emails/_components/EmailContainer";
+import { createSusceptibilityScoring } from "@/app/utils/susceptibilityScoring";
 
 // Initialize the .env variables
 dotenv.config();
@@ -11,6 +13,7 @@ const defaultVector = new Array(parseInt(process.env.USER_INDEX_SIZE, 10)).fill(
     Math.random() * 10).map(x => x.toFixed(1));
 const api_key = process.env.PINECONE_API_KEY
 const indexName = process.env.PINECONE_INDEX
+const resultsIndexName: string = process.env.RESULTS_INDEX || "default"
 
 
 // Need to fix this
@@ -167,7 +170,7 @@ export const updateBlockScores = async (userEmail: string, indexName: string, ve
             return false
         }
         return true
-      }
+    }
     catch (error) {
         console.error(error)
         return false
@@ -179,7 +182,7 @@ export const insertSurveyData = async(surveyData: string, email: string, token: 
         if (!surveyData || email === '') {
             return false;
         }
-    
+
         // Get the Pinecone index
         const index = await hasIndex(indexName) ? pc.index(indexName) : "";
         console.log(email)
@@ -198,7 +201,7 @@ export const insertSurveyData = async(surveyData: string, email: string, token: 
                 metadata: { surveyAnswers: surveyData}
             });
         }
-        
+
         else {
             return false
         }
@@ -213,23 +216,57 @@ export const insertSurveyData = async(surveyData: string, email: string, token: 
  * This will update the metadata to store the answers for the questions. The key will be 'block#-email#' and the value
  * will be either 'phish' or 'real'. This will depend on the block the user is in and which email they answered.
  *
- * @param index
- * @param email
  * @param answers
- * @requires index == existing index in DB
- * @requires email == existing record in DB
  * @ensures \result == \old(record.metadata) + \old(record.metadata).append(answers)
  */
-export const submitAnswers = async (index: string, email: string, answers: string[]) => {
-    const thisIndex = await hasIndex(index) ? pc.index(index) : "";
+export const submitAnswers = async (
+    token: string,
+    phaseNameSpace: string,
+    answers: EmailData[]
+) => {
+    const thisIndex = await hasIndex(resultsIndexName) ? pc.index(resultsIndexName) : ""
+
+    const emailInteractions = answers.map(answer => (
+        {
+            emailId: answer.id,
+            interactions: answer.interactions
+        }
+    ))
+
+    // Stores the values for each correct answer
+    const vector = []
+    emailInteractions.forEach((interaction) => {
+        vector.push(interaction.interactions.isCorrect ? 1 : 0)
+    })
+
+    //stores the interactions for insertion into metadata
+    const jsonString = JSON.stringify(emailInteractions)
+
+    // Creates the indices and values for the sparse vector for susceptibility scores
+    const scores = await createSusceptibilityScoring(answers)
+    const sparseIndices = [1,2,3,4,5]
+    const sparseValues = []
+
+    // Pushes the value for each observation point's score
+    for (const key in scores) {
+        const { score, stat } = scores[key]
+        sparseValues.push(score)
+    }
+
 
     try {
-        if (thisIndex !== "" && await hasRecord(index, email)) {
-            await thisIndex.update({
-                id: email,
-                metadata: {}
-            })
-            return true
+        if (thisIndex !== "") {
+            await thisIndex.namespace(phaseNameSpace).upsert([
+                {
+                    id: token,
+                    values: vector,
+                    sparseValues: {
+                        'indices': sparseIndices,
+                        'values': sparseValues
+                    },
+                    metadata: { results: jsonString, scores: JSON.stringify(scores) },
+                }
+            ])
         }
     }
     catch (error) {
