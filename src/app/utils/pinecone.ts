@@ -253,7 +253,6 @@ export const submitAnswers = async (
         sparseValues.push(score)
     }
 
-
     try {
         if (thisIndex !== "") {
             await thisIndex.namespace(phaseNameSpace).upsert([
