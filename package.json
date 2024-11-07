@@ -1,6 +1,7 @@
 {
 	"name": "@once-ui-system/nextjs-starter",
 	"version": "0.3.1",
+	"type": "module",
 	"scripts": {
 		"dev": "next dev",
 		"export": "next export",
@@ -10,7 +11,9 @@
 	},
 	"dependencies": {
 		"@floating-ui/react-dom": "^2.1.2",
+		"@huggingface/transformers": "^3.0.2",
 		"@pinecone-database/pinecone": "^3.0.3",
+		"axios": "^1.7.7",
 		"bootstrap": "^5.3.3",
 		"classnames": "^2.5.1",
 		"dotenv": "^16.4.5",
@@ -19,6 +22,7 @@
 		"jsonwebtoken": "^9.0.2",
 		"next": "^14.2.14",
 		"next-auth": "^4.24.8",
+		"openai": "^4.71.1",
 		"postcss": "^8.4.47",
 		"postcss-preset-env": "^9.6.0",
 		"react": "^18.3.1",

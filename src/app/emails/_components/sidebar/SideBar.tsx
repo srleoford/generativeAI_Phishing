@@ -1,6 +1,6 @@
 import { Accordion, Flex, Text } from '@/once-ui/components'
 import React, { useState } from 'react'
-import EmailItem from './EmailItem'
+import EmailItem from '@/app/emails/_components/sidebar/EmailItem'
 import { EmailData } from '../EmailContainer'
 
 interface SideBarProps {

@@ -17,7 +17,7 @@ interface Background {
     background?: `${ColorScheme}-${ColorWeight}`
 }
 
-const Emailtem = (props: EmailItemProps) => {
+const EmailItem = (props: EmailItemProps) => {
     let background: Background = {
         onBackground: undefined,
         background: undefined
@@ -94,5 +94,5 @@ const Emailtem = (props: EmailItemProps) => {
   )
 }
 
-export default Emailtem
+export default EmailItem
 
