@@ -212,6 +212,34 @@ export const insertSurveyData = async(surveyData: string, email: string, token: 
     }
 }
 
+export const getAnswers = async (token: string) => {
+    const thisIndex = await hasIndex(resultsIndexName) ? pc.index(resultsIndexName) : ""
+ 
+    try {
+        if (thisIndex !== "") {
+            const queryResponse1 = await index.namespace('phase_1').query({
+                id: token,
+                topK: 1,
+                includeValues: true
+            });
+            const queryResponse2 = await index.namespace('phase_2').query({
+                id: token,
+                topK: 1,
+                includeValues: true
+            });
+            // const queryResponse3 = await index.namespace('phase_3').query({
+            //     id: token,
+            //     topK: 1,
+            //     includeValues: true
+            // });
+            return [queryResponse1, queryResponse2]
+        }
+    }
+    catch (error) {
+        console.error(error)
+    }
+}
+
 /**
  * This will update the metadata to store the answers for the questions. The key will be 'block#-email#' and the value
  * will be either 'phish' or 'real'. This will depend on the block the user is in and which email they answered.
