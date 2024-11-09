@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import {NextRequest, NextResponse} from "next/server";
 
 let route: string = "phase_1"
 
-export interface RequestRoute { 
+export interface RequestRoute {
     newRoute: string
 }
 
@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     const body: RequestRoute = await request.json()
 
     route = body.newRoute
-    
+
     return NextResponse.json({status: 200})
 }
 

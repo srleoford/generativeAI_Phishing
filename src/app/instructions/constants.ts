@@ -1,6 +1,6 @@
 export const phase1Title = "Phase 1: User Profiling through Phishing Simulations"
 export const phase1Body = "In this phase, your behavior during phishing simulations will be monitored and analyzed to develop a personalized user profile. This profile will reflect your strengths, weaknesses, and areas for improvement when identifying phishing emails. The purpose of this phase is to tailor future training to your specific learning needs."
-export const phase2Title = "Phase 2: Phishing Email Identification and Feedback" 
+export const phase2Title = "Phase 2: Phishing Email Identification and Feedback"
 export const phase2Body = "In this phase, you will be participating in an exercise designed to enhance your ability to detect phishing emails. The exercise is divided into multiple blocks of emails, and your task is to determine whether each email is a phishing attempt or legitimate."
-export const phase3Title = "Phase 3: Email Classification without Feedback" 
+export const phase3Title = "Phase 3: Email Classification without Feedback"
 export const phase3Body = "In this phase, you will be classifying emails as either phishing or legitimate. Unlike Phase 2, you will not receive any feedback on your decisions during this phase. The goal is to evaluate your ability to detect phishing emails independently."

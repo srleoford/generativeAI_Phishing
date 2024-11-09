@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import {NextResponse} from "next/server";
 import emails from "../dataset/PhishingDataset_HFES2020.json"
 
 export interface DatasetEmail {
@@ -26,7 +26,7 @@ const emailDataset = emails.map(mapEmails)
 
 // Shuffle the array
 function shuffleArray(array: DatasetEmail[]): DatasetEmail[] {
-  return array.sort(() => Math.random() - 0.5);
+    return array.sort(() => Math.random() - 0.5);
 }
 
 export async function GET() {

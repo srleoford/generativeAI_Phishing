@@ -1,10 +1,10 @@
 'use client'
 
-import { Flex } from '@/once-ui/components'
-import React, { useState } from 'react'
+import {Flex} from '@/once-ui/components'
+import React, {useState} from 'react'
 import Email from './Email'
 import SideBar from './sidebar/SideBar'
-import { EmailAnswer } from '../models/emailAnswer'
+import {EmailAnswer} from '../models/emailAnswer'
 
 export interface EmailData {
     id: number,
@@ -13,7 +13,7 @@ export interface EmailData {
     date: string,
     from: string,
     emailType: string,
-    interactions : EmailAnswer,
+    interactions: EmailAnswer,
 }
 
 interface EmailContainerProps {
@@ -33,22 +33,22 @@ const EmailContainer = (props: EmailContainerProps) => {
             gap='xs'
             alignItems='start'
         >
-          <SideBar
-            emailsInfo={emailsData}
-            emailIndex={emailIndex}
-            setEmailIndex={setEmailIndex}
-          />
-          {emailIndex > -1 && (
-            <Email
-              emailsInfo={emailsData}
-              emailIndex={emailIndex}
-              phase={props.phase}
-              setEmailsInfo={setEmailsData}
+            <SideBar
+                emailsInfo={emailsData}
+                emailIndex={emailIndex}
+                setEmailIndex={setEmailIndex}
             />
-          )}
+            {emailIndex > -1 && (
+                <Email
+                    emailsInfo={emailsData}
+                    emailIndex={emailIndex}
+                    phase={props.phase}
+                    setEmailsInfo={setEmailsData}
+                />
+            )}
 
         </Flex>
-      )
+    )
 }
 
 export default EmailContainer
