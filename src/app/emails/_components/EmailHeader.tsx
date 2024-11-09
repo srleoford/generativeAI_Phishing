@@ -1,6 +1,6 @@
-import { Avatar, Flex, Text, ToggleButton } from '@/once-ui/components'
+import {Avatar, Flex, Text, ToggleButton} from '@/once-ui/components'
 import React from 'react'
-import { EmailData } from './EmailContainer'
+import {EmailData} from './EmailContainer'
 import Cookies from "js-cookie"
 
 interface EmailHeaderinfo {
@@ -14,63 +14,63 @@ const EmailHeader = ({info, onSenderClick}: EmailHeaderinfo) => {
     const email = Cookies.get("email")
     const senderClicked = !info.interactions.senderInteraction
     let sender = emailHide
-    if(info.interactions.senderInteraction) {
+    if (info.interactions.senderInteraction) {
         sender = info.from
     }
-  return (
-    <Flex
-        fillWidth
-        direction='column'
-        gap='16'
-        as='header'
-    >
-        <Text
-            paddingLeft='m'
-            variant = "heading-default-m" 
-            onBackground="brand-strong">
-            {info.subject}
-        </Text>
-
-        <Flex 
-            fillWidth
-            height="1"
-            solid="neutral-strong"/>
-
+    return (
         <Flex
-            gap="24"
-            direction='row'>
-            <Avatar
-                size="m"
-                src="/images/profile.png"
-            />
+            fillWidth
+            direction='column'
+            gap='16'
+            as='header'
+        >
+            <Text
+                paddingLeft='m'
+                variant="heading-default-m"
+                onBackground="brand-strong">
+                {info.subject}
+            </Text>
+
             <Flex
                 fillWidth
-                direction="column"
-                onBackground='neutral-weak'>
+                height="1"
+                solid="neutral-strong"/>
+
+            <Flex
+                gap="24"
+                direction='row'>
+                <Avatar
+                    size="m"
+                    src="/images/profile.png"
+                />
                 <Flex
                     fillWidth
-                    justifyContent="space-between">
-                    <ToggleButton
-                        onClick={onSenderClick}
-                        selected={senderClicked}
-                        size="s"
-                        label={sender}
-                        align="center"
-                    />
-                    <Text 
-                        variant = "body-default-s">
-                        {info.date}
+                    direction="column"
+                    onBackground='neutral-weak'>
+                    <Flex
+                        fillWidth
+                        justifyContent="space-between">
+                        <ToggleButton
+                            onClick={onSenderClick}
+                            selected={senderClicked}
+                            size="s"
+                            label={sender}
+                            align="center"
+                        />
+                        <Text
+                            variant="body-default-s">
+                            {info.date}
+                        </Text>
+                    </Flex>
+                    <Text
+                        suppressHydrationWarning
+                        variant="body-default-s">
+                        {"To: " + email}
                     </Text>
                 </Flex>
-                <Text 
-                    suppressHydrationWarning
-                    variant = "body-default-s" >
-                    {"To: " + email}
-                </Text>
             </Flex>
         </Flex>
-    </Flex>
-  )
+    )
 }
 
 export default EmailHeader
