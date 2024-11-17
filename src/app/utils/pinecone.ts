@@ -217,12 +217,12 @@ export const getAnswers = async (token: string) => {
  
     try {
         if (thisIndex !== "") {
-            const queryResponse1 = await index.namespace('phase_1').query({
+            const queryResponse1 = await thisIndex.namespace('phase_1').query({
                 id: token,
                 topK: 1,
                 includeValues: true
             });
-            const queryResponse2 = await index.namespace('phase_2').query({
+            const queryResponse2 = await thisIndex.namespace('phase_2').query({
                 id: token,
                 topK: 1,
                 includeValues: true
