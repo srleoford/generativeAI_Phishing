@@ -2,22 +2,8 @@ import React from 'react';
 import { getAnswers } from '../utils/pinecone';
 import { Heading, Text, Flex, Button, Grid, Icon, InlineCode, Logo, Background, RevealFx, Skeleton } from '@/once-ui/components';
 
-export interface BlockResults {
-    correct: number;
-    incorrect: number;
-    feedback: string;
-    clickingBehavior: boolean;
-    time: number;
-}
-
-interface SummaryPageProps {
-    block1: BlockResults;
-    block2: BlockResults;
-}
-
 // const token = Cookies.get("token")
 const token: string = "ZW1haWwyQGdtYWlsLmNvbTViNmY2ZTdkOWZiNGY3NTJlYWUzNTFjMGM4YmZkZDIx"
-
 
 /*
 Classification results in different phase (pre-training, training and post training) and if possible then also block wise in training. 
