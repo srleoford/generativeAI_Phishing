@@ -1,12 +1,16 @@
-'use client'
-
 import React from 'react';
 import { getAnswers } from '../utils/pinecone';
 import { Heading, Text, Flex, Button, Grid, Icon, InlineCode, Logo, Background, RevealFx, Skeleton } from '@/once-ui/components';
+// import SummaryCookies from '@/components/summary-cookies'
+// import { cookies } from 'next/headers'
+
 
 // const token = Cookies.get("token")
-const token = Cookies.get("userToken") as string;
-
+// const token = Cookies.get("userToken") as string;
+const token = "cnViZW42MjE5OTgucmViZ0BnbWFpbC5jb21iODVkOTg4YjViM2YwYjFkOWFkMTEwMmMwNDE5YWRlZA=="
+// const cookieStore = await cookies()
+// const theme = cookieStore.get('userToken')
+// console.log("Theme:", theme)
 
 /*
 Classification results in different phase (pre-training, training and post training) and if possible then also block wise in training.
@@ -91,14 +95,14 @@ const SummaryPage = async () => {
     // console.log("Ans phase 2:", answers[1].matches)
     // console.log("Ans phase 3:", answers[2].matches)
 
-    // const jsonString1 = answers[0].matches[0].metadata?.results as  string;
+    const jsonString1 = answers[1].matches[0].metadata?.results as  string;
     const jsonString2 = answers[1].matches[0].metadata?.results as  string;
-    const jsonString3 = answers[2].matches[0].metadata?.results as  string;
+    const jsonString3 = answers[1].matches[0].metadata?.results as  string;
 
     // console.log(answers[1].matches)
     // console.log("JSON:", jsonString2)
 
-    // const jsonObject1 = JSON.parse(jsonString1);
+    const jsonObject1 = JSON.parse(jsonString1);
     const jsonObject2 = JSON.parse(jsonString2);
     const jsonObject3 = JSON.parse(jsonString3);
 
@@ -106,7 +110,7 @@ const SummaryPage = async () => {
     // console.log(jsonObject2)
     // console.log(jsonObject3)
 
-    // const statsp1 = calculatePhaseStats(jsonObject1);
+    const statsp1 = calculatePhaseStats(jsonObject1);
     const statsp2 = calculatePhaseStats(jsonObject2);
     const statsp3 = calculatePhaseStats(jsonObject3);
 
@@ -167,7 +171,8 @@ const SummaryPage = async () => {
           background="brand-medium"
       >
           <Heading variant="heading-strong" align="center">Block 1</Heading>
-          <Text>Correct: {statsp2.totalCorrectChoices}</Text>
+          <Text variant='body-strong-xl'>
+          Correct: {statsp2.totalCorrectChoices}</Text>
           <Text>Incorrect: {statsp2.totalIncorrectChoices}</Text>
           <Text>Total time spent: {statsp2.totalTimeSpent}</Text>
           <Text>Avg time spent per email: {statsp2.avgTimeSpent}</Text>
