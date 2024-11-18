@@ -1,6 +1,6 @@
 'use server'
 
-import { Pinecone } from "@pinecone-database/pinecone";
+import { Pinecone, QueryResponse } from "@pinecone-database/pinecone";
 import dotenv from 'dotenv'
 import { EmailData } from "../emails/_components/EmailContainer";
 import { createSusceptibilityScoring } from "@/app/utils/susceptibilityScoring";
@@ -210,6 +210,41 @@ export const insertSurveyData = async(surveyData: string, email: string, token: 
         console.error(error)
         return false
     }
+}
+
+
+export const getAnswers = async (
+    token: string
+) : Promise<QueryResponse[]> => {
+    const thisIndex = await hasIndex(resultsIndexName) ? pc.index(resultsIndexName) : ""
+ 
+    try {
+        if (thisIndex !== "") {
+            const queryResponse1 = await thisIndex.namespace('phase_1').query({
+                id: token,
+                topK: 1,
+                includeValues: true,
+                includeMetadata: true
+            });
+            const queryResponse2 = await thisIndex.namespace('phase_2').query({
+                id: token,
+                topK: 1,
+                includeValues: true,
+                includeMetadata: true
+            });
+            const queryResponse3 = await thisIndex.namespace('phase_3').query({
+                id: token,
+                topK: 1,
+                includeValues: true,
+                includeMetadata: true
+            });
+            return [queryResponse1, queryResponse2, queryResponse3]
+        }
+    }
+    catch (error) {
+        console.error(error)
+    }
+    return []
 }
 
 /**
