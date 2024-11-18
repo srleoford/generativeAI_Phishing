@@ -1,11 +1,12 @@
-import {Flex} from '@/once-ui/components'
+import {DropdownOptions, Flex} from '@/once-ui/components'
 import React, {Dispatch, SetStateAction, useState} from 'react'
-import EmailBoby from './EmailBoby'
+import EmailBody from './EmailBody'
 import EmailHeader from './EmailHeader'
 import Options, {FeedbackMessage} from './Options'
 import {useRouter} from 'next/navigation'
 import ProgressBar from './ProgressBar'
 import {cookies} from '../../../../node_modules/next/headers';
+// @ts-ignore
 import Cookies from "js-cookie"
 import {setCompletedCookie} from '@/app/utils/cookies'
 import {EmailData} from './EmailContainer'
@@ -15,6 +16,7 @@ import {
     setHoverOverLink,
     setResponse,
     setSenderInteraction,
+    setSuggestedAction,
     setTimeSpent
 } from '../models/emailAnswer'
 
@@ -30,10 +32,10 @@ let startTime = new Date().getTime()
 let timeElapse = 0
 
 export default function Email(props: EmailProps) {
-    const token = Cookies.get("userToken")
-
+    const token = Cookies.get("userToken") || ""
     const router = useRouter()
     const [dialogStatus, setDialogStatus] = useState(false)
+    const [suggestedAction, setSelectSuggestion] = useState("")
     const [feedbackMessage, setFeedbackMessage]: [FeedbackMessage, Dispatch<SetStateAction<FeedbackMessage>>] = useState({
         title: "Correct",
         body: "This is the feedback generated from AI model"
@@ -75,6 +77,13 @@ export default function Email(props: EmailProps) {
             )
             setResponse(false, answerType, props.emailIndex, [props.emailsInfo, props.setEmailsInfo])
         }
+    }
+
+    const setSuggestAction = (
+        answerOption: DropdownOptions
+    ) => {
+        setSelectSuggestion(answerOption.label)
+        setSuggestedAction(answerOption.value, props.emailIndex, [props.emailsInfo, props.setEmailsInfo])
     }
 
     const onOptionSelected = (type: string) => {
@@ -121,7 +130,7 @@ export default function Email(props: EmailProps) {
                 }}
             />
 
-            <EmailBoby
+            <EmailBody
                 emailContent={props.emailsInfo[props.emailIndex].body}
                 onLinkClicked={() => {
                     setClickingBehavior(props.emailIndex, [props.emailsInfo, props.setEmailsInfo])
@@ -138,6 +147,8 @@ export default function Email(props: EmailProps) {
                 isDialogOpen={dialogStatus}
                 onPhishOption={onOptionSelected}
                 onRealOption={onOptionSelected}
+                onSetAction={setSuggestAction}
+                feedbackSuggestion={suggestedAction}
             />
             <ProgressBar index={progress} total={props.emailsInfo.length}/>
         </Flex>

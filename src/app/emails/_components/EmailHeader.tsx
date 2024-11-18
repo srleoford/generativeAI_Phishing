@@ -1,16 +1,17 @@
 import {Avatar, Flex, Text, ToggleButton} from '@/once-ui/components'
 import React from 'react'
 import {EmailData} from './EmailContainer'
+// @ts-ignore
 import Cookies from "js-cookie"
 
-interface EmailHeaderinfo {
-    info: EmailData
+interface EmailHeaderProps {
+    info: EmailData,
     onSenderClick: () => void
 }
 
 export const emailHide = "Click to view sender"
 
-const EmailHeader = ({info, onSenderClick}: EmailHeaderinfo) => {
+const EmailHeader = ({info, onSenderClick}: EmailHeaderProps) => {
     const email = Cookies.get("email")
     const senderClicked = !info.interactions.senderInteraction
     let sender = emailHide
