@@ -1,9 +1,11 @@
+'use client'
+
 import React from 'react';
 import { getAnswers } from '../utils/pinecone';
 import { Heading, Text, Flex, Button, Grid, Icon, InlineCode, Logo, Background, RevealFx, Skeleton } from '@/once-ui/components';
 
 // const token = Cookies.get("token")
-const token: string = "ZW1haWwyQGdtYWlsLmNvbTViNmY2ZTdkOWZiNGY3NTJlYWUzNTFjMGM4YmZkZDIx"
+const token = Cookies.get("userToken") as string;
 
 
 /*
@@ -118,43 +120,127 @@ const SummaryPage = async () => {
 
 
     return (
-        <div>
-            <h1>Test Summary</h1>
-            <div>
-                <h2>Block 1</h2>
-                <p>Correct: {statsp2.totalCorrectChoices}</p>
-                <p>Incorrect: {statsp2.totalIncorrectChoices}</p>
-                <p>Total time spent: {statsp2.totalTimeSpent}</p>
-                <p>Avg time spent per email: {statsp2.avgTimeSpent}</p>
-                <p>Feedback: </p>
-            </div>
-            <div>
-                <h2>Block 2</h2>
-                <p>Correct: {statsp2.totalCorrectChoices}</p>
-                <p>Incorrect: {statsp2.totalIncorrectChoices}</p>
-                <p>Total time spent: {statsp2.totalTimeSpent}</p>
-                <p>Avg time spent per email: {statsp2.avgTimeSpent}</p>
-                <p>Feedback: </p>
-            </div>  
-            <div>
-                <h2>Block 3</h2>
-                <p>Correct: {statsp3.totalCorrectChoices}</p>
-                <p>Incorrect: {statsp3.totalIncorrectChoices}</p>
-                <p>Total time spent: {statsp3.totalTimeSpent}</p>
-                <p>Avg time spent per email: {statsp3.avgTimeSpent}</p>
-                <p>Feedback: </p>
-            </div>
-            <div>
-                <h2>Summary</h2>
-                <p>Correct: {overallStats.totalCorrectChoices}</p>
-                <p>Incorrect: {overallStats.totalIncorrectChoices}</p>
-                <p>Total time spent: {overallStats.totalTimeSpent}</p>
-                <p>Avg time spent per email: {overallStats.avgTimeSpent}</p>
-                <p>Feedback: </p>
-            </div>
-          
-        </div>
-    );
+      <Flex fillWidth paddingTop="l" paddingX="l" direction="column" alignItems="center" flex={1}>
+      <Background dots={false} />
+      <Flex
+          position="relative"
+          as="section"
+          overflow="hidden"
+          fillWidth
+          minHeight="0"
+          maxWidth={68}
+          direction="column"
+          alignItems="center"
+          flex={1}
+      >
+          <Flex
+              as="main"
+              direction="column"
+              justifyContent="center"
+              fillWidth
+              fillHeight
+              padding="l"
+              gap="l"
+          >
+              <Flex mobileDirection="column" fillWidth gap="24">
+                  <Flex position="relative" flex={4} gap="24" marginBottom="104" direction="column">
+                      <Heading variant="display-strong-s" align="center" wrap="balance">
+                          <p><span className="font-code">Test Summary</span></p>
+                      </Heading>
+                  </Flex>
+              </Flex>
+          </Flex>
+      </Flex>
+
+      {/* Block 1 */}
+      <Flex
+          as="section"
+          border="brand-medium"
+          borderStyle="solid-1"
+          direction="column"
+          gap="24"
+          padding="24"
+          alignItems="center"
+          justifyContent="center"
+          radius="xl"
+          onBackground="brand-strong"
+          background="brand-medium"
+      >
+          <Heading variant="heading-strong" align="center">Block 1</Heading>
+          <Text>Correct: {statsp2.totalCorrectChoices}</Text>
+          <Text>Incorrect: {statsp2.totalIncorrectChoices}</Text>
+          <Text>Total time spent: {statsp2.totalTimeSpent}</Text>
+          <Text>Avg time spent per email: {statsp2.avgTimeSpent}</Text>
+          <Text>Feedback: </Text>
+      </Flex>
+
+      {/* Block 2 */}
+      <Flex
+          as="section"
+          border="brand-medium"
+          borderStyle="solid-1"
+          direction="column"
+          gap="24"
+          padding="24"
+          alignItems="center"
+          justifyContent="center"
+          radius="xl"
+          onBackground="brand-strong"
+          background="brand-medium"
+      >
+          <Heading variant="heading-strong" align="center">Block 2</Heading>
+          <Text>Correct: {statsp2.totalCorrectChoices}</Text>
+          <Text>Incorrect: {statsp2.totalIncorrectChoices}</Text>
+          <Text>Total time spent: {statsp2.totalTimeSpent}</Text>
+          <Text>Avg time spent per email: {statsp2.avgTimeSpent}</Text>
+          <Text>Feedback: </Text>
+      </Flex>
+
+      {/* Block 3 */}
+      <Flex
+          as="section"
+          border="brand-medium"
+          borderStyle="solid-1"
+          direction="column"
+          gap="24"
+          padding="24"
+          alignItems="center"
+          justifyContent="center"
+          radius="xl"
+          onBackground="brand-strong"
+          background="brand-medium"
+      >
+          <Heading variant="heading-strong" align="center">Block 3</Heading>
+          <Text>Correct: {statsp3.totalCorrectChoices}</Text>
+          <Text>Incorrect: {statsp3.totalIncorrectChoices}</Text>
+          <Text>Total time spent: {statsp3.totalTimeSpent}</Text>
+          <Text>Avg time spent per email: {statsp3.avgTimeSpent}</Text>
+          <Text>Feedback: </Text>
+      </Flex>
+
+      {/* Summary */}
+      <Flex
+          as="section"
+          border="brand-medium"
+          borderStyle="solid-1"
+          direction="column"
+          gap="24"
+          padding="24"
+          alignItems="center"
+          justifyContent="center"
+          radius="xl"
+          onBackground="brand-strong"
+          background="brand-medium"
+      >
+          <Heading variant="heading-strong" align="center">Summary</Heading>
+          <Text>Correct: {overallStats.totalCorrectChoices}</Text>
+          <Text>Incorrect: {overallStats.totalIncorrectChoices}</Text>
+          <Text>Total time spent: {overallStats.totalTimeSpent}</Text>
+          <Text>Avg time spent per email: {overallStats.avgTimeSpent}</Text>
+          <Text>Feedback: </Text>
+      </Flex>
+  </Flex>
+);
 };
 
 export default SummaryPage;

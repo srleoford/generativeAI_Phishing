@@ -88,6 +88,31 @@ export const userExists = async (index: string, userEmail: string): Promise<bool
         return false;
     }
 };
+/**
+ * This checks if a user exists and then retrieves their token.
+ * @param index
+ * @param userEmail
+ * @returns unique user token.
+ */
+export const getToken = async (index: string, userEmail: string): Promise<string | null> => {
+    try {
+        // Fetch the user by email from the specified index
+        const result = await pc.index(index).fetch([userEmail]);
+
+        // Check if the user exists in the response
+        if (result && result.records[userEmail]) {
+            const token = result.records[userEmail].metadata?.token; // Access the token in the metadata
+            return token || null;  // Return the token if found, else null
+        } else {
+            console.log(`User with email ${userEmail} does not exist in the index.`);
+            return null;
+        }
+    } catch (error) {
+        console.error(`Error checking user existence by user email in index ${index}:`, error);
+        return null;
+    }
+};
+
 
 /**
  * This will upsert into Pinecone DB for new users. The namespace will be the user's email. This requires to be vectors
