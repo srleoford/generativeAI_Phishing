@@ -1,31 +1,26 @@
 import {NextResponse} from "next/server";
 import emails from "../dataset/PhishingDataset_HFES2020.json"
+import {EmailData} from "@/app/emails/_components/EmailContainer";
+import {emptyEmailAnswer} from "@/app/emails/models/emailAnswer";
 
-export interface DatasetEmail {
-    emailId: number,
-    sender: string,
-    subject: string,
-    email: string,
-    emailtype: string,
-    clusterNo: number
-}
-
-// Transforms dataset into objects of type DatasetEmail
-const mapEmails = (emailData: any): DatasetEmail => {
+// Transforms dataset into objects of type EmailData
+const mapEmails = (emailData: any): EmailData => {
     return {
-        emailId: emailData.Email_ID,
-        sender: emailData.Sender,
+        id: emailData.Email_ID,
+        body: emailData.Email,
         subject: emailData.Subject,
-        email: emailData.Email,
-        emailtype: emailData.Email_type,
-        clusterNo: emailData.Cluster_no,
-    };
-};
+        date: "Nov 23, 2024, 11:25 AM",
+        from: emailData.Sender,
+        emailType: emailData.Email_type,
+        feedbackMessage: "",
+        interactions: emptyEmailAnswer()
+    }
+}
 
 const emailDataset = emails.map(mapEmails)
 
 // Shuffle the array
-function shuffleArray(array: DatasetEmail[]): DatasetEmail[] {
+function shuffleArray(array: EmailData[]): EmailData[] {
     return array.sort(() => Math.random() - 0.5);
 }
 

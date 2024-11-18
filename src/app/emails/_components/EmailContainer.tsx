@@ -13,6 +13,7 @@ export interface EmailData {
     date: string,
     from: string,
     emailType: string,
+    feedbackMessage: string,
     interactions: EmailAnswer,
 }
 
