@@ -4,7 +4,7 @@ import { getAnswers } from '../utils/pinecone';
 import { Heading, Text, Flex, Button, Grid, Icon, InlineCode, Logo, Background, RevealFx, Skeleton } from '@/once-ui/components';
 
 // const token = Cookies.get("token")
-const token = Cookies.get("userToken");
+const token = Cookies.get("userToken") as string;
 
 
 /*
