@@ -60,23 +60,14 @@ export default function Email(props: EmailProps) {
         emailType: string,
         answerType: string
     ) => {
-        if (emailType === answerType) {
-            setFeedbackMessage(
-                {
-                    title: "Correct",
-                    body: "This answer was correct because...."
-                }
-            )
-            setResponse(true, answerType, props.emailIndex, [props.emailsInfo, props.setEmailsInfo])
-        } else {
-            setFeedbackMessage(
-                {
-                    title: "Incorrect",
-                    body: "This answer was incorrect because...."
-                }
-            )
-            setResponse(false, answerType, props.emailIndex, [props.emailsInfo, props.setEmailsInfo])
-        }
+        const response = emailType === answerType;
+        setFeedbackMessage(
+            {
+                title: response ? "Correct" : "Incorrect",
+                body: props.emailsInfo[props.emailIndex].feedbackMessage
+            }
+        )
+        setResponse(response, answerType, props.emailIndex, [props.emailsInfo, props.setEmailsInfo])
     }
 
     const setSuggestAction = (

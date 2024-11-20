@@ -67,7 +67,7 @@ const Options = (props: OptionsProps) => {
                     />
                     <Button
                         onClick={
-                            () => {props.onRealOption("Real")}
+                            () => {props.onRealOption("Ham")}
                         }
                         variant="primary"
                         size="l"

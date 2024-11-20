@@ -19,6 +19,7 @@
 		"jsonwebtoken": "^9.0.2",
 		"next": "^14.2.14",
 		"next-auth": "^4.24.8",
+		"openai": "^4.72.0",
 		"postcss": "^8.4.47",
 		"postcss-preset-env": "^9.6.0",
 		"react": "^18.3.1",
