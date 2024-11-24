@@ -1,24 +1,8 @@
-import React from 'react';
+'use client'
+import React, { useEffect, useState } from 'react';
+import Cookies from 'js-cookie';
 import { getAnswers } from '../utils/pinecone';
-import { Heading, Text, Flex, Button, Grid, Icon, InlineCode, Logo, Background, RevealFx, Skeleton } from '@/once-ui/components';
-// import SummaryCookies from '@/components/summary-cookies'
-// import { cookies } from 'next/headers'
-
-
-// const token = Cookies.get("token")
-// const token = Cookies.get("userToken") as string;
-const token = "cnViZW42MjE5OTgucmViZ0BnbWFpbC5jb21iODVkOTg4YjViM2YwYjFkOWFkMTEwMmMwNDE5YWRlZA=="
-// const cookieStore = await cookies()
-// const theme = cookieStore.get('userToken')
-// console.log("Theme:", theme)
-
-/*
-Classification results in different phase (pre-training, training and post training) and if possible then also block wise in training.
-Time spent phase wise.
-Performance against specific persuasion strategy.  
-Performance statistics, such as clicks, time per email, etc.
-Showing the results using the graphs is a good idea. Let mw know if you have any other questions.
-*/
+import { Heading, Text, Flex, Background } from '@/once-ui/components';
 
 const calculatePhaseStats = (phaseData: any[]) => {
   let totalMouseHoverOverLinks = 0;
@@ -87,165 +71,110 @@ const calculateAllPhasesStats = (allPhasesData: any[][]) => {
   return overallStats;
 };
 
-const SummaryPage = async () => {
-    const answers = await getAnswers(token)
-    // console.log(answers)
+const SummaryPage = () => {
+  const [userToken, setUserToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
-    // console.log("Ans phase 1:", answers[0].matches)
-    // console.log("Ans phase 2:", answers[1].matches)
-    // console.log("Ans phase 3:", answers[2].matches)
+  useEffect(() => {
+    // Retrieve the token using js-cookie
+    //Cookies.set('userToken','ZW1haWxAZW1haWwuY29tYTNhZDU5NWNhMGJmNjdhNzM3MGMzMzIzOTlkZTEzMjA=')
+    const token = Cookies.get('userToken');
+    if (token) {
+      setUserToken(token);
+    }
+  }, []);
 
-    const jsonString1 = answers[1].matches[0].metadata?.results as  string;
-    const jsonString2 = answers[1].matches[0].metadata?.results as  string;
-    const jsonString3 = answers[1].matches[0].metadata?.results as  string;
+  const [answers, setAnswers] = useState<any[]>([]);
+  const [overallStats, setOverallStats] = useState<any>(null);
 
-    // console.log(answers[1].matches)
-    // console.log("JSON:", jsonString2)
+  useEffect(() => {
+    if (userToken) {
+      (async () => {
+        const response = await getAnswers(userToken);
+        setAnswers(response);
+        console.log(response)
+        const jsonString2 = response[1].matches[0].metadata?.results as string;
+        const jsonString3 = response[2].matches[0].metadata?.results as string;
 
-    const jsonObject1 = JSON.parse(jsonString1);
-    const jsonObject2 = JSON.parse(jsonString2);
-    const jsonObject3 = JSON.parse(jsonString3);
+        const jsonObject2 = JSON.parse(jsonString2);
+        const jsonObject3 = JSON.parse(jsonString3);
 
-    // console.log(jsonObject1)
-    // console.log(jsonObject2)
-    // console.log(jsonObject3)
+        const statsp2 = calculatePhaseStats(jsonObject2);
+        const statsp3 = calculatePhaseStats(jsonObject3);
 
-    const statsp1 = calculatePhaseStats(jsonObject1);
-    const statsp2 = calculatePhaseStats(jsonObject2);
-    const statsp3 = calculatePhaseStats(jsonObject3);
+        const allPhasesData = [jsonObject2, jsonObject3];
+        const overallStats = calculateAllPhasesStats(allPhasesData);
 
-    // console.log(statsp1)
-    // console.log(statsp2)
-    // console.log(statsp3)
+        setOverallStats({
+          statsp2,
+          statsp3,
+          overallStats,
+        });
+      })();
+    }
+  }, [userToken]);
 
-    const allPhasesData = [jsonObject2, jsonObject3];
-    const overallStats = calculateAllPhasesStats(allPhasesData);
+  if (!overallStats) {
+    return <p>Loading statistics...</p>;
+  }
 
+  const { statsp2, statsp3, overallStats: summary } = overallStats;
 
-
-    return (
-      <Flex fillWidth paddingTop="l" paddingX="l" direction="column" alignItems="center" flex={1}>
+  return (
+    <Flex fillWidth paddingTop="l" paddingX="l" direction="column" alignItems="center" flex={1}>
       <Background dots={false} />
       <Flex
-          position="relative"
-          as="section"
-          overflow="hidden"
+        position="relative"
+        as="section"
+        overflow="hidden"
+        fillWidth
+        minHeight="0"
+        maxWidth={68}
+        direction="column"
+        alignItems="center"
+        flex={1}
+      >
+        <Flex
+          as="main"
+          direction="column"
+          justifyContent="center"
           fillWidth
-          minHeight="0"
-          maxWidth={68}
-          direction="column"
-          alignItems="center"
-          flex={1}
-      >
-          <Flex
-              as="main"
-              direction="column"
-              justifyContent="center"
-              fillWidth
-              fillHeight
-              padding="l"
-              gap="l"
-          >
-              <Flex mobileDirection="column" fillWidth gap="24">
-                  <Flex position="relative" flex={4} gap="24" marginBottom="104" direction="column">
-                      <Heading variant="display-strong-s" align="center" wrap="balance">
-                          <p><span className="font-code">Test Summary</span></p>
-                      </Heading>
-                  </Flex>
-              </Flex>
+          fillHeight
+          padding="l"
+          gap="l"
+        >
+          <Flex mobileDirection="column" fillWidth gap="24">
+            <Flex position="relative" flex={4} gap="24" marginBottom="104" direction="column">
+              <Heading variant="display-strong-s" align="center" wrap="balance">
+                <p><span className="font-code">Test Summary</span></p>
+              </Heading>
+            </Flex>
           </Flex>
+        </Flex>
       </Flex>
-
-      {/* Block 1 */}
-      <Flex
-          as="section"
-          border="brand-medium"
-          borderStyle="solid-1"
-          direction="column"
-          gap="24"
-          padding="24"
-          alignItems="center"
-          justifyContent="center"
-          radius="xl"
-          onBackground="brand-strong"
-          background="brand-medium"
-      >
-          <Heading variant="heading-strong" align="center">Block 1</Heading>
-          <Text variant='body-strong-xl'>
-          Correct: {statsp2.totalCorrectChoices}</Text>
-          <Text>Incorrect: {statsp2.totalIncorrectChoices}</Text>
-          <Text>Total time spent: {statsp2.totalTimeSpent}</Text>
-          <Text>Avg time spent per email: {statsp2.avgTimeSpent}</Text>
-          <Text>Feedback: </Text>
-      </Flex>
-
       {/* Block 2 */}
-      <Flex
-          as="section"
-          border="brand-medium"
-          borderStyle="solid-1"
-          direction="column"
-          gap="24"
-          padding="24"
-          alignItems="center"
-          justifyContent="center"
-          radius="xl"
-          onBackground="brand-strong"
-          background="brand-medium"
-      >
-          <Heading variant="heading-strong" align="center">Block 2</Heading>
-          <Text>Correct: {statsp2.totalCorrectChoices}</Text>
-          <Text>Incorrect: {statsp2.totalIncorrectChoices}</Text>
-          <Text>Total time spent: {statsp2.totalTimeSpent}</Text>
-          <Text>Avg time spent per email: {statsp2.avgTimeSpent}</Text>
-          <Text>Feedback: </Text>
+      <Flex as="section">
+        <Text>Correct: {statsp2.totalCorrectChoices}</Text>
+        <Text>Incorrect: {statsp2.totalIncorrectChoices}</Text>
+        <Text>Total time spent: {statsp2.totalTimeSpent}</Text>
+        <Text>Avg time spent per email: {statsp2.avgTimeSpent}</Text>
       </Flex>
-
       {/* Block 3 */}
-      <Flex
-          as="section"
-          border="brand-medium"
-          borderStyle="solid-1"
-          direction="column"
-          gap="24"
-          padding="24"
-          alignItems="center"
-          justifyContent="center"
-          radius="xl"
-          onBackground="brand-strong"
-          background="brand-medium"
-      >
-          <Heading variant="heading-strong" align="center">Block 3</Heading>
-          <Text>Correct: {statsp3.totalCorrectChoices}</Text>
-          <Text>Incorrect: {statsp3.totalIncorrectChoices}</Text>
-          <Text>Total time spent: {statsp3.totalTimeSpent}</Text>
-          <Text>Avg time spent per email: {statsp3.avgTimeSpent}</Text>
-          <Text>Feedback: </Text>
+      <Flex as="section">
+        <Text>Correct: {statsp3.totalCorrectChoices}</Text>
+        <Text>Incorrect: {statsp3.totalIncorrectChoices}</Text>
+        <Text>Total time spent: {statsp3.totalTimeSpent}</Text>
+        <Text>Avg time spent per email: {statsp3.avgTimeSpent}</Text>
       </Flex>
-
       {/* Summary */}
-      <Flex
-          as="section"
-          border="brand-medium"
-          borderStyle="solid-1"
-          direction="column"
-          gap="24"
-          padding="24"
-          alignItems="center"
-          justifyContent="center"
-          radius="xl"
-          onBackground="brand-strong"
-          background="brand-medium"
-      >
-          <Heading variant="heading-strong" align="center">Summary</Heading>
-          <Text>Correct: {overallStats.totalCorrectChoices}</Text>
-          <Text>Incorrect: {overallStats.totalIncorrectChoices}</Text>
-          <Text>Total time spent: {overallStats.totalTimeSpent}</Text>
-          <Text>Avg time spent per email: {overallStats.avgTimeSpent}</Text>
-          <Text>Feedback: </Text>
+      <Flex as="section">
+        <Text>Correct: {summary.totalCorrectChoices}</Text>
+        <Text>Incorrect: {summary.totalIncorrectChoices}</Text>
+        <Text>Total time spent: {summary.totalTimeSpent}</Text>
+        <Text>Avg time spent per email: {summary.avgTimeSpent}</Text>
       </Flex>
-  </Flex>
-);
+    </Flex>
+  );
 };
 
 export default SummaryPage;
