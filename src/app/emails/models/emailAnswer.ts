@@ -80,7 +80,7 @@ export function setResponse(response: boolean, choice: string, emailIndex: numbe
     const newEmailsData = [...emailsState[0]]
     newEmailsData[emailIndex].interactions.isCorrect = response
     newEmailsData[emailIndex].interactions.choice = choice
-    emailsState[1](newEmailsData)
+    //emailsState[1](newEmailsData)
 }
 
 export function setSuggestedAction(action: string, emailIndex: number, emailsState: [EmailData[], Dispatch<SetStateAction<EmailData[]>>]) {
