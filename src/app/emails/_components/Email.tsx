@@ -5,7 +5,6 @@ import EmailHeader from './EmailHeader'
 import Options, {FeedbackMessage} from './Options'
 import {useRouter} from 'next/navigation'
 import ProgressBar from './ProgressBar'
-import {cookies} from '../../../../node_modules/next/headers';
 // @ts-ignore
 import Cookies from "js-cookie"
 import {setCompletedCookie} from '@/app/utils/cookies'
@@ -75,20 +74,50 @@ export default function Email(props: EmailProps) {
     ) => {
         setSelectSuggestion(answerOption.label)
         setSuggestedAction(answerOption.value, props.emailIndex, [props.emailsInfo, props.setEmailsInfo])
+        if (props.emailsInfo[props.emailIndex].interactions.choice != '') {
+            processEmail()
+        }
     }
 
     const onOptionSelected = (type: string) => {
-        // Capturing the time spent in seconds
-        timeElapse = new Date().getTime() - startTime
-        let timeInSeconds = timeElapse / 1000
-        setTimeSpent(timeInSeconds, props.emailIndex, [props.emailsInfo, props.setEmailsInfo])
         setResultAnswer(
             props.emailsInfo[props.emailIndex].emailType, type
         )
+        if (props.emailsInfo[props.emailIndex].interactions.suggestedAction !== '') {
+            processEmail()
+        }
+    }
+
+    const processEmail = () => {
+        handleAttentionChecks()
+        timeElapse = new Date().getTime() - startTime
+        let timeInSeconds = timeElapse / 1000
+        setTimeSpent(timeInSeconds, props.emailIndex, [props.emailsInfo, props.setEmailsInfo])
+
         if (props.phase === "phase_2") {
             setDialogStatus(!dialogStatus)
         } else {
             completeEmail()
+        }
+    }
+
+    const handleAttentionChecks = () => {
+        if (props.emailsInfo[props.emailIndex].emailType.toLowerCase() == 'attention_check') {
+            var regex = /<b>(\w+)\s+email/;
+            console.log(props.emailsInfo[props.emailIndex].body)
+            var match = props.emailsInfo[props.emailIndex].body.match(regex);
+            const attentionCheckType = match[1].toLowerCase()
+            regex = /<b>"(\w+)\b.*?"\s<\/b>option/;
+            match = props.emailsInfo[props.emailIndex].body.match(regex);
+            const attentionCheckAction = match[1].toLowerCase()
+
+            if (attentionCheckType != props.emailsInfo[props.emailIndex].interactions.choice.toLowerCase()
+                || !props.emailsInfo[props.emailIndex].interactions.suggestedAction.toLowerCase().includes(attentionCheckAction)) {
+
+                setTimeout(() => {
+                    router.push("/");
+                }, 0);
+            }
         }
     }
 
