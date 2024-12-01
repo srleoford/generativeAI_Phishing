@@ -1,5 +1,4 @@
 import { EmailData } from "../_components/EmailContainer"
-import Cookies from "js-cookie"
 import { submitAnswers } from "@/app/utils/pinecone";
 import { Dispatch, SetStateAction } from "react";
 
@@ -10,7 +9,8 @@ export interface EmailAnswer {
     senderInteraction: boolean,
     openingAttachments: boolean,
     choice: string,
-    isCorrect?: boolean
+    isCorrect?: boolean,
+    suggestedAction: string
 }
 
 export function emptyEmailAnswer(): EmailAnswer {
@@ -21,7 +21,8 @@ export function emptyEmailAnswer(): EmailAnswer {
         senderInteraction: false,
         openingAttachments: false,
         choice: "",
-        isCorrect: undefined
+        isCorrect: undefined,
+        suggestedAction: ""
     }
 }
 
@@ -79,5 +80,11 @@ export function setResponse(response: boolean, choice: string, emailIndex: numbe
     const newEmailsData = [...emailsState[0]]
     newEmailsData[emailIndex].interactions.isCorrect = response
     newEmailsData[emailIndex].interactions.choice = choice
+    //emailsState[1](newEmailsData)
+}
+
+export function setSuggestedAction(action: string, emailIndex: number, emailsState: [EmailData[], Dispatch<SetStateAction<EmailData[]>>]) {
+    const newEmailsData = [...emailsState[0]]
+    newEmailsData[emailIndex].interactions.suggestedAction = action
     emailsState[1](newEmailsData)
 }

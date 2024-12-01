@@ -3,13 +3,13 @@ import React, {useEffect, useState} from 'react'
 import parse, {attributesToProps, domToReact, Element} from 'html-react-parser';
 import type {DOMNode, HTMLReactParserOptions} from 'html-react-parser';
 
-interface EmailBobyProps {
+interface EmailBodyProps {
     emailContent: string,
     onHoverOverLink: () => void,
     onLinkClicked: () => void
 }
 
-const EmailBoby = (props: EmailBobyProps) => {
+const EmailBody = (props: EmailBodyProps) => {
     const [isClient, setIsClient] = useState(false)
 
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -24,7 +24,11 @@ const EmailBoby = (props: EmailBobyProps) => {
     const options: HTMLReactParserOptions = {
         replace(domNode: DOMNode) {
             if (domNode instanceof Element && domNode.name === "head") {
-                return <></>
+                return <>{domToReact(domNode.children as DOMNode[], options)}</>
+            }
+
+            if (domNode instanceof Element && domNode.name === "html") {
+                return <>{domToReact(domNode.children as DOMNode[], options)}</>
             }
 
             if (domNode instanceof Element && domNode.name === "body") {
@@ -34,6 +38,7 @@ const EmailBoby = (props: EmailBobyProps) => {
             if (domNode instanceof Element && domNode.name === "a") {
                 const props = attributesToProps(domNode.attribs)
                 return <a
+                    style={{color: "blue"}}
                     onMouseEnter={handleMouseEnter}
                     onClick={handleClick}
                     {...props}
@@ -62,4 +67,4 @@ const EmailBoby = (props: EmailBobyProps) => {
     )
 }
 
-export default EmailBoby
+export default EmailBody
