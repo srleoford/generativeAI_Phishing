@@ -35,7 +35,7 @@ const Options = (props: OptionsProps) => {
                 title={props.feedbackMessage.title}
                 primaryButtonProps={{
                     disabled: false,
-                    label: 'Confirm',
+                    label: 'Ok',
                     loading: false,
                     onClick: props.onClose,
                     size: 'm',
