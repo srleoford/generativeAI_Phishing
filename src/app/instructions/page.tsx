@@ -37,15 +37,11 @@ const InstructionsPage = async () => {
             // Redirect to the summary page if the route is not valid
             title = "Thank you, you will now be redirected to the summary page."
             body = ""
-            
-            // Redirect after a small delay 
-            setTimeout(() => {
-              redirect("/summary") // This will redirect to the /summary page
-            }, 2000)
+            redirect("/summary") // This will redirect to the /summary page
       
             break
           }
-        }
+    }
 
     return (
         <Flex
