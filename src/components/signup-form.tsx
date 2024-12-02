@@ -1,6 +1,6 @@
 import { useFormState } from "react-dom";
 import { registerUser } from '@/app/actions/actions'
-import { DefaultButton } from "@/app/ui/button";
+import { DefaultButton } from "@/components/button";
 import { Input } from "@/once-ui/components"
 import { setRegisterCookies } from "@/app/utils/cookies";
 
