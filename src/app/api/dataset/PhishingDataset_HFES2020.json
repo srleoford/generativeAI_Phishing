@@ -1910,21 +1910,5 @@
    "Email": "Hi there,<br><p>Jacob (jacob14@gmail.com) thinks you should use Dropbox! It's a free and easy way to access and share your docs, photos, and videos with colleagues and friends-even if they don't have Dropbox accounts.</p><a href=\"https://www.dropbox.com/referrals/AADuX582bAET\" onClick=\"return false;\">Accept invite </a><br>Get started through this email, and you'll get an extra 500 MB added to your 2 GB of free space.<br><br>Happy Dropboxing!",
    "Email_type": "Ham",
    "Cluster_no": 4
- },
- {
-   "Email_ID": 240,
-   "Sender": "help-check@human.resource.com",
-   "Subject": "An important email to respond",
-   "Email": "<p>Hello!</p><p>This email is used for <b>attention check</b> during the experiment. It will be used to evaluate your attention in the experiment.If you are reading this email, please do the following actions: <br> 1. Select this as a <b>phishing email</b> in the first question (Q1). <br> 2. Select the <b>\"report this email\" </b>option in the third question(Q3). </p><p>If you are not paying attention and select the wrong options for this email, you may not be able to continue the experiment. Your attention is important for the experiment. <p>&nbsp;</p><p>Thanks, and good luck!</p><p>Human Resource Management</p>",
-   "Email_type": "Attention_check",
-   "Cluster_no": 4
- },
- {
-   "Email_ID": 241,
-   "Sender": "help-check@human.resource.com",
-   "Subject": "An important email to respond",
-   "Email": "<p>Hello!</p><p>This email is used for <b>attention check</b> during the experiment. It will be used to evaluate your attention in the experiment.If you are reading this email, please do the following actions: <br> 1. Select this as a <b>phishing email</b> in the first question (Q1). <br> 2. Select the <b>\"Delete Email\" </b>option in the third question(Q3). </p><p>If you are not paying attention and select the wrong options for this email, you may not be able to continue the experiment. Your attention is important for the experiment. <p>&nbsp;</p><p>Thanks, and good luck!</p><p>Human Resource Management</p>",
-   "Email_type": "Attention_check",
-   "Cluster_no": 4
  }
 ]
