@@ -45,7 +45,19 @@ const EmailsPage = async () => {
 
         case "phase_3": {
             newRoute = "phase_0"
-            const openaiEmails = await fetch('http://localhost:3000/api/generateEmails', {cache: 'no-store'})
+            const openaiEmails = await fetch(
+                'http://localhost:3000/api/generateEmails',
+                {
+                    method: 'POST',
+                    body: JSON.stringify(
+                        {
+                            survey,
+                            difficulty: 10,
+                        }
+                    ),
+                    cache: 'no-store'
+                }
+            )
             emailsContent = await openaiEmails.json()
             break
         }
