@@ -1,10 +1,16 @@
-import {NextResponse} from "next/server";
+import {NextRequest, NextResponse} from "next/server";
 import {generate} from "@/app/utils/openai";
 import {EmailData} from "@/app/emails/_components/EmailContainer";
 import {emptyEmailAnswer} from "@/app/emails/models/emailAnswer";
 
-export async function GET() {
-    const generatedEmails = await generate() || ""
+export interface RequestBody {
+    profile: string
+    difficulty: number
+}
+
+export async function POST(requestBody: NextRequest) {
+    const body: RequestBody = await requestBody.json()
+    const generatedEmails = await generate(body.profile) || ""
 
     const jsonEmails:{ emails: [] } = JSON.parse(generatedEmails)
 

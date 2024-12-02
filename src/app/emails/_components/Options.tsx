@@ -1,8 +1,8 @@
 'use client'
 
-import { Button, Dialog, DropdownOptions, Flex, Select } from '@/once-ui/components'
+import {Button, Chip, Dialog, DropdownOptions, Flex, Select, Text} from '@/once-ui/components'
 import React from 'react'
-import { EmailData } from './EmailContainer'
+import {EmailData} from './EmailContainer'
 import styles from '@/app/emails/_components/sidebar/SideBar.module.css'
 
 export interface FeedbackMessage {
@@ -35,7 +35,7 @@ const Options = (props: OptionsProps) => {
                 title={props.feedbackMessage.title}
                 primaryButtonProps={{
                     disabled: false,
-                    label: 'Confirm',
+                    label: 'Ok',
                     loading: false,
                     onClick: props.onClose,
                     size: 'm',
@@ -55,10 +55,13 @@ const Options = (props: OptionsProps) => {
             >
                 <Flex
                     direction='row'
+                    alignItems='center'
                     gap='m'>
                     <Button
                         onClick={
-                            () => {props.onPhishOption("Phishing")}
+                            () => {
+                                props.onPhishOption("Phishing")
+                            }
                         }
                         variant="primary"
                         size="l"
@@ -67,13 +70,24 @@ const Options = (props: OptionsProps) => {
                     />
                     <Button
                         onClick={
-                            () => {props.onRealOption("Ham")}
+                            () => {
+                                props.onRealOption("Ham")
+                            }
                         }
                         variant="primary"
                         size="l"
                         label="Real"
                         disabled={isChoiceDisable}
                     />
+                    {
+                        props.email.interactions.choice !== "" &&
+                        <Chip
+                            label={props.email.interactions.choice}
+                            selected
+                            onClick={()=>{}}
+                        />
+                    }
+
                 </Flex>
 
                 <Select

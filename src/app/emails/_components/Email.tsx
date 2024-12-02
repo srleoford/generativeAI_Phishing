@@ -1,4 +1,4 @@
-import {DropdownOptions, Flex} from '@/once-ui/components'
+import {DropdownOptions, Flex, Spinner} from '@/once-ui/components'
 import React, {Dispatch, SetStateAction, useState} from 'react'
 import EmailBody from './EmailBody'
 import EmailHeader from './EmailHeader'
@@ -18,6 +18,8 @@ import {
     setSuggestedAction,
     setTimeSpent
 } from '../models/emailAnswer'
+import {createSusceptibilityScoring} from "@/app/utils/susceptibilityScoring";
+import {getNextJsCookies} from "@/app/actions/nextJsCookies";
 
 interface EmailProps {
     emailsInfo: EmailData[],
@@ -29,6 +31,7 @@ interface EmailProps {
 let progress = 0
 let startTime = new Date().getTime()
 let timeElapse = 0
+const totalEmailsPhase2 = 40
 
 export default function Email(props: EmailProps) {
     const token = Cookies.get("userToken") || ""
@@ -39,10 +42,40 @@ export default function Email(props: EmailProps) {
         title: "Correct",
         body: "This is the feedback generated from AI model"
     })
+    const [loadingBlock, setLoadingBlock] = useState(false)
 
     const completeEmail = () => {
         progress++
-        if (props.emailsInfo.length === progress) {
+        if (props.emailsInfo.length === progress && props.emailsInfo.length < totalEmailsPhase2
+            && (props.phase === "phase_2" || props.phase === "phase_3")) {
+            console.log("New Block")
+            const fetchEmails = async () => {
+                setLoadingBlock(true)
+                const scores = createSusceptibilityScoring(props.emailsInfo)
+                const totalScore = Object.values(scores).reduce((sum, item) => sum + item.score, 0)
+                const survey = await getNextJsCookies("survey")
+                const surveyValue = survey?.value
+                const openaiEmails = await fetch('http://localhost:3000/api/generateEmails',
+                    {
+                        method: 'POST',
+                        body: JSON.stringify(
+                            {
+                                surveyValue,
+                                difficulty: totalScore,
+                            }
+                        ),
+                        cache: 'no-store'
+                    }
+                )
+                const blockEmails: EmailData[] = await openaiEmails.json()
+                console.log("Block generated")
+                console.log(blockEmails)
+                const newEmailsData = props.emailsInfo.concat(blockEmails)
+                console.log("New data for Block")
+                props.setEmailsInfo(newEmailsData)
+            }
+            fetchEmails().then(_ => setLoadingBlock(false))
+        } else if (props.emailsInfo.length === progress) {
             setCompletedCookie()
             sendEmailAnswers(
                 token,
@@ -143,6 +176,19 @@ export default function Email(props: EmailProps) {
                 width: "80%"
             }}
         >
+
+            {
+                loadingBlock &&
+                <Spinner
+                    size="xl"
+                    style={{
+                        width:'70px', height:'70px',
+                        position: "absolute",
+                        top: "50%", right: "50%"
+                    }}
+                />
+            }
+
             <EmailHeader
                 info={props.emailsInfo[props.emailIndex]}
                 onSenderClick={() => {

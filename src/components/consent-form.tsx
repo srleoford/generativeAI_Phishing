@@ -1,7 +1,7 @@
 import { useFormState } from "react-dom";
 import { consent } from '@/app/lib/data'
 import { userConsent } from "@/app/actions/actions";
-import { DefaultButton } from "@/app/ui/button"
+import { DefaultButton } from "@/components/button"
 import { Flex } from '@/once-ui/components'
 // import SignatureCaptureComponent from "@/components/signature";
 

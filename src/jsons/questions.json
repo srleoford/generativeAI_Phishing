@@ -1,48 +1,11 @@
-'use client'
-import 'survey-core/defaultV2.min.css';
-
-import { Survey } from 'survey-react-ui';
-import React from "react";
-//import { Flex, Skeleton } from "@/once-ui/components";
-import { Model } from "survey-core";
-import { DefaultLight  } from "survey-core/themes";
-import { useRouter } from 'next/navigation';
-import Cookies from 'js-cookie';
-import { loadPreviousAnswers } from '@/app/utils/cookies'
-import { useEffect } from 'react';
-import { insertSurveyData } from '@/app/utils/pinecone'
-import {setNextCookie} from "@/app/actions/nextJsCookies";
-
-
-export default function SurveyForm() {
-
-  const router = useRouter();
-	/**
-	 * 	Scores for profiling the user from the results
-	 */
-	const profileScores = {
-		"Low Risk": 1,
-		"Moderate Risk": 2,
-		"High Risk": 3
-	}
-    
-	/**
-	 * 	The initial questions are grouped by category. Each category has an ID, title, and an array of questions.
-	 * 		Each question has a question prompt ('questions'), answers ('options'), and response (for input from user)
-	 */
-     
-    const surveyJson = {
-  "title": "Profiling Survey",
-  "pages": [
+{
+  "questions": [
     {
-      "name": "page1",
       "title": "Demographics",
       "elements": [
         {
-          "type": "radiogroup",
           "name": "question1",
           "title": "What is your age group?",
-          "isRequired": true,
           "choices": [
             {
               "value": "Item 1",
@@ -63,10 +26,8 @@ export default function SurveyForm() {
           ]
         },
         {
-          "type": "radiogroup",
           "name": "question2",
           "title": "What is the highest level of education you have completed?",
-          "isRequired": true,
           "choices": [
             {
               "value": "Item 1",
@@ -94,9 +55,6 @@ export default function SurveyForm() {
           "type": "radiogroup",
           "name": "question3",
           "title": "What is your current job title or field of work?",
-          "isRequired": true,
-          "showCommentArea": true,
-          "commentText": "Other (specify) :",
           "choices": [
             {
               "value": "Item 1",
@@ -113,10 +71,8 @@ export default function SurveyForm() {
           ]
         },
         {
-          "type": "radiogroup",
           "name": "question4",
           "title": "How would you rate your proficiency in understanding and using the English language?",
-          "isRequired": true,
           "choices": [
             {
               "value": "Item 1",
@@ -143,14 +99,11 @@ export default function SurveyForm() {
       ]
     },
     {
-      "name": "page2",
       "title": "Technical Knowledge and Security Training",
       "elements": [
         {
-          "type": "radiogroup",
           "name": "question5",
           "title": "Do you frequently work with technology (e.g., email, cloud platform) ?",
-          "isRequired": true,
           "choices": [
             {
               "value": "Item 1",
@@ -167,10 +120,8 @@ export default function SurveyForm() {
           ]
         },
         {
-          "type": "radiogroup",
           "name": "question6",
           "title": "How confident are you in your ability to identify phishing emails or scams?",
-          "isRequired": true,
           "choices": [
             {
               "value": "Item 1",
@@ -191,10 +142,8 @@ export default function SurveyForm() {
           ]
         },
         {
-          "type": "radiogroup",
           "name": "question7",
           "title": "Have you received any cybersecurity or phishing awareness training in the last 12 months?",
-          "isRequired": true,
           "choices": [
             {
               "value": "Item 1",
@@ -213,14 +162,11 @@ export default function SurveyForm() {
       ]
     },
     {
-      "name": "page3",
       "title": "Social and Environmental Factors",
       "elements": [
         {
-          "type": "radiogroup",
           "name": "question8",
           "title": "How often do you use social media (e.g., Facebook, LinkedIn, Instagram)?",
-          "isRequired": true,
           "choices": [
             {
               "value": "Item 1",
@@ -237,10 +183,8 @@ export default function SurveyForm() {
           ]
         },
         {
-          "type": "radiogroup",
           "name": "question9",
           "title": "Do you accept friend requests or connect with people you don't personally know on social media?",
-          "isRequired": true,
           "choices": [
             {
               "value": "Item 1",
@@ -257,10 +201,8 @@ export default function SurveyForm() {
           ]
         },
         {
-          "type": "radiogroup",
           "name": "question10",
           "title": "Do you share personal or work-related information on your social media profiles?",
-          "isRequired": true,
           "choices": [
             {
               "value": "Item 1",
@@ -277,10 +219,8 @@ export default function SurveyForm() {
           ]
         },
         {
-          "type": "radiogroup",
           "name": "question11",
           "title": "Does your organization conduct regular security training or simulated phishing attacks?",
-          "isRequired": true,
           "choices": [
             {
               "value": "Item 1",
@@ -299,14 +239,11 @@ export default function SurveyForm() {
       ]
     },
     {
-      "name": "page4",
       "title": "Emotional/Cognitive Bias",
       "elements": [
         {
-          "type": "radiogroup",
           "name": "question12",
           "title": "How do you typically respond to urgent emails requesting immediate action (e.g., account lockout, payment issues)?",
-          "isRequired": true,
           "choices": [
             {
               "value": "Item 1",
@@ -323,10 +260,8 @@ export default function SurveyForm() {
           ]
         },
         {
-          "type": "radiogroup",
           "name": "question13",
           "title": "Are you more likely to trust emails from senior management or authorities without question?",
-          "isRequired": true,
           "choices": [
             {
               "value": "Item 1",
@@ -343,10 +278,8 @@ export default function SurveyForm() {
           ]
         },
         {
-          "type": "radiogroup",
           "name": "question14",
           "title": "How do you respond to unexpected rewards or offers (e.g., winning a prize, getting a free service)?",
-          "isRequired": true,
           "choices": [
             {
               "value": "Item 1",
@@ -364,80 +297,5 @@ export default function SurveyForm() {
         }
       ]
     }
-  ],
-  "showPrevButton": false,
-  "requiredText": "(*)",
-  "questionStartIndex": "1"
-};
-    
-  const survey = new Model(surveyJson);
-  survey.applyTheme(DefaultLight);
-
-  useEffect(() => {
-          loadPreviousAnswers(survey)
-    }, []);
-
-  survey.onCurrentPageChanged.add(function (sender, options) {
-      Cookies.set('surveyAnswers',JSON.stringify(sender.data))
-      console.log(Cookies.get('surveyAnswers'))
-  });
-
-  survey.onComplete.add(function (sender, options) {
-
-    console.log(sender.data)
-    // Display the "Saving..." message (pass a string value to display a custom message)
-    options.showSaveInProgress();
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", "http://localhost:3000");
-    xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
-    xhr.onload = xhr.onerror = function () {
-      if (xhr.status == 200) {
-        //options.showSaveSuccess();
-        Cookies.set("surveySubmitted","true")
-
-        const selectedChoicesText = {};
-
-        survey.getAllQuestions().forEach((question) => {
-          // Only process questions with choices (checkbox, radiogroup, dropdown)
-          if (question.choices && question.value) {
-            const selectedValues = Array.isArray(question.value) ? question.value : [question.value];
-
-            // Map selected values to their corresponding text
-            const texts = selectedValues.map(value => {
-              const choice = question.choices.find(choice => choice.value === value);
-              return choice ? choice.text : value;
-            });
-
-            // If only one choice was selected, store as a string; otherwise, store as an array
-            selectedChoicesText[question.name] = texts.length === 1 ? texts[0] : texts;
-          }
-        });
-
-        console.log(JSON.stringify(selectedChoicesText));
-        insertSurveyData(JSON.stringify(selectedChoicesText), Cookies.get('email'), Cookies.get('userToken'))
-        setNextCookie("token", Cookies.get('userToken'))
-        setNextCookie("survey", JSON.stringify(selectedChoicesText))
-        router.push("/instructions");
-      } else {
-        // Display the "Error" message (pass a string value to display a custom message)
-        options.showSaveError();
-      }
-  };
-  xhr.send(JSON.stringify(sender.data));
-});
-  const fillSurveyWithRandomChoices = () => {
-    survey.getAllQuestions().forEach((question) => {
-        if (question.getType() === "radiogroup") {
-            const choices = question.choices;
-            const randomIndex = Math.floor(Math.random() * choices.length);
-            question.value = choices[randomIndex].value;
-        }
-    });
-  };
-  return (
-    <div>
-        <button onClick={fillSurveyWithRandomChoices}>Fill Survey with Random Choices</button>
-        <Survey model={survey} />
-    </div>
-  );
+  ]
 }

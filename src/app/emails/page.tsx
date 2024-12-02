@@ -3,8 +3,11 @@ import React from 'react'
 import {ResponseRoute} from '../api/phases/route'
 import EmailContainer, {EmailData} from './_components/EmailContainer'
 import HandlePhasesNavigation from "@/components/cookies-email-phases";
+import {cookies} from "next/headers";
 
 const EmailsPage = async () => {
+    const cookieStore = await cookies()
+    const survey = cookieStore.get('survey')?.value
 
     const data = await fetch('http://localhost:3000/api/phases', {cache: 'no-store'})
     const routeResponse: ResponseRoute = await data.json()
@@ -23,7 +26,19 @@ const EmailsPage = async () => {
 
         case "phase_2": {
             newRoute = "phase_3"
-            const openaiEmails = await fetch('http://localhost:3000/api/generateEmails', {cache: 'no-store'})
+            const openaiEmails = await fetch(
+                'http://localhost:3000/api/generateEmails',
+                {
+                    method: 'POST',
+                    body: JSON.stringify(
+                        {
+                            survey,
+                            difficulty: 10,
+                        }
+                    ),
+                    cache: 'no-store'
+                }
+            )
             emailsContent = await openaiEmails.json()
             break
         }

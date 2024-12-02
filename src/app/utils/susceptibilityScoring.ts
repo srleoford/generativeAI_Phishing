@@ -23,7 +23,7 @@ const average = (array: number[]) =>
  * @param answers
  * @requires answers.length == length of a block of emails
  */
-export const createSusceptibilityScoring = async (
+export const createSusceptibilityScoring = (
     answers: EmailData[]
 )=> {
     let mouseHovers: number[] = []

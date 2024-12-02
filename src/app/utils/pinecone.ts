@@ -243,7 +243,7 @@ export const submitAnswers = async (
     const jsonString = JSON.stringify(emailInteractions)
 
     // Creates the indices and values for the sparse vector for susceptibility scores
-    const scores = await createSusceptibilityScoring(answers)
+    const scores = createSusceptibilityScoring(answers)
     const sparseIndices = [1,2,3,4,5]
     const sparseValues = []
 

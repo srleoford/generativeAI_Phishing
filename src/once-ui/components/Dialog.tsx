@@ -138,12 +138,6 @@ const Dialog: React.FC<DialogProps> = forwardRef<HTMLDivElement, DialogProps>(({
                             variant="heading-strong-l">
                             {title}
                         </Heading>
-                        <IconButton
-                            icon="close"
-                            size="m"
-                            variant="tertiary"
-                            tooltip="Close"
-                            onClick={onClose} />
                     </Flex>
                     {description && (
                         <Text
