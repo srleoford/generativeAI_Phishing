@@ -77,7 +77,7 @@ const SummaryPage = () => {
 
   useEffect(() => {
     // Retrieve the token using js-cookie
-    //Cookies.set('userToken','ZW1haWxAZW1haWwuY29tYTNhZDU5NWNhMGJmNjdhNzM3MGMzMzIzOTlkZTEzMjA=')
+    Cookies.set('userToken','c0B5bWFpbC5jb20yOTQ0YTUyYzU0MWZkYzk3YzRmNjVmM2JjNmYyZWM4YQ==')
     const token = Cookies.get('userToken');
     if (token) {
       setUserToken(token);
@@ -92,20 +92,29 @@ const SummaryPage = () => {
       (async () => {
         const response = await getAnswers(userToken);
         setAnswers(response);
-        console.log(response)
+        // console.log(response)
+
+        const jsonString1 = response[0].matches[0].metadata?.results as string;
         const jsonString2 = response[1].matches[0].metadata?.results as string;
         const jsonString3 = response[2].matches[0].metadata?.results as string;
+        // console.log(jsonString1)
 
+        const jsonObject1 = JSON.parse(jsonString1);
         const jsonObject2 = JSON.parse(jsonString2);
         const jsonObject3 = JSON.parse(jsonString3);
+        // console.log(jsonObject1)
 
+        const statsp1 = calculatePhaseStats(jsonObject1);
         const statsp2 = calculatePhaseStats(jsonObject2);
         const statsp3 = calculatePhaseStats(jsonObject3);
+        // console.log(statsp1)
 
-        const allPhasesData = [jsonObject2, jsonObject3];
+        const allPhasesData = [jsonObject1, jsonObject2, jsonObject3];
+        // console.log(allPhasesData)
         const overallStats = calculateAllPhasesStats(allPhasesData);
 
         setOverallStats({
+          statsp1,
           statsp2,
           statsp3,
           overallStats,
@@ -118,7 +127,7 @@ const SummaryPage = () => {
     return <p>Loading statistics...</p>;
   }
 
-  const { statsp2, statsp3, overallStats: summary } = overallStats;
+  const { statsp1, statsp2, statsp3, overallStats: summary } = overallStats;
 
   return (
     <Flex fillWidth paddingTop="l" paddingX="l" direction="column" alignItems="center" flex={1}>
@@ -144,7 +153,7 @@ const SummaryPage = () => {
           gap="l"
         >
           <Flex mobileDirection="column" fillWidth gap="24">
-            <Flex position="relative" flex={4} gap="24" marginBottom="104" direction="column">
+            <Flex position="relative" flex={4} gap="24" direction="column">
               <Heading variant="display-strong-s" align="center" wrap="balance">
                 <p><span className="font-code">Test Summary</span></p>
               </Heading>
@@ -152,28 +161,45 @@ const SummaryPage = () => {
           </Flex>
         </Flex>
       </Flex>
-      {/* Block 2 */}
-      <Flex as="section">
-        <Text>Correct: {statsp2.totalCorrectChoices}</Text>
-        <Text>Incorrect: {statsp2.totalIncorrectChoices}</Text>
-        <Text>Total time spent: {statsp2.totalTimeSpent}</Text>
-        <Text>Avg time spent per email: {statsp2.avgTimeSpent}</Text>
+      <Flex mobileDirection="column" fillWidth gap="24">
+        <Flex position="relative" flex={4} gap="24" marginBottom="104" direction="column" align="center">
+          {/* Phase 1 Statistics */}
+          <Flex as="section" direction="column" gap="8" padding="m">
+            <Heading>Phase 1 Statistics</Heading>
+            <Text>Correct: {statsp1.totalCorrectChoices}</Text>
+            <Text>Incorrect: {statsp1.totalIncorrectChoices}</Text>
+            <Text>Total time spent: {statsp1.totalTimeSpent}</Text>
+            <Text>Avg time spent per email: {statsp1.avgTimeSpent}</Text>
+          </Flex>
+          {/* Phase 2 Statistics */}
+          <Flex as="section" direction="column" gap="8" padding="m">
+            <Heading>Phase 2 Statistics</Heading>
+            <Text>Correct: {statsp2.totalCorrectChoices}</Text>
+            <Text>Incorrect: {statsp2.totalIncorrectChoices}</Text>
+            <Text>Total time spent: {statsp2.totalTimeSpent}</Text>
+            <Text>Avg time spent per email: {statsp2.avgTimeSpent}</Text>
+          </Flex>
+
+          {/* Phase 3 Statistics */}
+          <Flex as="section" direction="column" gap="8" padding="m">
+            <Heading>Phase 3 Statistics</Heading>
+            <Text>Correct: {statsp3.totalCorrectChoices}</Text>
+            <Text>Incorrect: {statsp3.totalIncorrectChoices}</Text>
+            <Text>Total time spent: {statsp3.totalTimeSpent}</Text>
+            <Text>Avg time spent per email: {statsp3.avgTimeSpent}</Text>
+          </Flex>
+
+          {/* Overall Summary */}
+          <Flex as="section" direction="column" gap="8" padding="m">
+            <Heading>Overall Summary</Heading>
+            <Text>Correct: {summary.totalCorrectChoices}</Text>
+            <Text>Incorrect: {summary.totalIncorrectChoices}</Text>
+            <Text>Total time spent: {summary.totalTimeSpent}</Text>
+            <Text>Avg time spent per email: {summary.avgTimeSpent}</Text>
+          </Flex>
+        </Flex>
       </Flex>
-      {/* Block 3 */}
-      <Flex as="section">
-        <Text>Correct: {statsp3.totalCorrectChoices}</Text>
-        <Text>Incorrect: {statsp3.totalIncorrectChoices}</Text>
-        <Text>Total time spent: {statsp3.totalTimeSpent}</Text>
-        <Text>Avg time spent per email: {statsp3.avgTimeSpent}</Text>
-      </Flex>
-      {/* Summary */}
-      <Flex as="section">
-        <Text>Correct: {summary.totalCorrectChoices}</Text>
-        <Text>Incorrect: {summary.totalIncorrectChoices}</Text>
-        <Text>Total time spent: {summary.totalTimeSpent}</Text>
-        <Text>Avg time spent per email: {summary.avgTimeSpent}</Text>
-      </Flex>
-    </Flex>
+          </Flex>
   );
 };
 
