@@ -77,7 +77,7 @@ const SummaryPage = () => {
 
   useEffect(() => {
     // Retrieve the token using js-cookie
-    Cookies.set('userToken','c0B5bWFpbC5jb20yOTQ0YTUyYzU0MWZkYzk3YzRmNjVmM2JjNmYyZWM4YQ==')
+    // Cookies.set('userToken','c0B5bWFpbC5jb20yOTQ0YTUyYzU0MWZkYzk3YzRmNjVmM2JjNmYyZWM4YQ==')
     const token = Cookies.get('userToken');
     if (token) {
       setUserToken(token);
