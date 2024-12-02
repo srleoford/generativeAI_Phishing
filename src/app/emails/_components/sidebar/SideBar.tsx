@@ -15,6 +15,7 @@ const SideBar = (props: SideBarProps) => {
         <Flex
             gap='4'
             fillHeight
+            overflowY="scroll"
             border="brand-strong"
             borderStyle="solid-1"
             padding="xs"

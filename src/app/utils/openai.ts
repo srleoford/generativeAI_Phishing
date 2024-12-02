@@ -2,6 +2,8 @@ import OpenAI from "openai";
 import dotenv from "dotenv";
 import { z } from "zod";
 import { zodResponseFormat } from "openai/helpers/zod";
+import emailTemplates from '../../jsons/emailTemplates.json'
+import questions from "../../jsons/questions.json"
 
 dotenv.config()
 
@@ -25,15 +27,28 @@ const emailsArrayFormat = z.object({
     emails: z.array(generateEmailFormat).describe("Emails generated")
 })
 
-export async function generate() {
+export async function generate(profile: string, difficulty: number) {
+    const emails = emailTemplates.emails.map((emailBase64) => {
+        return atob(emailBase64);
+    })
+
     const response = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         messages: [
-            { role: "system", content: "You are an Email generator AI. We need you to generate training emails" },
-            { role: "system", content: "Add design to the HTML generated, use css and any necessary HTML component" },
-            { role: "system", content: "Be careful with the margins in the HTML" },
+            { role: "system", content: "You are an Email generator AI. We need you to generate training phishing emails" },
+            { role: "system", content: "Adapt the emails using next profiling data: " + profile},
+            { role: "system", content: "The questions used for the profile were: " + JSON.stringify(questions) },
+            { role: "system", content: "Add design to the HTML generated, you can use css and any necessary HTML component" },
+            { role: "system", content: "If you add HTML buttons, add enough margin around them" },
+            { role: "system", content: "Be careful with the margins between components in the HTML" },
             { role: "system", content: "All emails should be different" },
             { role: "system", content: "Consider for design that HTML will be displayed in a white background" },
+            { role: "system", content: "Use next body email as template 1: " + emails[0]},
+            { role: "system", content: "Use next body email as template 2: " + emails[1]},
+            { role: "system", content: "Use next body email as template 3: " + emails[2]},
+            { role: "system", content: "Do not use the name of the email recipient on the body and subject" },
+            { role: "system", content: "Adjust the difficulty of the emails according to this number: " + difficulty },
+            { role: "system", content: "15 (least difficult), 5 (most difficult)" },
             { role: "user", content: "Generate 5 emails, phishing and no phishing (5 in total)" }
         ],
         response_format: zodResponseFormat(emailsArrayFormat, "emails_format")
