@@ -6,7 +6,7 @@ import {phase1Body, phase1Title, phase2Title, phase3Title, phase2Body, phase3Bod
 import InstructionsBody from './_components/InstructionsBody';
 import {ResponseRoute} from '../api/phases/route';
 import HandlePhasesNavigation from '@/components/cookies-email-phases'
-
+import { redirect } from "next/navigation";
 const InstructionsPage = async () => {
     let title, body: string
 
@@ -34,11 +34,18 @@ const InstructionsPage = async () => {
         }
 
         default: {
-            title = "Thank you, now you can close the browser"
+            // Redirect to the summary page if the route is not valid
+            title = "Thank you, you will now be redirected to the summary page."
             body = ""
+            
+            // Redirect after a small delay 
+            setTimeout(() => {
+              redirect("/summary") // This will redirect to the /summary page
+            }, 2000)
+      
             break
+          }
         }
-    }
 
     return (
         <Flex

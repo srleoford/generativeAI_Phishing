@@ -10,9 +10,11 @@
 	},
 	"dependencies": {
 		"@floating-ui/react-dom": "^2.1.2",
+		"@huggingface/inference": "^2.8.1",
 		"@pinecone-database/pinecone": "^3.0.3",
 		"bootstrap": "^5.3.3",
 		"classnames": "^2.5.1",
+		"datasets": "^0.1.0",
 		"dotenv": "^16.4.5",
 		"html-react-parser": "^5.1.18",
 		"js-cookie": "^3.0.5",
@@ -20,6 +22,8 @@
 		"next": "^14.2.14",
 		"next-auth": "^4.24.8",
 		"openai": "^4.72.0",
+		"pinecone": "^0.1.0",
+		"pip": "^0.0.1",
 		"postcss": "^8.4.47",
 		"postcss-preset-env": "^9.6.0",
 		"react": "^18.3.1",
@@ -28,6 +32,7 @@
 		"sass": "^1.77.6",
 		"sharp": "^0.33.4",
 		"survey-react-ui": "^1.12.3",
+		"transformers": "^3.1.0",
 		"zod": "^3.23.8"
 	},
 	"devDependencies": {
