@@ -1,0 +1,50 @@
+.carousel {
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: center;
+  width: -moz-fit-content;
+  width: 50%;
+  height: -moz-fit-content;
+  height: fit-content;
+  overflow: hidden;
+  position: absolute;
+  margin-top: 160px;
+}
+
+.carousel::before {
+  content: "Verify Links: Always hover over links to check the URL before clicking. Phishing sites often mimic legitimate ones.";
+  animation: changeText 100s infinite; /* Total duration: 100 seconds */
+}
+
+@keyframes changeText {
+  0%, 10% {
+    content: "Verify Links: Always hover over links to check the URL before clicking. Phishing sites often mimic legitimate ones.";
+  }
+  10.1%, 20% {
+    content: "Watch for Urgency: Scammers use urgency to trick you into acting quickly. Pause and verify first.";
+  }
+  20.1%, 30% {
+    content: "Check Email Addresses: Fake emails may look real but often have slight misspellings in the sender's address.";
+  }
+  30.1%, 40% {
+    content: "Avoid Attachments: Don’t download unexpected email attachments. They might contain malware.";
+  }
+  40.1%, 50% {
+    content: "Don’t Share Sensitive Info: Legitimate companies never ask for passwords or sensitive data via email.";
+  }
+  50.1%, 60% {
+    content: "Secure Login: Always log in to sensitive accounts through their official website, not links from emails.";
+  }
+  60.1%, 70% {
+    content: "Look for Spelling Errors: Poor grammar and spelling mistakes are red flags for phishing attempts.";
+  }
+  70.1%, 80% {
+    content: "Enable Two-Factor Authentication: 2FA adds an extra layer of security even if credentials are stolen.";
+  }
+  80.1%, 90% {
+    content: "Beware of Spoofed Phone Numbers: Scammers can fake caller IDs. Verify calls independently if in doubt.";
+  }
+  90.1%, 100% {
+    content: "Stay Informed: Phishing tactics evolve. Regularly update your knowledge to stay safe online.";
+  }
+}

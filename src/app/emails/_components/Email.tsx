@@ -20,6 +20,7 @@ import {
 } from '../models/emailAnswer'
 import {createSusceptibilityScoring} from "@/app/utils/susceptibilityScoring";
 import {getNextJsCookies} from "@/app/actions/nextJsCookies";
+import Loader from '../loading'
 
 interface EmailProps {
     emailsInfo: EmailData[],
@@ -50,7 +51,11 @@ export default function Email(props: EmailProps) {
             && (props.phase === "phase_2" || props.phase === "phase_3")) {
             console.log("New Block")
             const fetchEmails = async () => {
+                let body = document.getElementsByClassName("flex-row")[0];
+                body.style.pointerEvents = 'none';
+                
                 setLoadingBlock(true)
+
                 const scores = createSusceptibilityScoring(props.emailsInfo)
                 const totalScore = Object.values(scores).reduce((sum, item) => sum + item.score, 0)
                 const survey = await getNextJsCookies("survey")
@@ -74,7 +79,12 @@ export default function Email(props: EmailProps) {
                 console.log("New data for Block")
                 props.setEmailsInfo(newEmailsData)
             }
-            fetchEmails().then(_ => setLoadingBlock(false))
+            fetchEmails().then(() =>  {
+                    setLoadingBlock(false)
+                    let body = document.getElementsByClassName("flex-row")[0];
+                    body.style.pointerEvents = 'all';
+                }
+            )
         } else if (props.emailsInfo.length === progress) {
             setCompletedCookie()
             sendEmailAnswers(
@@ -171,6 +181,7 @@ export default function Email(props: EmailProps) {
             // onSolid="brand-strong"
             // solid="neutral-weak"
             direction='column'
+           
             style={{
                 background: "white",
                 width: "80%"
@@ -179,14 +190,27 @@ export default function Email(props: EmailProps) {
 
             {
                 loadingBlock &&
-                <Spinner
-                    size="xl"
-                    style={{
-                        width:'70px', height:'70px',
-                        position: "absolute",
-                        top: "50%", right: "50%"
-                    }}
-                />
+                <>
+                  <div style={{color:'white',zIndex:'1001',height:'0px'}}><Loader/></div>  
+                <div className='overlay'>
+                </div>
+                <style jsx>{`
+                    .overlay {
+                      position: fixed;
+                      top: 0;
+                      left: 0;
+                      width: 100%;
+                      height: 100%;
+                      filter: blur(2px);
+                      background: rgba(0, 0, 0, 0.8);
+                      display: flex;
+                      justify-content: center;
+                      align-items: center;
+                      z-index: 1000;
+                      pointer-events: none; /* Prevent clicks in the overlay */
+                    }
+                  `}</style>
+                  </>
             }
 
             <EmailHeader
