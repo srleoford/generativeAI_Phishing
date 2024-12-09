@@ -21,6 +21,20 @@ export interface OptionsProps {
     feedbackSuggestion: string,
 }
 
+const options = [
+    { label: 'Respond to this email', value: 'respond' },
+    { label: 'Click Link/Open attachment', value: 'click_open' },
+    { label: 'Check sender', value: 'checkSender' },
+    { label: 'Check link', value: 'checkLink' },
+    { label: 'Delete email', value: 'delete' },
+    { label: 'Report this email', value: 'report' },
+];
+
+const getLabelFromValue = (value) => {
+    const option = options.find((opt) => opt.value === value);
+    return option ? option.label : '';
+};
+
 const Options = (props: OptionsProps) => {
     const isChoiceDisable = props.email.interactions.isCorrect !== undefined
     const isActionDisable = props.email.interactions.suggestedAction !== ""
@@ -94,33 +108,8 @@ const Options = (props: OptionsProps) => {
                     id={"suggestAction"}
                     className={styles.suggestedAction}
                     label="Choose suggested action"
-                    options={[
-                        {
-                            label: 'Respond to this email',
-                            value: 'respond'
-                        },
-                        {
-                            label: 'Click Link/Open attachment',
-                            value: 'click_open'
-                        },
-                        {
-                            label: 'Check sender',
-                            value: 'checkSender'
-                        },
-                        {
-                            label: 'Check link',
-                            value: 'checkLink'
-                        },
-                        {
-                            label: 'Delete email',
-                            value: 'delete'
-                        },
-                        {
-                            label: 'Report this email',
-                            value: 'report'
-                        }
-                    ]}
-                    value={props.feedbackSuggestion}
+                    options={options}
+                    value={getLabelFromValue(props.feedbackSuggestion)}
                     onSelect={props.onSetAction}
                     disabled={isActionDisable}
                 />

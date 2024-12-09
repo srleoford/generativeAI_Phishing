@@ -40,7 +40,7 @@ const SideBar = (props: SideBarProps) => {
             >
                 {
                     props.emailsInfo.map((element, index) => {
-                        if (element.interactions.isCorrect === undefined) {
+                        if (element.interactions.isCorrect === undefined || element.interactions.suggestedAction === '') {
                             return (
                                 <EmailItem
                                     key={index}
@@ -63,7 +63,7 @@ const SideBar = (props: SideBarProps) => {
             >
                 {
                     props.emailsInfo.map((element, index) => {
-                        if (element.interactions.isCorrect !== undefined) {
+                        if (element.interactions.isCorrect !== undefined && element.interactions.suggestedAction !== '') {
                             if (!isReadOpen) {
                                 setIsReadOpen(true)
                             }

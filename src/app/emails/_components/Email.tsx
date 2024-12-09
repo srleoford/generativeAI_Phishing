@@ -238,7 +238,7 @@ export default function Email(props: EmailProps) {
                 onPhishOption={onOptionSelected}
                 onRealOption={onOptionSelected}
                 onSetAction={setSuggestAction}
-                feedbackSuggestion={suggestedAction}
+                feedbackSuggestion={props.emailsInfo[props.emailIndex].interactions.suggestedAction}
             />
             <ProgressBar index={progress} total={props.emailsInfo.length}/>
         </Flex>
