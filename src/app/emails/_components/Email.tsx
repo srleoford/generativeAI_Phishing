@@ -21,6 +21,7 @@ import {
 import {createSusceptibilityScoring} from "@/app/utils/susceptibilityScoring";
 import {getNextJsCookies} from "@/app/actions/nextJsCookies";
 import Loader from '../loading'
+import {numberOfBlocksPhase2, numberOfEmailsPerBlock,numberOfTotalAttentionChecks} from  '../emailsConfiguration'
 
 interface EmailProps {
     emailsInfo: EmailData[],
@@ -32,7 +33,6 @@ interface EmailProps {
 let progress = 0
 let startTime = new Date().getTime()
 let timeElapse = 0
-const totalEmailsPhase2 = 40
 
 export default function Email(props: EmailProps) {
     const token = Cookies.get("userToken") || ""
@@ -47,10 +47,10 @@ export default function Email(props: EmailProps) {
 
     const completeEmail = () => {
         progress++
-        if (props.emailsInfo.length === progress && props.emailsInfo.length < totalEmailsPhase2
+        if (props.emailsInfo.length === progress && props.emailsInfo.length < (numberOfBlocksPhase2 * numberOfEmailsPerBlock)
             && (props.phase === "phase_2" || props.phase === "phase_3")) {
-            console.log("New Block")
             const fetchEmails = async () => {
+                //Disable pointer events while emails are being generated
                 let body = document.getElementsByClassName("flex-row")[0];
                 body.style.pointerEvents = 'none';
                 
@@ -67,20 +67,40 @@ export default function Email(props: EmailProps) {
                             {
                                 surveyValue,
                                 difficulty: totalScore,
+                                numberOfEmails: numberOfEmailsPerBlock
                             }
                         ),
                         cache: 'no-store'
                     }
                 )
-                const blockEmails: EmailData[] = await openaiEmails.json()
-                console.log("Block generated")
-                console.log(blockEmails)
+                let blockEmails: EmailData[] = await openaiEmails.json()
+
+                if (props.phase === 'phase_2') {
+                    const numberOfProcessedAttentionChecks = props.emailsInfo.filter(email => email.emailType.toLowerCase() === 'attention_check').length
+
+                    if (numberOfProcessedAttentionChecks < numberOfTotalAttentionChecks) {
+                         // Select a random block from the blocks yet to process
+                        const randomIndex = Math.floor(Math.random() * (numberOfBlocksPhase2 - ((props.emailsInfo.length - numberOfProcessedAttentionChecks)/numberOfEmailsPerBlock)));
+    
+                        // Check if the randomly selected block is the first block
+                        let isFirstSelected = randomIndex === 0;
+                        isFirstSelected = true
+                        if (isFirstSelected) {
+                            //Get random attention check and add it to block of emails
+                            const attentionCheckData = await fetch('http://localhost:3000/api/dataset', {method:'POST',cache: 'no-store'})
+                            let attentionCheckContent: EmailData[]
+                            attentionCheckContent = await attentionCheckData.json()
+                            blockEmails = blockEmails.concat(attentionCheckContent)
+                        }
+                    }
+                }
+                
                 const newEmailsData = props.emailsInfo.concat(blockEmails)
-                console.log("New data for Block")
                 props.setEmailsInfo(newEmailsData)
             }
             fetchEmails().then(() =>  {
                     setLoadingBlock(false)
+                    //Enable back pointer events after emails have loaded
                     let body = document.getElementsByClassName("flex-row")[0];
                     body.style.pointerEvents = 'all';
                 }

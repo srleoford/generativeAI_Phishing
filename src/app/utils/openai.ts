@@ -27,7 +27,7 @@ const emailsArrayFormat = z.object({
     emails: z.array(generateEmailFormat).describe("Emails generated")
 })
 
-export async function generate(profile: string, difficulty: number) {
+export async function generate(profile: string, difficulty: number, numberOfEmails: number) {
     const emails = emailTemplates.emails.map((emailBase64) => {
         return atob(emailBase64);
     })
@@ -49,7 +49,7 @@ export async function generate(profile: string, difficulty: number) {
             { role: "system", content: "Do not use the name of the email recipient on the body and subject" },
             { role: "system", content: "Adjust the difficulty of the emails according to this number: " + difficulty },
             { role: "system", content: "15 (least difficult), 5 (most difficult)" },
-            { role: "user", content: "Generate 5 emails, phishing and no phishing (5 in total)" }
+            { role: "user", content: "Generate " + numberOfEmails + " emails, phishing and no phishing (" + numberOfEmails + " in total)" }
         ],
         response_format: zodResponseFormat(emailsArrayFormat, "emails_format")
     })

@@ -4,6 +4,7 @@ import {ResponseRoute} from '../api/phases/route'
 import EmailContainer, {EmailData} from './_components/EmailContainer'
 import HandlePhasesNavigation from "@/components/cookies-email-phases";
 import {cookies} from "next/headers";
+import {numberOfPhase3Emails,numberOfBlocksPhase2,numberOfEmailsPerBlock} from  '../emails/emailsConfiguration'
 
 const EmailsPage = async () => {
     const cookieStore = await cookies()
@@ -13,6 +14,7 @@ const EmailsPage = async () => {
     const routeResponse: ResponseRoute = await data.json()
 
     let emailsContent: EmailData[]
+    let attentionCheckContent: EmailData[]
     let newRoute: string
 
     switch (routeResponse.route) {
@@ -34,12 +36,27 @@ const EmailsPage = async () => {
                         {
                             survey,
                             difficulty: 10,
+                            numberOfEmails: numberOfEmailsPerBlock
                         }
                     ),
                     cache: 'no-store'
                 }
             )
+
             emailsContent = await openaiEmails.json()
+
+             // Select a random block from the total number of blocks
+            const randomIndex = Math.floor(Math.random() * numberOfBlocksPhase2);
+
+            // Check if the randomly selected block is the first block
+            let isFirstSelected = randomIndex === 0;
+            isFirstSelected = true
+            if (isFirstSelected) {
+                //Get random attention check and add it to block of emails
+                const attentionCheckData = await fetch('http://localhost:3000/api/dataset', {method:'POST',cache: 'no-store'})
+                attentionCheckContent = await attentionCheckData.json()
+                emailsContent = emailsContent.concat(attentionCheckContent)
+            }
             break
         }
 
@@ -53,6 +70,7 @@ const EmailsPage = async () => {
                         {
                             survey,
                             difficulty: 10,
+                            numberOfEmails: numberOfPhase3Emails
                         }
                     ),
                     cache: 'no-store'
