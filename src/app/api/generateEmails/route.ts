@@ -6,11 +6,12 @@ import {emptyEmailAnswer} from "@/app/emails/models/emailAnswer";
 export interface RequestBody {
     profile: string
     difficulty: number
+    numberOfEmails: number
 }
 
 export async function POST(requestBody: NextRequest) {
     const body: RequestBody = await requestBody.json()
-    const generatedEmails = await generate(body.profile) || ""
+    const generatedEmails = await generate(body.profile, body.difficulty, body.numberOfEmails) || ""
 
     const jsonEmails:{ emails: [] } = JSON.parse(generatedEmails)
 
