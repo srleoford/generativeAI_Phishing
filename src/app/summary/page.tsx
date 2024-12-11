@@ -12,6 +12,9 @@ const calculatePhaseStats = (phaseData: any[]) => {
   let totalOpeningAttachments = 0;
   let totalCorrectChoices = 0;
   let totalIncorrectChoices = 0;
+  let totalHam = 0;
+  let totalPhishing = 0;
+  const suggestedActionsCount: { [key: string]: number } = {};
 
   phaseData.forEach((email) => {
     const interactions = email.interactions;
@@ -22,7 +25,16 @@ const calculatePhaseStats = (phaseData: any[]) => {
     if (interactions.openingAttachments) totalOpeningAttachments++;
     if (interactions.isCorrect) totalCorrectChoices++;
     else totalIncorrectChoices++;
+    if (interactions.choice === 'Ham') totalHam++;
+    else totalPhishing++;
     totalTimeSpent += interactions.timeSpent;
+    if (interactions.suggestedAction) {
+      if (suggestedActionsCount[interactions.suggestedAction]) {
+      suggestedActionsCount[interactions.suggestedAction]++;
+      } else {
+      suggestedActionsCount[interactions.suggestedAction] = 1;
+      }
+    }
   });
 
   const avgTimeSpent = totalTimeSpent / phaseData.length;
@@ -34,8 +46,11 @@ const calculatePhaseStats = (phaseData: any[]) => {
     totalOpeningAttachments,
     totalCorrectChoices,
     totalIncorrectChoices,
+    totalHam,
+    totalPhishing,
     totalTimeSpent,
     avgTimeSpent,
+    suggestedActionsCount
   };
 };
 
@@ -50,6 +65,9 @@ const calculateAllPhasesStats = (allPhasesData: any[][]) => {
     totalTimeSpent: 0,
     totalEmails: 0,
     avgTimeSpent: 0,
+    totalHam: 0,
+    totalPhishing: 0,
+    totalSuggestedActionsCount: {} as { [key: string]: number }
   };
 
   allPhasesData.forEach((phaseData) => {
@@ -63,6 +81,15 @@ const calculateAllPhasesStats = (allPhasesData: any[][]) => {
     overallStats.totalIncorrectChoices += phaseData.length - phaseStats.totalCorrectChoices;
     overallStats.totalTimeSpent += phaseStats.totalTimeSpent;
     overallStats.totalEmails += phaseData.length;
+    overallStats.totalHam += phaseStats.totalHam;
+    overallStats.totalPhishing += phaseStats.totalPhishing;
+    Object.keys(phaseStats.suggestedActionsCount).forEach((action) => {
+      if (overallStats.totalSuggestedActionsCount[action]) {
+        overallStats.totalSuggestedActionsCount[action] += phaseStats.suggestedActionsCount[action];
+      } else {
+        overallStats.totalSuggestedActionsCount[action] = phaseStats.suggestedActionsCount[action];
+      }
+    });
   });
 
   // Calculate overall average time spent
@@ -77,7 +104,7 @@ const SummaryPage = () => {
 
   useEffect(() => {
     // Retrieve the token using js-cookie
-    // Cookies.set('userToken','c0B5bWFpbC5jb20yOTQ0YTUyYzU0MWZkYzk3YzRmNjVmM2JjNmYyZWM4YQ==')
+    Cookies.set('userToken','cmVib2xhZG9AZ21haWwuY29tZjJjMmQ1MjA3NjYwMzRkNWQ2ODJhNGEyZWYxOGNhYzg=')
     const token = Cookies.get('userToken');
     if (token) {
       setUserToken(token);
@@ -168,16 +195,43 @@ const SummaryPage = () => {
             <Heading>Phase 1 Statistics</Heading>
             <Text>Correct: {statsp1.totalCorrectChoices}</Text>
             <Text>Incorrect: {statsp1.totalIncorrectChoices}</Text>
-            <Text>Total time spent: {statsp1.totalTimeSpent}</Text>
-            <Text>Avg time spent per email: {statsp1.avgTimeSpent}</Text>
+            <Text>Mouse Hovers: {statsp1.totalMouseHoverOverLinks}</Text>
+            <Text>Clicks on Links: {statsp1.totalClickingBehavior}</Text>
+            <Text>Sender Interaction: {statsp1.totalSenderInteraction}</Text>
+            <Text>Attachments Opened: {statsp1.totalOpeningAttachments}</Text>
+            <Text>Total Ham Emails: {statsp1.totalHam}</Text>
+            <Text>Total Phishing Emails: {statsp1.totalPhishing}</Text>
+            <Text>Total time spent: {statsp1.totalTimeSpent}s</Text>
+            <Text>Avg time spent per email: {statsp1.avgTimeSpent}s</Text>
+            <Heading>Actions Chosen</Heading>
+            <Text>Respond to this Email: {statsp1.suggestedActionsCount["respond"] || 0}</Text>
+            <Text>Click Link/Open attachment: {statsp1.suggestedActionsCount["click_open"] || 0}</Text>
+            <Text>Check Sender: {statsp1.suggestedActionsCount["checkSender"] || 0}</Text>
+            <Text>Check Link: {statsp1.suggestedActionsCount["checkLink"] || 0}</Text>
+            <Text>Delete Email: {statsp1.suggestedActionsCount["delete"] || 0}</Text>
+            <Text>Report Email: {statsp1.suggestedActionsCount["report"] || 0}</Text>
+            
           </Flex>
           {/* Phase 2 Statistics */}
           <Flex as="section" direction="column" gap="8" padding="m">
             <Heading>Phase 2 Statistics</Heading>
             <Text>Correct: {statsp2.totalCorrectChoices}</Text>
             <Text>Incorrect: {statsp2.totalIncorrectChoices}</Text>
-            <Text>Total time spent: {statsp2.totalTimeSpent}</Text>
-            <Text>Avg time spent per email: {statsp2.avgTimeSpent}</Text>
+            <Text>Mouse Hovers: {statsp2.totalMouseHoverOverLinks}</Text>
+            <Text>Clicks on Links: {statsp2.totalClickingBehavior}</Text>
+            <Text>Sender Interaction: {statsp2.totalSenderInteraction}</Text>
+            <Text>Attachments Opened: {statsp2.totalOpeningAttachments}</Text>
+            <Text>Total Ham Emails: {statsp2.totalHam}</Text>
+            <Text>Total Phishing Emails: {statsp2.totalPhishing}</Text>
+            <Text>Total time spent: {statsp2.totalTimeSpent}s</Text>
+            <Text>Avg time spent per email: {statsp2.avgTimeSpent}s</Text>
+            <Heading>Actions Chosen</Heading>
+            <Text>Respond to this Email: {statsp2.suggestedActionsCount["respond"] || 0}</Text>
+            <Text>Click Link/Open attachment: {statsp2.suggestedActionsCount["click_open"] || 0}</Text>
+            <Text>Check Sender: {statsp2.suggestedActionsCount["checkSender"] || 0}</Text>
+            <Text>Check Link: {statsp2.suggestedActionsCount["checkLink"] || 0}</Text>
+            <Text>Delete Email: {statsp2.suggestedActionsCount["delete"] || 0}</Text>
+            <Text>Report Email: {statsp2.suggestedActionsCount["report"] || 0}</Text>
           </Flex>
 
           {/* Phase 3 Statistics */}
@@ -185,8 +239,21 @@ const SummaryPage = () => {
             <Heading>Phase 3 Statistics</Heading>
             <Text>Correct: {statsp3.totalCorrectChoices}</Text>
             <Text>Incorrect: {statsp3.totalIncorrectChoices}</Text>
-            <Text>Total time spent: {statsp3.totalTimeSpent}</Text>
-            <Text>Avg time spent per email: {statsp3.avgTimeSpent}</Text>
+            <Text>Mouse Hovers: {statsp3.totalMouseHoverOverLinks}</Text>
+            <Text>Clicks on Links: {statsp3.totalClickingBehavior}</Text>
+            <Text>Sender Interaction: {statsp3.totalSenderInteraction}</Text>
+            <Text>Attachments Opened: {statsp3.totalOpeningAttachments}</Text>
+            <Text>Total Ham Emails: {statsp3.totalHam}</Text>
+            <Text>Total Phishing Emails: {statsp3.totalPhishing}</Text>
+            <Text>Total time spent: {statsp3.totalTimeSpent}s</Text>
+            <Text>Avg time spent per email: {statsp3.avgTimeSpent}s</Text>
+            <Heading>Actions Chosen</Heading>
+            <Text>Respond to this Email: {statsp3.suggestedActionsCount["respond"] || 0}</Text>
+            <Text>Click Link/Open attachment: {statsp3.suggestedActionsCount["click_open"] || 0}</Text>
+            <Text>Check Sender: {statsp3.suggestedActionsCount["checkSender"] || 0}</Text>
+            <Text>Check Link: {statsp3.suggestedActionsCount["checkLink"] || 0}</Text>
+            <Text>Delete Email: {statsp3.suggestedActionsCount["delete"] || 0}</Text>
+            <Text>Report Email: {statsp3.suggestedActionsCount["report"] || 0}</Text>
           </Flex>
 
           {/* Overall Summary */}
@@ -194,8 +261,21 @@ const SummaryPage = () => {
             <Heading>Overall Summary</Heading>
             <Text>Correct: {summary.totalCorrectChoices}</Text>
             <Text>Incorrect: {summary.totalIncorrectChoices}</Text>
-            <Text>Total time spent: {summary.totalTimeSpent}</Text>
-            <Text>Avg time spent per email: {summary.avgTimeSpent}</Text>
+            <Text>Mouse Hovers: {summary.totalMouseHoverOverLinks}</Text>
+            <Text>Clicks on Links: {summary.totalClickingBehavior}</Text>
+            <Text>Sender Interaction: {summary.totalSenderInteraction}</Text>
+            <Text>Attachments Opened: {summary.totalOpeningAttachments}</Text>
+            <Text>Total Ham Emails: {summary.totalHam}</Text>
+            <Text>Total Phishing Emails: {summary.totalPhishing}</Text>
+            <Text>Total time spent: {summary.totalTimeSpent}s</Text>
+            <Text>Avg time spent per email: {summary.avgTimeSpent}s</Text>
+            <Heading>Actions Chosen</Heading>
+            <Text>Respond to this Email: {summary.totalSuggestedActionsCount["respond"] || 0}</Text>
+            <Text>Click Link/Open attachment: {summary.totalSuggestedActionsCount["click_open"] || 0}</Text>
+            <Text>Check Sender: {summary.totalSuggestedActionsCount["checkSender"] || 0}</Text>
+            <Text>Check Link: {summary.totalSuggestedActionsCount["checkLink"] || 0}</Text>
+            <Text>Delete Email: {summary.totalSuggestedActionsCount["delete"] || 0}</Text>
+            <Text>Report Email: {summary.totalSuggestedActionsCount["report"] || 0}</Text>
           </Flex>
         </Flex>
       </Flex>
