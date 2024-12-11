@@ -8,6 +8,7 @@ const calculatePhaseStats = (phaseData: any[]) => {
   let totalMouseHoverOverLinks = 0;
   let totalClickingBehavior = 0;
   let totalTimeSpent = 0;
+  let totalTimeSpentInMinutes = '';
   let totalSenderInteraction = 0;
   let totalOpeningAttachments = 0;
   let totalCorrectChoices = 0;
@@ -38,6 +39,7 @@ const calculatePhaseStats = (phaseData: any[]) => {
   });
 
   const avgTimeSpent = totalTimeSpent / phaseData.length;
+  totalTimeSpentInMinutes = `${Math.floor(totalTimeSpent / 60)}:${Math.floor(totalTimeSpent % 60).toString().padStart(2, '0')}m`;
 
   return {
     totalMouseHoverOverLinks,
@@ -49,6 +51,7 @@ const calculatePhaseStats = (phaseData: any[]) => {
     totalHam,
     totalPhishing,
     totalTimeSpent,
+    totalTimeSpentInMinutes,
     avgTimeSpent,
     suggestedActionsCount
   };
@@ -63,6 +66,7 @@ const calculateAllPhasesStats = (allPhasesData: any[][]) => {
     totalCorrectChoices: 0,
     totalIncorrectChoices: 0,
     totalTimeSpent: 0,
+    totalTimeSpentInMinutes: '',
     totalEmails: 0,
     avgTimeSpent: 0,
     totalHam: 0,
@@ -94,7 +98,7 @@ const calculateAllPhasesStats = (allPhasesData: any[][]) => {
 
   // Calculate overall average time spent
   overallStats.avgTimeSpent = overallStats.totalTimeSpent / overallStats.totalEmails;
-
+  overallStats.totalTimeSpentInMinutes = `${Math.floor(overallStats.totalTimeSpent / 60)}:${Math.floor(overallStats.totalTimeSpent % 60).toString().padStart(2, '0')}`;
   return overallStats;
 };
 
@@ -201,8 +205,8 @@ const SummaryPage = () => {
             <Text>Attachments Opened: {statsp1.totalOpeningAttachments}</Text>
             <Text>Total Ham Emails: {statsp1.totalHam}</Text>
             <Text>Total Phishing Emails: {statsp1.totalPhishing}</Text>
-            <Text>Total time spent: {statsp1.totalTimeSpent}s</Text>
-            <Text>Avg time spent per email: {statsp1.avgTimeSpent}s</Text>
+            <Text>Total time spent: {statsp1.totalTimeSpentInMinutes}</Text>
+            <Text>Avg time spent per email: {statsp1.avgTimeSpent.toFixed(2)}s</Text>
             <Heading>Actions Chosen</Heading>
             <Text>Respond to this Email: {statsp1.suggestedActionsCount["respond"] || 0}</Text>
             <Text>Click Link/Open attachment: {statsp1.suggestedActionsCount["click_open"] || 0}</Text>
@@ -223,8 +227,8 @@ const SummaryPage = () => {
             <Text>Attachments Opened: {statsp2.totalOpeningAttachments}</Text>
             <Text>Total Ham Emails: {statsp2.totalHam}</Text>
             <Text>Total Phishing Emails: {statsp2.totalPhishing}</Text>
-            <Text>Total time spent: {statsp2.totalTimeSpent}s</Text>
-            <Text>Avg time spent per email: {statsp2.avgTimeSpent}s</Text>
+            <Text>Total time spent: {statsp2.totalTimeSpentInMinutes}</Text>
+            <Text>Avg time spent per email: {statsp2.avgTimeSpent.toFixed(2)}s</Text>
             <Heading>Actions Chosen</Heading>
             <Text>Respond to this Email: {statsp2.suggestedActionsCount["respond"] || 0}</Text>
             <Text>Click Link/Open attachment: {statsp2.suggestedActionsCount["click_open"] || 0}</Text>
@@ -245,8 +249,8 @@ const SummaryPage = () => {
             <Text>Attachments Opened: {statsp3.totalOpeningAttachments}</Text>
             <Text>Total Ham Emails: {statsp3.totalHam}</Text>
             <Text>Total Phishing Emails: {statsp3.totalPhishing}</Text>
-            <Text>Total time spent: {statsp3.totalTimeSpent}s</Text>
-            <Text>Avg time spent per email: {statsp3.avgTimeSpent}s</Text>
+            <Text>Total time spent: {statsp3.totalTimeSpentInMinutes}</Text>
+            <Text>Avg time spent per email: {statsp3.avgTimeSpent.toFixed(2)}s</Text>
             <Heading>Actions Chosen</Heading>
             <Text>Respond to this Email: {statsp3.suggestedActionsCount["respond"] || 0}</Text>
             <Text>Click Link/Open attachment: {statsp3.suggestedActionsCount["click_open"] || 0}</Text>
@@ -267,8 +271,8 @@ const SummaryPage = () => {
             <Text>Attachments Opened: {summary.totalOpeningAttachments}</Text>
             <Text>Total Ham Emails: {summary.totalHam}</Text>
             <Text>Total Phishing Emails: {summary.totalPhishing}</Text>
-            <Text>Total time spent: {summary.totalTimeSpent}s</Text>
-            <Text>Avg time spent per email: {summary.avgTimeSpent}s</Text>
+            <Text>Total time spent: {summary.totalTimeSpentInMinutes}m</Text>
+            <Text>Avg time spent per email: {summary.avgTimeSpent.toFixed(2)}s</Text>
             <Heading>Actions Chosen</Heading>
             <Text>Respond to this Email: {summary.totalSuggestedActionsCount["respond"] || 0}</Text>
             <Text>Click Link/Open attachment: {summary.totalSuggestedActionsCount["click_open"] || 0}</Text>
