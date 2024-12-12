@@ -6,8 +6,8 @@
 1. [Installation](#Installation)
 2. Introduction
 	- [Purpose](#Purpose)
-	- [[#Framework]]
-	- [[#References]]
+	- [Framework](#Framework)
+	- [References](#References)
 3. Design
 
 ## Installation
