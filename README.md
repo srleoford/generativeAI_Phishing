@@ -8,7 +8,9 @@
 	- [Purpose](#Purpose)
 	- [Framework](#Framework)
 	- [References](#References)
-3. Design
+3. [Design](#Design)
+	- [Overview](#Overview)
+	- [Database Design](#Database\Design)
 
 ---
 
@@ -81,7 +83,7 @@ Once you've created your accounts you'll need to create and grab your API keys a
 
 After you have your API keys, go to the `.env` file in your root directory and place your keys in their respective variables:
 
-![](docs/Environment-File-for-Keys.png)
+![](Environment-File-for-Keys.png)
 
 Now that've you setup your resources, you should be ready to install!
 
@@ -141,6 +143,35 @@ Lastly, since generating responses, emails, and other necessary information for 
 
 ---
 
+
+#### Overview
+
 The general overview of the software is very simplistic by design. We didn't want there to be a lot of moving parts for the system so it's easy to manage and even easier to develop especially considering this only needs to take in surveys from individuals:
 
 ![](docs/GoPhish-Architecture.png)
+
+This is our simplistic overview of the system. There's four main components:
+
+1. The Client/User
+2. Vercel Component (used for deployment and server)
+3. OpenAI using chatGPT 4o mini model
+4. Pinecone database
+
+#### Database Design
+
+![](docs/Database-Diagram.png)
+
+In Pinecone, the database is structured a little differently than others. For each database, there are a number of indexes (similar to SQL tables) which contain a number of records that can be separated through namespaces. Namespaces are used as a separation between records. It's a way to group records to make future usage more efficient rather than iterating over the entire index. Each record has an ID and houses a dense vector and a sparse vector values along with metadata. Since dense vector values cannot be empty, we've just initialized indexes with a random vector of values and dimensions, but it's part of our design for future development that this would be used to store embeddings in for models in the future. 
+
+We've chose to use metadata to store all of our data from initial responses and information to each phases' responses and emails for use and research later. There are two indexes that must be created in the database before the system can store data:
+1. `users`
+2. `results`
+These names can be changed later, but this is how the current design has been constructed.
+
+We've split the users, survey answers, and a token to be stored in one index, and the rest of the emails, interactions, and other metrics from each phase in a separate index separating each phase into their respective namespaces titled `phase_1`, `phase_2`, and `phase_3`. 
+
+
+#### Frontend Design
+
+
+
