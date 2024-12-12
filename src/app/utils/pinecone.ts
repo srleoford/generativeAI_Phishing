@@ -10,19 +10,52 @@ import { redirect } from "next/navigation";
 dotenv.config();
 
 // Default values for Pinecone such as the default vector for user creation, Pinecone API, etc.
-const defaultVector = new Array(parseInt(process.env.USER_INDEX_SIZE, 10)).fill(0).map(() =>
+const defaultVector = new Array(parseInt(process.env.DEFAULT_INDEX_SIZE, 10)).fill(0).map(() =>
     Math.random() * 10).map(x => x.toFixed(1));
 const api_key = process.env.PINECONE_API_KEY
-const indexName = process.env.PINECONE_INDEX
-const resultsIndexName: string = process.env.RESULTS_INDEX || "default"
+const indexName = process.env.PINECONE_USERS_INDEX
+const resultsIndexName: string = process.env.PINECONE_RESULTS_INDEX || "default"
 
 
-// Need to fix this
+/**
+ * Initialize the Pinecone client to use for the system
+ */
 const pc = new Pinecone({
     apiKey: api_key
 });
 
-const hasIndex = async (index: string) => {
+/**
+ * This checks if there exists a namespace i.e., user inserted into the Pinecone DB
+ * @param index
+ * @requires index != ""
+ * @requires hasIndex(index) == false
+ * @ensures \result = hasIndex(index) == true
+ */
+const createNewIndex = async (
+    index: string
+) => {
+    await pc.createIndex({
+        name: index,
+        dimension: parseInt(process.env.DEFAULT_INDEX_SIZE, 10),
+        metric: 'cosine',
+        spec: {
+            serverless: {
+                cloud: process.env.PINECONE_CLOUD,
+                region: process.env.PINECONE_REGION
+            }
+        }
+    })
+}
+
+/**
+ * This checks if there exists a namespace i.e., user inserted into the Pinecone DB
+ * @param index
+ * @requires index exists in DB
+ * @ensures \result = pc.listIndexes().indexes.filter((i: { name: string; }) => i.name === index).length === 1
+ */
+const hasIndex = async (
+    index: string
+) => {
 
     // Is the there an index name
     if (index === '') {
@@ -39,12 +72,28 @@ const hasIndex = async (index: string) => {
 }
 
 /**
+ * This will grab the size i.e., the amount of records in the given index
+ * @param index
+ * @requires index != '' && index != null
+ * @ensures \result == pc.index(index).length
+ */
+const getIndexSize = async (
+    index: string
+) => {
+    const stats = await pc.index(index).describeIndexStats()
+    return stats.totalRecordCount
+}
+
+/**
  * This checks if there exists a namespace i.e., user inserted into the Pinecone DB
  * @param index
  * @param namespace
  * @requires index exists in DB, namespace != ""
  */
-const hasNamespace = async (index: string, namespace: string) => {
+const hasNamespace = async (
+    index: string,
+    namespace: string
+) => {
     const { namespaces } = await pc.index(index).describeIndexStats()
     return namespaces.hasOwnProperty(namespace)
 }
@@ -57,7 +106,10 @@ const hasNamespace = async (index: string, namespace: string) => {
  * @requires email != ""
  * @ensures \result == record with ID email from DB
  */
-const hasRecord = async (index: string, email: string) => {
+const hasRecord = async (
+    index: string,
+    email: string
+) => {
     const thisIndex = await hasIndex(index) ? pc.index(index) : "";
 
     if (index !== "") {
@@ -73,13 +125,17 @@ const hasRecord = async (index: string, email: string) => {
     }
     return false
 }
+
 /**
  * This checks if a user with the given userEmail exists in a specified index.
  * @param index
  * @param userEmail
  * @returns resolves to true if the user exists, otherwise false.
  */
-export const userExists = async (index: string, userEmail: string): Promise<boolean> => {
+export const userExists = async (
+    index: string,
+    userEmail: string
+): Promise<boolean> => {
     try {
         // Fetch the user by email from the specified index
         const result = await pc.index(index).fetch([userEmail]);
@@ -89,13 +145,17 @@ export const userExists = async (index: string, userEmail: string): Promise<bool
         return false;
     }
 };
+
 /**
  * This checks if a user exists and then retrieves their token.
  * @param index
  * @param userEmail
  * @returns unique user token.
  */
-export const getToken = async (index: string, userEmail: string): Promise<string | null> => {
+export const getToken = async (
+    index: string,
+    userEmail: string
+): Promise<string | null> => {
     try {
         // Fetch the user by email from the specified index
         const result = await pc.index(index).fetch([userEmail]);
@@ -114,7 +174,6 @@ export const getToken = async (index: string, userEmail: string): Promise<string
     }
 };
 
-
 /**
  * This will upsert into Pinecone DB for new users. The namespace will be the user's email. This requires to be vectors
  * inserted into the record as well, so any non-zero default values are fine since it doesn't matter until the initial
@@ -124,9 +183,10 @@ export const getToken = async (index: string, userEmail: string): Promise<string
  * @param token
  * @requires userEmail != "" && userEmail not in DB, indexName != "" && token != ""
  */
-export const insertUser = async(userEmail: string, token: string) =>{
-
-
+export const insertUser = async (
+    userEmail: string,
+    token: string
+) => {
     try {
         // Get the Pinecone index
         const index = await hasIndex(indexName) ? pc.index(indexName) : "";
@@ -171,7 +231,12 @@ export const insertUser = async(userEmail: string, token: string) =>{
  * @requires vector == type Array[number] && vector.length == 5
  * @ensures \result == \old(array[0:block] + vector + \old(array[block + blockSize:\old(array.length)]
  */
-export const updateBlockScores = async (userEmail: string, indexName: string, vector: any, block: number) => {
+export const updateBlockScores = async (
+    userEmail: string,
+    indexName: string,
+    vector: any,
+    block: number
+) => {
     try {
         // Get the Pinecone index
         const index = await hasIndex(indexName) ? pc.index(indexName) : "";
@@ -204,7 +269,11 @@ export const updateBlockScores = async (userEmail: string, indexName: string, ve
 }
 
 
-export const insertSurveyData = async(surveyData: string, email: string, token: string)=> {
+export const insertSurveyData = async(
+    surveyData: string,
+    email: string,
+    token: string
+)=> {
     try {
 
         if (!surveyData || email === '') {
@@ -245,7 +314,7 @@ export const getAnswers = async (
     token: string
 ) : Promise<QueryResponse[]> => {
     const thisIndex = await hasIndex(resultsIndexName) ? pc.index(resultsIndexName) : ""
- 
+
     try {
         if (thisIndex !== "") {
             const queryResponse1 = await thisIndex.namespace('phase_1').query({
@@ -291,7 +360,6 @@ export const submitAnswers = async (
 
     const emailInteractions = answers.map(answer => (
         {
-            emailId: answer.id,
             interactions: answer.interactions
         }
     ))
@@ -354,4 +422,52 @@ export const submitAnswers = async (
             redirect('/summary')
         }
     }
+}
+
+/**
+ * Helper function to export the Pinecone DB into a CSV file given valid index and a valid
+ * ID of a record inside the index.
+ * Note: the 'topk' can be replaced with getIndexSize(); however if the call is nested
+ * in more than two async functions, this can be a problem.
+ * @param indexName
+ * @param id
+ * @requires indexName != '' && index != null
+ * @requires id != '' && index != null && \exists(pc.index(indexName)[id]) !== null
+ * @ensures \result = CSV file of the given index in the root directory
+ */
+const exportPCDatabase = async (
+    indexName: string,
+    id: string
+
+) => {
+    const fs = require('fs');
+
+    // Connect to your index
+    const index = pc.Index(indexName);
+
+    // Define the number of vectors to retrieve per query
+    const topk = 100  // Adjust based on your needs
+
+    // Query Pinecone to retrieve all vectors (or specify IDs)
+    const queryResult = await index.query({
+        id: id,
+        topK: topk,
+        includeValues: true,
+        includeMetadata: true,
+    });
+
+    // Prepare CSV data
+    let csvContent = 'ID,Vector,Metadata\n';  // Header row
+
+    queryResult.matches.forEach(match => {
+        const id = match.id;
+        const vector = match.values.join(',');  // Join vector values into a string
+        const metadata = JSON.stringify(match.metadata);  // Convert metadata to string
+        csvContent += `${id},${vector},${metadata}\n`;
+    });
+
+    // Save to CSV
+    fs.writeFileSync('pinecone_export.csv', csvContent);
+
+    console.log('Export complete!');
 }
