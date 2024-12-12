@@ -38,12 +38,13 @@ export async function generate(profile: string, difficulty: number, numberOfEmai
     const emails = emailTemplates.emails.map((emailBase64) => {
         return atob(emailBase64);
     })
-    const generatePrompt = numberOfEmails => {
+    const generatePrompt = (numberOfEmails: number) => {
         return `Generate exactly ${numberOfEmails} ${
           numberOfEmails === 1 ? "email" : "emails"
         }, including phishing and non-phishing examples (${numberOfEmails} in total).`;
       };
     // Add details to AI model about the purpose
+    // Template 0: Notification style, button in the middle.
     const response = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         messages: [
@@ -55,9 +56,10 @@ export async function generate(profile: string, difficulty: number, numberOfEmai
             { role: "system", content: "Be careful with the margins between components in the HTML" },
             { role: "system", content: "All emails should be different" },
             { role: "system", content: "Consider for design that HTML will be displayed in a white background" },
-            // { role: "system", content: "Use next body email as template 1: " + emails[0] + ". This template should only be used on 10% of the emails generated."},
-            { role: "system", content: "Use next body email as template 2: " + emails[1] + ". This template should used on 50% of the emails generated."},
-            { role: "system", content: "Use next body email as template 3: " + emails[2] + ". This template should used on 50% of the emails generated."},
+            { role: "system", content: "Use next body email as template 1, use this template in 10% of generated emails: " + emails[0]},
+            { role: "system", content: "Use next body email as template 2: " + emails[1]},
+            { role: "system", content: "Use next body email as template 3: " + emails[2]},
+            { role: "system", content: "Use next body email as template 3: " + emails[3]},
             { role: "system", content: "Do not use the name of the email recipient on the body and subject" },
             { role: "system", content: "Adjust the difficulty of the emails according to this number: " + difficulty },
             { role: "system", content: "15 (least difficult), 5 (most difficult)" },
