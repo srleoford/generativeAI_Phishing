@@ -10,7 +10,7 @@ export interface EmailAnswer {
     openingAttachments: boolean,
     choice: string,
     isCorrect?: boolean,
-    suggestedAction: string
+    suggestedActions: string[]
 }
 
 export function emptyEmailAnswer(): EmailAnswer {
@@ -22,7 +22,7 @@ export function emptyEmailAnswer(): EmailAnswer {
         openingAttachments: false,
         choice: "",
         isCorrect: undefined,
-        suggestedAction: ""
+        suggestedActions: []
     }
 }
 
@@ -121,12 +121,12 @@ export function setResponse(response: boolean, choice: string, emailIndex: numbe
 
 /**
  * Sets the suggested action.
- * @param {string} action - The suggested action for the user.
+ * @param {string[]} actions - The suggested action for the user.
  * @param {number} emailIndex - The index of the email in the emailsState array.
  * @param {[EmailData[], Dispatch<SetStateAction<EmailData[]>>]} emailsState - The state array and updater function.
  */
-export function setSuggestedAction(action: string, emailIndex: number, emailsState: [EmailData[], Dispatch<SetStateAction<EmailData[]>>]) {
+export function setSuggestedAction(actions: string[], emailIndex: number, emailsState: [EmailData[], Dispatch<SetStateAction<EmailData[]>>]) {
     const newEmailsData = [...emailsState[0]]
-    newEmailsData[emailIndex].interactions.suggestedAction = action
+    newEmailsData[emailIndex].interactions.suggestedActions = actions
     emailsState[1](newEmailsData)
 }

@@ -1,9 +1,10 @@
 'use client'
 
-import {Button, Chip, Dialog, DropdownOptions, Flex, Select, Text} from '@/once-ui/components'
+import {Button, Chip, Dialog, DropdownOptions, Flex, Select} from '@/once-ui/components'
 import React from 'react'
 import {EmailData} from './EmailContainer'
-import styles from '@/app/emails/_components/sidebar/SideBar.module.css'
+import {ActionMeta, default as ReactSelect} from "react-select"
+import {options} from "@/app/emails/emailsConfiguration";
 
 export interface FeedbackMessage {
     title: string,
@@ -17,27 +18,20 @@ export interface OptionsProps {
     isDialogOpen: boolean,
     onPhishOption: (type: string) => void,
     onRealOption: (type: string) => void,
-    onSetAction: (action: DropdownOptions) => void,
-    feedbackSuggestion: string,
+    onSetActions: (actions: string[]) => void,
+    suggestedActions: string[],
 }
-
-const options = [
-    { label: 'Respond to this email', value: 'respond' },
-    { label: 'Click Link/Open attachment', value: 'click_open' },
-    { label: 'Check sender', value: 'checkSender' },
-    { label: 'Check link', value: 'checkLink' },
-    { label: 'Delete email', value: 'delete' },
-    { label: 'Report this email', value: 'report' },
-];
-
-const getLabelFromValue = (value) => {
-    const option = options.find((opt) => opt.value === value);
-    return option ? option.label : '';
-};
 
 const Options = (props: OptionsProps) => {
     const isChoiceDisable = props.email.interactions.isCorrect !== undefined
-    const isActionDisable = props.email.interactions.suggestedAction !== ""
+    const isActionDisable = props.email.interactions.suggestedActions.length > 0 && isChoiceDisable
+    const onSelectChange = (options: readonly { label: string; value: string }[], actionMeta: ActionMeta<{ label: string; value: string }>) => {
+        const values: string[] = options.map(item => item.value)
+        props.onSetActions(values)
+    }
+    const selectedActions = options.filter(
+        option => props.suggestedActions.includes(option.value)
+    )
     return (
         <Flex
             direction='row'
@@ -104,14 +98,16 @@ const Options = (props: OptionsProps) => {
 
                 </Flex>
 
-                <Select
-                    id={"suggestAction"}
-                    className={styles.suggestedAction}
-                    label="Choose suggested action"
+                <ReactSelect
                     options={options}
-                    value={getLabelFromValue(props.feedbackSuggestion)}
-                    onSelect={props.onSetAction}
-                    disabled={isActionDisable}
+                    menuPlacement='top'
+                    isMulti
+                    closeMenuOnSelect={false}
+                    hideSelectedOptions={false}
+                    isDisabled={isActionDisable}
+                    onChange={onSelectChange}
+                    value={selectedActions}
+                    placeholder="Choose suggested action"
                 />
             </Flex>
         </Flex>
