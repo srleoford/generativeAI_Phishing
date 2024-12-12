@@ -4,7 +4,7 @@ import {ResponseRoute} from '../api/phases/route'
 import EmailContainer, {EmailData} from './_components/EmailContainer'
 import HandlePhasesNavigation from "@/components/cookies-email-phases";
 import {cookies} from "next/headers";
-import {numberOfPhase3Emails,numberOfBlocksPhase2,numberOfEmailsPerBlock} from  '../emails/emailsConfiguration'
+import {numberOfPhase3Emails,numberOfBlocksPhase2,numberOfEmailsPerBlock,numberOfTotalAttentionChecks} from  '../emails/emailsConfiguration'
 
 const EmailsPage = async () => {
     const cookieStore = await cookies()
@@ -45,18 +45,21 @@ const EmailsPage = async () => {
 
             emailsContent = await openaiEmails.json()
 
-             // Select a random block from the total number of blocks
-            const randomIndex = Math.floor(Math.random() * numberOfBlocksPhase2);
+            if (numberOfTotalAttentionChecks > 0) {
+                // Select a random block from the total number of blocks
+                const randomIndex = Math.floor(Math.random() * numberOfBlocksPhase2);
 
-            // Check if the randomly selected block is the first block
-            let isFirstSelected = randomIndex === 0;
-            isFirstSelected = true
-            if (isFirstSelected) {
-                //Get random attention check and add it to block of emails
-                const attentionCheckData = await fetch('http://localhost:3000/api/dataset', {method:'POST',cache: 'no-store'})
-                attentionCheckContent = await attentionCheckData.json()
-                emailsContent = emailsContent.concat(attentionCheckContent)
+                // Check if the randomly selected block is the first block
+                let isFirstSelected = randomIndex === 0;
+                isFirstSelected = true
+                if (isFirstSelected) {
+                    //Get random attention check and add it to block of emails
+                    const attentionCheckData = await fetch('http://localhost:3000/api/dataset', {method:'POST',cache: 'no-store'})
+                    attentionCheckContent = await attentionCheckData.json()
+                    emailsContent = emailsContent.concat(attentionCheckContent)
+                }
             }
+            
             break
         }
 

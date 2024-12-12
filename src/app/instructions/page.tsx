@@ -32,15 +32,6 @@ const InstructionsPage = async () => {
             body = phase3Body
             break
         }
-
-        default: {
-            // Redirect to the summary page if the route is not valid
-            title = "Thank you, you will now be redirected to the summary page."
-            body = ""
-            redirect("/summary") // This will redirect to the /summary page
-      
-            break
-          }
     }
 
     return (
