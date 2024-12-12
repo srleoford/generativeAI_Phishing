@@ -8,8 +8,8 @@
 	- [Purpose](#Purpose)
 	- [Framework](#Framework)
 	- [References](#References)
-3. [Features](#)
-	- 
+3. [Features](#Features)
+	- [Main Features](#Main-Features)
 4. [Design](#Design)
 	- [Overview](#Overview)
 	- [Database](#Database-Design)
