@@ -10,7 +10,7 @@
 	- [References](#References)
 3. [Design](#Design)
 	- [Overview](#Overview)
-	- [Database Design](#Database\Design)
+	- [Database Design](#Database-Design)
 
 ---
 
