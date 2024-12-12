@@ -9,18 +9,29 @@ interface EmailBodyProps {
     onLinkClicked: () => void
 }
 
+/**
+ * EmailBody component renders email content while enabling custom event handling for links.
+ *
+ * Props:
+ * - emailContent: string - The HTML content to be rendered.
+ * - onLinkClicked: () => void - Callback invoked when a link is clicked.
+ * - onHoverOverLink: () => void - Callback invoked when a link is hovered over.
+ */
 const EmailBody = (props: EmailBodyProps) => {
     const [isClient, setIsClient] = useState(false)
 
+    // Handles link click event
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
         props.onLinkClicked()
     }
 
+    // Handles mouse hover event on links
     const handleMouseEnter = (event: React.MouseEvent<HTMLElement>) => {
         props.onHoverOverLink()
     }
 
+    // Parsing options to customize how HTML is rendered
     const options: HTMLReactParserOptions = {
         replace(domNode: DOMNode) {
             if (domNode instanceof Element && domNode.name === "head") {

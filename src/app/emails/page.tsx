@@ -6,10 +6,17 @@ import HandlePhasesNavigation from "@/components/cookies-email-phases";
 import {cookies} from "next/headers";
 import {numberOfPhase3Emails,numberOfBlocksPhase2,numberOfEmailsPerBlock} from  '../emails/emailsConfiguration'
 
+/**
+ * EmailsPage Component
+ * This component manages email generation based on different phases of the phishing training application.
+ * It handles route changes, email fetching, and rendering the appropriate email content.
+ */
 const EmailsPage = async () => {
+    // Retrieve survey data from cookies
     const cookieStore = await cookies()
     const survey = cookieStore.get('survey')?.value
 
+    // Fetch the current phase from the backend
     const data = await fetch('http://localhost:3000/api/phases', {cache: 'no-store'})
     const routeResponse: ResponseRoute = await data.json()
 
@@ -17,9 +24,11 @@ const EmailsPage = async () => {
     let attentionCheckContent: EmailData[]
     let newRoute: string
 
+    // Determine the next action based on the current phase
     switch (routeResponse.route) {
 
         case "phase_1": {
+            // Transition to phase_2 and fetch initial dataset emails
             newRoute = "phase_2"
             const datasetEmails = await fetch('http://localhost:3000/api/dataset', {cache: 'no-store'})
             emailsContent = await datasetEmails.json()
@@ -27,6 +36,7 @@ const EmailsPage = async () => {
         }
 
         case "phase_2": {
+            // Transition to phase_3 and generate emails using OpenAI API
             newRoute = "phase_3"
             const openaiEmails = await fetch(
                 'http://localhost:3000/api/generateEmails',
@@ -61,6 +71,7 @@ const EmailsPage = async () => {
         }
 
         case "phase_3": {
+            // Reset to phase_0 and generate new emails for evaluation
             newRoute = "phase_0"
             const openaiEmails = await fetch(
                 'http://localhost:3000/api/generateEmails',
@@ -87,6 +98,7 @@ const EmailsPage = async () => {
         }
     }
 
+    // Update the current phase on the backend
     await fetch('http://localhost:3000/api/phases',
         {
             method: 'POST',

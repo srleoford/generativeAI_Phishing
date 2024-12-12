@@ -9,7 +9,14 @@ interface SideBarProps {
     setEmailIndex: (index: number) => void
 }
 
+/**
+ * SideBar component that displays a list of emails categorized into unread and read sections.
+ * It allows selecting an email to view its details.
+ *
+ * @param props - Properties passed to the component.
+ */
 const SideBar = (props: SideBarProps) => {
+    /** State to manage whether the "Read - Solved" section is expanded. */
     const [isReadOpen, setIsReadOpen] = useState(false)
     return (
         <Flex
