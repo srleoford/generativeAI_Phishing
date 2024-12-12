@@ -76,7 +76,7 @@ Once you've created your accounts you'll need to create and grab your API keys a
 		
 		![](docs/OpenAI-API-keys.png)
 	1. Click **Create new secret key**
-		![](OpenAI-Create-API-key.png)
+		![](docs/OpenAI-Create-API-key.png)
 	3. After name and create your key, copy and store the key somewhere safe because you ***will not*** be able to do this again
 
 After you have your API keys, go to the `.env` file in your root directory and place your keys in their respective variables:
