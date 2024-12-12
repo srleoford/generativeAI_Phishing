@@ -4,6 +4,7 @@ import { Pinecone, QueryResponse } from "@pinecone-database/pinecone";
 import dotenv from 'dotenv'
 import { EmailData } from "../emails/_components/EmailContainer";
 import { createSusceptibilityScoring } from "@/app/utils/susceptibilityScoring";
+import { redirect } from "next/navigation";
 
 // Initialize the .env variables
 dotenv.config();
@@ -294,10 +295,7 @@ export const submitAnswers = async (
     ))
 
     // Stores the values for each correct answer
-    const vector = []
-    emailInteractions.forEach((interaction) => {
-        vector.push(interaction.interactions.isCorrect ? 1 : 0)
-    })
+    const vector = [1,0,0,0,0]
 
     //stores the interactions for insertion into metadata
     const jsonString = JSON.stringify(emailInteractions)
@@ -331,5 +329,10 @@ export const submitAnswers = async (
     }
     catch (error) {
         console.error(error)
+    }
+    finally {
+        if (phaseNameSpace === 'phase_3') {
+            redirect('/summary')
+        }
     }
 }

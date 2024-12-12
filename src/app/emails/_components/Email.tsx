@@ -74,8 +74,9 @@ export default function Email(props: EmailProps) {
                     }
                 )
                 let blockEmails: EmailData[] = await openaiEmails.json()
-
-                if (props.phase === 'phase_2') {
+                
+                //Assign attention check to current block
+                if (props.phase === 'phase_2' && numberOfTotalAttentionChecks > 0) {
                     const numberOfProcessedAttentionChecks = props.emailsInfo.filter(email => email.emailType.toLowerCase() === 'attention_check').length
 
                     if (numberOfProcessedAttentionChecks < numberOfTotalAttentionChecks) {
@@ -112,7 +113,9 @@ export default function Email(props: EmailProps) {
                 props.phase,
                 props.emailsInfo
             )
-            router.push("/instructions")
+            if (props.phase === 'phase_1' || props.phase === 'phase_2'){
+                router.push("/instructions")
+            }
         } else {
             startTime = new Date().getTime()
         }
@@ -123,12 +126,23 @@ export default function Email(props: EmailProps) {
         answerType: string
     ) => {
         const response = emailType === answerType;
-        setFeedbackMessage(
-            {
-                title: response ? "Correct" : "Incorrect",
-                body: props.emailsInfo[props.emailIndex].feedbackMessage
-            }
-        )
+        if (emailType.toLowerCase() === 'attention_check') {
+            setFeedbackMessage(
+                {
+                    title: 'Correct',
+                    body: 'Thank you for paying attention!'
+                }
+            )
+        }
+        else {
+            setFeedbackMessage(
+                {
+                    title: response ? "Correct" : "Incorrect",
+                    body: props.emailsInfo[props.emailIndex].feedbackMessage
+                }
+            )
+        }
+
         setResponse(response, answerType, props.emailIndex, [props.emailsInfo, props.setEmailsInfo])
     }
 
