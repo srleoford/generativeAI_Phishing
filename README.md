@@ -81,7 +81,7 @@ Once you've created your accounts you'll need to create and grab your API keys a
 
 After you have your API keys, go to the `.env` file in your root directory and place your keys in their respective variables:
 
-![](Environment-File-for-Keys.png)
+![](docs/Environment-File-for-Keys.png)
 
 Now that've you setup your resources, you should be ready to install!
 
