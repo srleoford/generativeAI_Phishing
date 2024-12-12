@@ -202,6 +202,8 @@ export const updateBlockScores = async (userEmail: string, indexName: string, ve
         return false
     }
 }
+
+
 export const insertSurveyData = async(surveyData: string, email: string, token: string)=> {
     try {
 
@@ -224,7 +226,7 @@ export const insertSurveyData = async(surveyData: string, email: string, token: 
         if (queryResponse){
             await index.update({
                 id: email,
-                metadata: { surveyAnswers: surveyData}
+                metadata: { surveyAnswers: surveyData }
             });
         }
 
@@ -294,6 +296,19 @@ export const submitAnswers = async (
         }
     ))
 
+    const rawEmails = answers.map(answer => (
+        {
+            emailId: answer.id,
+            email: {
+                emailType: answer.emailType,
+                emailDate: answer.date,
+                emailFrom: answer.from,
+                emailSubject: answer.subject,
+                emailBody: answer.body
+            }
+        }
+    ))
+
     // Stores the values for each correct answer
     const vector = [1,0,0,0,0]
 
@@ -322,7 +337,11 @@ export const submitAnswers = async (
                         'indices': sparseIndices,
                         'values': sparseValues
                     },
-                    metadata: { results: jsonString, scores: JSON.stringify(scores) },
+                    metadata: {
+                        results: jsonString,
+                        scores: JSON.stringify(scores),
+                        rawEmails: JSON.stringify(rawEmails)
+                    },
                 }
             ])
         }
