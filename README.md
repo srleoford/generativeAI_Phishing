@@ -5,7 +5,7 @@
 
 1. [Installation](#Installation)
 2. Introduction
-	- [[#Purpose]]
+	- [Purpose](#Purpose)
 	- [[#Framework]]
 	- [[#References]]
 3. Design
