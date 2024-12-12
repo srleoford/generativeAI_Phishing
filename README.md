@@ -60,7 +60,7 @@ Once you've created your accounts you'll need to create and grab your API keys a
 
 - Pinecone API key
 	1. In the dashboard, click on the **API keys** in the side Navbar
-	![image1](docs/Pinecone API key.png)
+	![image1](./docs/Pinecone API key.png)
 	2. Click **Create API key**
 		![[Pinecone Create API key.png]]
 	3. After name and create your key, copy and store the key somewhere because you will ***not be*** able to do this again later
