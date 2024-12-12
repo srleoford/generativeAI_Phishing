@@ -65,18 +65,22 @@ Once you've created your accounts you'll need to create and grab your API keys a
 
 - Pinecone API key
 	1. In the dashboard, click on the **API keys** in the side Navbar
+		
 		![](docs/Pinecone-API-key.png)
-	2. Click **Create API key**
+	1. Click **Create API key**
+		
 		![](docs/Pinecone-Create-API-key.png)
-	3. After name and create your key, copy and store the key somewhere because you will ***not be*** able to do this again later
+	1. After name and create your key, copy and store the key somewhere because you will ***not be*** able to do this again later
 - OpenAI API key
 	1. In the dashboard, click the **API keys** in the side Navbar
+		
 		![](docs/OpenAI-API-keys.png)
-	2. Click **Create new secret key**
+	1. Click **Create new secret key**
 		![](OpenAI-Create-API-key.png)
 	3. After name and create your key, copy and store the key somewhere safe because you ***will not*** be able to do this again
 
 After you have your API keys, go to the `.env` file in your root directory and place your keys in their respective variables:
+
 ![](Environment-File-for-Keys.png)
 
 Now that've you setup your resources, you should be ready to install!
