@@ -21,7 +21,7 @@ import {
 import {createSusceptibilityScoring} from "@/app/utils/susceptibilityScoring";
 import {getNextJsCookies} from "@/app/actions/nextJsCookies";
 import Loader from '../loading'
-import {numberOfBlocksPhase2, numberOfEmailsPerBlock,numberOfTotalAttentionChecks} from  '../emailsConfiguration'
+import {numberOfBlocksPhase2, numberOfEmailsPerBlock,numberOfPhase3Emails,numberOfTotalAttentionChecks} from  '../emailsConfiguration'
 
 interface EmailProps {
     emailsInfo: EmailData[],
@@ -47,15 +47,16 @@ export default function Email(props: EmailProps) {
 
     const completeEmail = () => {
         progress++
-        if (props.emailsInfo.length === progress && props.emailsInfo.length < (numberOfBlocksPhase2 * numberOfEmailsPerBlock)
-            && (props.phase === "phase_2" || props.phase === "phase_3")) {
+        //Checks if there are emails pending to be processed
+        if (props.emailsInfo.length === progress && ((props.emailsInfo.length < (numberOfBlocksPhase2 * numberOfEmailsPerBlock)
+            && (props.phase === "phase_2")) || (props.phase === "phase_3" && props.emailsInfo.length < numberOfPhase3Emails))) {
             const fetchEmails = async () => {
                 //Disable pointer events while emails are being generated
                 let body = document.getElementsByClassName("flex-row")[0];
                 body.style.pointerEvents = 'none';
                 
                 setLoadingBlock(true)
-
+                
                 const scores = createSusceptibilityScoring(props.emailsInfo)
                 const totalScore = Object.values(scores).reduce((sum, item) => sum + item.score, 0)
                 const survey = await getNextJsCookies("survey")

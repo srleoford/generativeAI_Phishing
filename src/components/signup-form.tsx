@@ -34,8 +34,8 @@ export function SignupForm () {
                     labelAsPlaceholder />
                 <br/>
                 <RegisterButton />
-                 <p dangerouslySetInnerHTML={{__html: state?.message}} style={{color: "red"}} aria-live="assertive"
-                   className="sr-only" role="status"/> 
+                 {/* <p dangerouslySetInnerHTML={{__html: state?.message}} style={{color: "red"}} aria-live="assertive"
+                   className="sr-only" role="status"/>  */}
             </form>
         </>
         

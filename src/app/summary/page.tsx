@@ -112,7 +112,8 @@ const [overallStats, setOverallStats] = useState<any>(null);
   useEffect(() => {
     if (userToken) {
       (async () => {
-        const response = await getAnswers(userToken);
+        await new Promise((resolve) => setTimeout(resolve, 3000)); // 3-second delay
+        const response = await getAnswers(userToken);        
         setAnswers(response);
 
         const phase1Response = response[0].matches[0].metadata?.results as string;

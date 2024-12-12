@@ -38,7 +38,11 @@ export async function generate(profile: string, difficulty: number, numberOfEmai
     const emails = emailTemplates.emails.map((emailBase64) => {
         return atob(emailBase64);
     })
-
+    const generatePrompt = numberOfEmails => {
+        return `Generate exactly ${numberOfEmails} ${
+          numberOfEmails === 1 ? "email" : "emails"
+        }, including phishing and non-phishing examples (${numberOfEmails} in total).`;
+      };
     // Add details to AI model about the purpose
     const response = await openai.chat.completions.create({
         model: "gpt-4o-mini",
@@ -57,7 +61,7 @@ export async function generate(profile: string, difficulty: number, numberOfEmai
             { role: "system", content: "Do not use the name of the email recipient on the body and subject" },
             { role: "system", content: "Adjust the difficulty of the emails according to this number: " + difficulty },
             { role: "system", content: "15 (least difficult), 5 (most difficult)" },
-            { role: "user", content: "Generate " + numberOfEmails + " emails, phishing and no phishing (" + numberOfEmails + " in total)" }
+            { role: "user", content: generatePrompt(numberOfEmails) }
         ],
         response_format: zodResponseFormat(emailsArrayFormat, "emails_format")
     })
