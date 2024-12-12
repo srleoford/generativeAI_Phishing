@@ -300,11 +300,11 @@ export const submitAnswers = async (
         {
             emailId: answer.id,
             email: {
-                emailType: answer.emailType,
-                emailDate: answer.date,
-                emailFrom: answer.from,
-                emailSubject: answer.subject,
-                emailBody: answer.body
+                type: answer.emailType,
+                date: answer.date,
+                from: answer.from,
+                subject: answer.subject,
+                body: answer.body
             }
         }
     ))
@@ -340,7 +340,7 @@ export const submitAnswers = async (
                     metadata: {
                         results: jsonString,
                         scores: JSON.stringify(scores),
-                        rawEmails: JSON.stringify(rawEmails)
+                        emails: JSON.stringify(rawEmails)
                     },
                 }
             ])
