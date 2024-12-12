@@ -38,7 +38,6 @@ export default function Email(props: EmailProps) {
     const token = Cookies.get("userToken") || ""
     const router = useRouter()
     const [dialogStatus, setDialogStatus] = useState(false)
-    const [suggestedAction, setSelectSuggestion] = useState("")
     const [feedbackMessage, setFeedbackMessage]: [FeedbackMessage, Dispatch<SetStateAction<FeedbackMessage>>] = useState({
         title: "Correct",
         body: "This is the feedback generated from AI model"
@@ -147,11 +146,8 @@ export default function Email(props: EmailProps) {
         setResponse(response, answerType, props.emailIndex, [props.emailsInfo, props.setEmailsInfo])
     }
 
-    const setSuggestAction = (
-        answerOption: DropdownOptions
-    ) => {
-        setSelectSuggestion(answerOption.label)
-        setSuggestedAction(answerOption.value, props.emailIndex, [props.emailsInfo, props.setEmailsInfo])
+    const setSuggestAction = (suggestedActions: string[]) => {
+        setSuggestedAction(suggestedActions, props.emailIndex, [props.emailsInfo, props.setEmailsInfo])
         if (props.emailsInfo[props.emailIndex].interactions.choice != '') {
             processEmail()
         }
@@ -161,7 +157,7 @@ export default function Email(props: EmailProps) {
         setResultAnswer(
             props.emailsInfo[props.emailIndex].emailType, type
         )
-        if (props.emailsInfo[props.emailIndex].interactions.suggestedAction !== '') {
+        if (props.emailsInfo[props.emailIndex].interactions.suggestedActions.length > 0) {
             processEmail()
         }
     }
@@ -179,6 +175,12 @@ export default function Email(props: EmailProps) {
         }
     }
 
+    const findActionInActions = (attentionCheck: string) => {
+        return props.emailsInfo[props.emailIndex].interactions.suggestedActions.some(
+            item => attentionCheck.includes(item)
+        )
+    }
+
     const handleAttentionChecks = () => {
         if (props.emailsInfo[props.emailIndex].emailType.toLowerCase() == 'attention_check') {
             var regex = /<b>(\w+)\s+email/;
@@ -190,7 +192,7 @@ export default function Email(props: EmailProps) {
             const attentionCheckAction = match[1].toLowerCase()
 
             if (attentionCheckType != props.emailsInfo[props.emailIndex].interactions.choice.toLowerCase()
-                || !props.emailsInfo[props.emailIndex].interactions.suggestedAction.toLowerCase().includes(attentionCheckAction)) {
+                || !findActionInActions(attentionCheckAction)) {
 
                 setTimeout(() => {
                     router.push("/");
@@ -272,8 +274,8 @@ export default function Email(props: EmailProps) {
                 isDialogOpen={dialogStatus}
                 onPhishOption={onOptionSelected}
                 onRealOption={onOptionSelected}
-                onSetAction={setSuggestAction}
-                feedbackSuggestion={props.emailsInfo[props.emailIndex].interactions.suggestedAction}
+                onSetActions={setSuggestAction}
+                suggestedActions={props.emailsInfo[props.emailIndex].interactions.suggestedActions}
             />
             <ProgressBar index={progress} total={props.emailsInfo.length}/>
         </Flex>
