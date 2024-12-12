@@ -3,7 +3,7 @@
 
 ## *Table of Contents*
 
-1. [[#Installation]]
+1. [Installation](#Installation)
 2. Introduction
 	- [[#Purpose]]
 	- [[#Framework]]
