@@ -4,13 +4,18 @@
 ## *Table of Contents*
 
 1. [Installation](#Installation)
-2. Introduction
+2. [Introduction](#Introduction)
 	- [Purpose](#Purpose)
 	- [Framework](#Framework)
 	- [References](#References)
 3. Design
 
+---
+
+
+
 ## Installation
+
 ---
 
 This software is very easy to use and install! This software does have dependencies before you try and install this software:
@@ -60,19 +65,19 @@ Once you've created your accounts you'll need to create and grab your API keys a
 
 - Pinecone API key
 	1. In the dashboard, click on the **API keys** in the side Navbar
-	![image1](docs/Pinecone API key.png)
+		![](docs/Pinecone-API-key.png)
 	2. Click **Create API key**
-		![[Pinecone Create API key.png]]
+		![](docs/Pinecone-Create-API-key.png)
 	3. After name and create your key, copy and store the key somewhere because you will ***not be*** able to do this again later
 - OpenAI API key
 	1. In the dashboard, click the **API keys** in the side Navbar
-		![[OpenAI API keys.png]]
+		![](docs/OpenAI-API-keys.png)
 	2. Click **Create new secret key**
-		![[OpenAI Create API key.png]]
+		![](OpenAI-Create-API-key.png)
 	3. After name and create your key, copy and store the key somewhere safe because you ***will not*** be able to do this again
 
 After you have your API keys, go to the `.env` file in your root directory and place your keys in their respective variables:
-![[Environment File for Keys 1.png]]
+![](Environment-File-for-Keys.png)
 
 Now that've you setup your resources, you should be ready to install!
 
@@ -96,6 +101,10 @@ Now that've you setup your resources, you should be ready to install!
 
 ---
 
+
+
+## Introduction
+---
 #### Purpose
 
 Phishing has and is still a very effective tool to hack into the lives of people. The issue is in teaching people effectively how to spot the signs of phishing emails and train people how to learn from these signs. Part of the effectiveness is a system's ability to capture the focus and attention of the users through interactivity and engagement during the usage. Another issue is that there's still ongoing research into phishing and what makes them so effective across multiple demographics. Certain metrics need to be recorded as a baseline for each user to further quantify and establish ground truths for further study. There needs to be a means to store these training results along with the emails and metrics to help train and discover underlying relationships among these factors. Lastly, an issue with training is the available resources for phishing training (constructing emails, both legitimate and phishing, the database to store and learn, tested results, etc.) Go Phish! is meant to be a easy-to-use, efficient means to complete all three objectives with more novel approaches: the use of vector databases alongside artificial intelligence to generate emails on a case-by-case bases.
@@ -117,11 +126,16 @@ Lastly, since generating responses, emails, and other necessary information for 
 #### References
 
 1. [Next.js Tutorial](https://nextjs.org/docs)
-2. [Next.js API References](https://nextjs.org/docs/app/api-reference)
-3. 
+2. [Next.js API References](https://nextjs.org/docs/app/api-reference
+3. [Pinecone Documentation](https://docs.pinecone.io/guides/get-started/overview)
+4. [OpenAI Documentation](https://platform.openai.com/docs/overview)
 
+---
 
+## Design
 
+---
 
+The general overview of the software is very simplistic by design. We didn't want there to be a lot of moving parts for the system so it's easy to manage and even easier to develop especially considering this only needs to take in surveys from individuals:
 
-
+![](GoPhish-Architecture.png)
