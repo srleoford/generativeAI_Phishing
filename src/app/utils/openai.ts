@@ -13,6 +13,7 @@ const openai = new OpenAI({
     apiKey: openaiApiKey
 })
 
+// Here we describe the information require for each email
 const generateEmailFormat = z.object({
     id: z.number().describe("Start from 1001"),
     body: z.string().describe("HTML content of the email generated"),
@@ -27,11 +28,18 @@ const emailsArrayFormat = z.object({
     emails: z.array(generateEmailFormat).describe("Emails generated")
 })
 
+/**
+ * This method will generate AI phishing and no phishing emails
+ * @param profile this is the user answers in the survey
+ * @param difficulty set difficulty for the emails
+ * @param numberOfEmails amount of emails we want to generate
+ */
 export async function generate(profile: string, difficulty: number, numberOfEmails: number) {
     const emails = emailTemplates.emails.map((emailBase64) => {
         return atob(emailBase64);
     })
 
+    // Add details to AI model about the purpose
     const response = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         messages: [
