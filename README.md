@@ -8,9 +8,12 @@
 	- [Purpose](#Purpose)
 	- [Framework](#Framework)
 	- [References](#References)
-3. [Design](#Design)
+3. [Features](#)
+	- 
+4. [Design](#Design)
 	- [Overview](#Overview)
-	- [Database Design](#Database-Design)
+	- [Database](#Database-Design)
+	- [Frontend](#Frontend\Design)
 
 ---
 
@@ -139,6 +142,16 @@ Lastly, since generating responses, emails, and other necessary information for 
 
 ---
 
+## Features
+
+---
+
+
+#### Main Features
+
+
+---
+
 ## Design
 
 ---
@@ -164,14 +177,47 @@ This is our simplistic overview of the system. There's four main components:
 In Pinecone, the database is structured a little differently than others. For each database, there are a number of indexes (similar to SQL tables) which contain a number of records that can be separated through namespaces. Namespaces are used as a separation between records. It's a way to group records to make future usage more efficient rather than iterating over the entire index. Each record has an ID and houses a dense vector and a sparse vector values along with metadata. Since dense vector values cannot be empty, we've just initialized indexes with a random vector of values and dimensions, but it's part of our design for future development that this would be used to store embeddings in for models in the future. 
 
 We've chose to use metadata to store all of our data from initial responses and information to each phases' responses and emails for use and research later. There are two indexes that must be created in the database before the system can store data:
+
 1. `users`
 2. `results`
-These names can be changed later, but this is how the current design has been constructed.
 
-We've split the users, survey answers, and a token to be stored in one index, and the rest of the emails, interactions, and other metrics from each phase in a separate index separating each phase into their respective namespaces titled `phase_1`, `phase_2`, and `phase_3`. 
+These names can be changed later, but this is how the current design has been constructed. 
+
+We've split the users, survey answers, and a token to be stored in one index (`users`), and the rest of the emails, interactions, and other metrics from each phase in a separate index (`results`) separating each phase into their respective namespaces titled `phase_1`, `phase_2`, and `phase_3`. 
 
 
 #### Frontend Design
 
+There's a number of components that went into the frontend of the system that is designed to be more modular and flexible to change for various changes and fixes that might come up in the future. The main pages that are built are stored in `root/src/app` directory and can be divided up into:
 
+1. Consent Page 
+	- `app` directory
+2. Register Page
+	- `register` directory
+3. Survey Page
+	- `intro` directory
+4. Survey Declined Page
+	- `declinedSurvey` directory
+1. Instructions Page
+	- `instructions` directory
+2. Email Phase Pages
+	- `emails` directory
+3. Summary Page
+	- `summary` directory
 
+Each page has it's own directory for the design of the page and where the components are placed. The rest of the directories are used for various helper functions, data, and other helpful files to separate the necessary components from the website pages. The rest of the directories are as followed:
+
+- `actions`
+	- Responsible for general actions of the web pages and between the user and the components such as grabbing form data, user authorization, etc.
+- `api`
+	- Routes established to communicate between the frontend and other parts of the system like OpenAI for email generation and rerouting for between different instructions and phases of the survey
+- `lib`
+	- Library functions and data is stored here that other components can check out and use for the future such as the consent form, TypeScript definitions for different data types and validations, and a security tokenizer
+- `utils`
+	- Utilities that are necessary and only used purely on a utility function for certain aspects such as cookies, susceptibility calculations and specific functions for OpenAI and Pinecone
+- `src/components`
+	- React components built specifically for this system are stored here. Some maybe built from scratch and others might integrate other OnceUI components as well
+- `src/jsons`
+	- Store templates of data for questions and survey answers
+- `src/once-ui`
+	- All the available OnceUI components to use and integrate into the system like styles, React components, tokens, and other helpful functions like interfaces, types, and icons
