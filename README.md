@@ -143,4 +143,4 @@ Lastly, since generating responses, emails, and other necessary information for 
 
 The general overview of the software is very simplistic by design. We didn't want there to be a lot of moving parts for the system so it's easy to manage and even easier to develop especially considering this only needs to take in surveys from individuals:
 
-![](GoPhish-Architecture.png)
+![](docs/GoPhish-Architecture.png)
