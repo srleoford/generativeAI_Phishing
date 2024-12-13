@@ -149,6 +149,7 @@ Lastly, since generating responses, emails, and other necessary information for 
 
 #### Main Features
 Navigation locks: The flow of the user interacting with the system is protected via the use of cookies. There are rules specified that make sure that the user does not navigate to a section of the application where they are not supposed to be at that moment. Going back or refreshing the page will result in getting kicked out of the system, and a new email registration will be needed.
+
 User registration: We ask users to provide an email. If they try to register an already existing email, the system returns an error screen. No password is required since this system is intented to be used only once.
 
 Profiling Survey: We have a survey made with SurveyJS with 14 configurable questions. It provides a baseline that we can use to tailor AI generated emails.
