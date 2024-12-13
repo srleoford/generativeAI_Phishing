@@ -4,7 +4,28 @@ import {ResponseRoute} from '../api/phases/route'
 import EmailContainer, {EmailData} from './_components/EmailContainer'
 import HandlePhasesNavigation from "@/components/cookies-email-phases";
 import {cookies} from "next/headers";
-import {numberOfPhase3Emails,numberOfBlocksPhase2,numberOfEmailsPerBlock,numberOfTotalAttentionChecks} from  '../emails/emailsConfiguration'
+import {numberOfPhase1Emails,numberOfPhase3Emails,numberOfBlocksPhase2,numberOfEmailsPerBlock,numberOfTotalAttentionChecks} from  '../emails/emailsConfiguration'
+
+//With this helper function you can decide which phases generate AI emails and which ones use the premade dataset.
+async function fetchEmails(numberOfEmails:number, generateWithAI:boolean, survey:string | undefined) {
+    const emails = generateWithAI ? await fetch(
+        'http://localhost:3000/api/generateEmails',
+        {
+            method: 'POST',
+            body: JSON.stringify(
+                {
+                    survey,
+                    difficulty: 10,
+                    numberOfEmails: numberOfEmails
+                }
+            ),
+            cache: 'no-store'
+        }
+    )
+    :
+    await fetch(`http://localhost:3000/api/dataset?numberOfEmails=${numberOfEmails}`, { cache: 'no-store' });
+    return emails.json()
+}
 
 /**
  * EmailsPage Component
@@ -28,32 +49,16 @@ const EmailsPage = async () => {
     switch (routeResponse.route) {
 
         case "phase_1": {
-            // Transition to phase_2 and fetch initial dataset emails
+            // Transition to phase_2 and fetch initial dataset of premade emails
             newRoute = "phase_2"
-            const datasetEmails = await fetch('http://localhost:3000/api/dataset', {cache: 'no-store'})
-            emailsContent = await datasetEmails.json()
+            emailsContent = await fetchEmails(numberOfPhase1Emails,false,'')
             break
         }
 
         case "phase_2": {
             // Transition to phase_3 and generate emails using OpenAI API
             newRoute = "phase_3"
-            const openaiEmails = await fetch(
-                'http://localhost:3000/api/generateEmails',
-                {
-                    method: 'POST',
-                    body: JSON.stringify(
-                        {
-                            survey,
-                            difficulty: 10,
-                            numberOfEmails: numberOfEmailsPerBlock
-                        }
-                    ),
-                    cache: 'no-store'
-                }
-            )
-
-            emailsContent = await openaiEmails.json()
+            emailsContent = await fetchEmails(numberOfEmailsPerBlock,true,survey)
 
             if (numberOfTotalAttentionChecks > 0) {
                 // Select a random block from the total number of blocks
@@ -76,21 +81,7 @@ const EmailsPage = async () => {
         case "phase_3": {
             // Reset to phase_0 and generate new emails for evaluation
             newRoute = "phase_0"
-            const openaiEmails = await fetch(
-                'http://localhost:3000/api/generateEmails',
-                {
-                    method: 'POST',
-                    body: JSON.stringify(
-                        {
-                            survey,
-                            difficulty: 10,
-                            numberOfEmails: numberOfPhase3Emails
-                        }
-                    ),
-                    cache: 'no-store'
-                }
-            )
-            emailsContent = await openaiEmails.json()
+            emailsContent = await fetchEmails(numberOfPhase3Emails,false,'')
             break
         }
 

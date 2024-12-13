@@ -2,7 +2,6 @@ import {NextResponse} from "next/server";
 import emails from "../dataset/PhishingDataset_HFES2020.json"
 import {EmailData} from "@/app/emails/_components/EmailContainer";
 import {emptyEmailAnswer} from "@/app/emails/models/emailAnswer";
-import {numberOfPhase1Emails} from  '../../emails/emailsConfiguration'
 
 // Transforms dataset into objects of type EmailData
 const mapEmails = (emailData: any): EmailData => {
@@ -26,9 +25,11 @@ function shuffleArray(array: EmailData[]): EmailData[] {
     return array.sort(() => Math.random() - 0.5);
 }
 
-export async function GET() {
+export async function GET(request) {
+    const { searchParams } = new URL(request.url);
+    const numberOfEmails = searchParams.get('numberOfEmails');
     // Get five random elements from the dataset
-    const randomElements = shuffleArray(emailDataset).slice(0, numberOfPhase1Emails)
+    const randomElements = shuffleArray(emailDataset).slice(0, Number(numberOfEmails))
     return NextResponse.json(randomElements, {status: 200})
 }
 
