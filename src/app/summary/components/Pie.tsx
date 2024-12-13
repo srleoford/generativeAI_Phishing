@@ -3,6 +3,7 @@ import { Pie } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   Tooltip,
+  Title,
   Legend,
   ArcElement,
   ChartOptions,
@@ -10,19 +11,18 @@ import {
 } from 'chart.js';
 
 // Register Chart.js components
-ChartJS.register(Tooltip, Legend, ArcElement);
+ChartJS.register(Tooltip, Legend, Title, ArcElement);
 
 // Define props for the PieChart component
 interface PieChartProps {
-  labels: {
-    [key: string]: string[];
-  }
-  data: {
-    [key: string]: number;
-  };
+  title: string;
+  datalabel: string;
+  labels: string[];
+  data: number[];
+  colors: string[];
 }
 
-export const PieChart: React.FC<PieChartProps> = ({ labels, data }) => {
+export const PieChart: React.FC<PieChartProps> = ({title, datalabel, labels, data, colors }) => {
   const options: ChartOptions<'pie'> = {
     responsive: true,
     plugins: {
@@ -30,22 +30,24 @@ export const PieChart: React.FC<PieChartProps> = ({ labels, data }) => {
         display: true,
         position: 'top',
       },
+      title: {
+        display: true,
+        text: title,
+      },
       tooltip: {
         enabled: true,
       },
     },
   };
-  const sampleLabels = ["Correct", "Incorrect"]
-  const sampleData = [data.totalCorrectChoices, data.totalIncorrectChoices]
 
   const pieChartData: ChartData<'pie'> = {
     labels: labels,
     datasets: [
       {
-        label: "Choices",
-        data: sampleData,
-        backgroundColor: ["rgba(4, 255, 0, 0.2)", "rgba(244, 0, 0, 0.2)"],
-        hoverOffset: 4,
+        label: datalabel,
+        data: data,
+        backgroundColor: colors,
+        hoverOffset: 10,
       },
     ],
   };

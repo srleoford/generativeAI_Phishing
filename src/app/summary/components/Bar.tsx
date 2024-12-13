@@ -17,13 +17,13 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 // Define props for the BarChart component
 interface BarChartProps {
-  data: {
-      totalCorrectChoices: number;
-      totalIncorrectChoices: number;
-  };
+    title: string;
+    labels: string[];
+    data: number[];
+    colors: string[];
 }
 
-export const BarChart: React.FC<BarChartProps> = ({ data }) => {
+export const BarChart: React.FC<BarChartProps> = ({ title, labels, data, colors }) => {
   const options: ChartOptions<'bar'> = {
     responsive: true,
     plugins: {
@@ -32,19 +32,19 @@ export const BarChart: React.FC<BarChartProps> = ({ data }) => {
       },
       title: {
         display: true,
-        text: 'Correct vs Incorrect Choices',
+        text: title,
       },
     },
   };
 
   const barChartData: ChartData<'bar'> = {
-    labels: ["Correct", "Incorrect"],
+    labels: labels,
     datasets: [
       {
         label: "Choices",
-        data: [data.totalCorrectChoices, data.totalIncorrectChoices],
-        backgroundColor: ["rgba(75, 192, 192, 0.2)", "rgba(255, 99, 132, 0.2)"],
-        borderColor: ["rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)"],
+        data: data,
+        backgroundColor: colors,
+        borderColor: colors,
         borderWidth: 1,
       },
     ],
