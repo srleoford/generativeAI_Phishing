@@ -143,7 +143,6 @@ const [overallStats, setOverallStats] = useState<any>(null);
     return <p>Loading statistics...</p>;
   }
   const { statsp1, statsp2, statsp3, overallStats: summary } = overallStats;
-
   
 
   return (
@@ -179,10 +178,19 @@ const [overallStats, setOverallStats] = useState<any>(null);
         </Flex>
       </Flex>
       <Flex mobileDirection="column" fillWidth gap="24">
-        <Flex position="relative" flex={4} gap="24" marginBottom="104" direction="column" align="center">
-        <CollapsibleTable stats={overallStats} />
-        <BarChart data={statsp1}/>
-        <PieChart data={statsp1}/>
+        <Flex position="relative" flex={4} gap="24" marginBottom="104" direction="row" align="center">
+          <CollapsibleTable stats={overallStats} />
+          <Flex direction="column" gap="24">
+            {/* Performance Overview Charts */}
+            <BarChart title="Correct vs Incorrect Choices" labels={["Correct", "Incorrect"]} data={[summary.totalCorrectChoices, summary.totalIncorrectChoices]} colors={["rgba(3, 171, 0, 0.96))", "rgb(203, 15, 56)"]}/>
+            <PieChart title="Time Spent on Each Phase" datalabel="Seconds" labels={["Phase 1", "Phase 2", "Phase 3"]} data={[statsp1.totalTimeSpent, statsp2.totalTimeSpent, statsp3.totalTimeSpent]} colors={["rgba(3, 171, 0, 0.96)", "rgb(244, 0, 0)", "rgb(0, 0, 255)"]}/>
+            {/* User Interaction Charts */}
+            <PieChart title="User Interactions" datalabel="Interactions" labels={["Link Hovers", "Attachments Opened", "Checked Sender", "Links Clicked"]} data={[summary.totalMouseHoverOverLinks, summary.totalOpeningAttachments, summary.totalSenderInteraction, summary.totalClickingBehavior]} colors={["rgba(3, 171, 0, 0.96)", "rgba(244, 0, 0, 0.87)", "rgba(0, 0, 255, 0.95)", "rgb(249, 179, 0)"]}/>
+            {/* Risk Actions Charts */}
+            <PieChart title="Risk Actions" datalabel="Selections" labels={["Respond", "Open Attachment", "Check Sender", "Check Link", "Delete Email", "Report"]} data={[summary.totalSuggestedActionsCount["respond"], summary.totalSuggestedActionsCount["click_open"], summary.totalSuggestedActionsCount["checkSender"], summary.totalSuggestedActionsCount["checkLink"], summary.totalSuggestedActionsCount["delete"], summary.totalSuggestedActionsCount["report"],]} colors={["rgba(3, 171, 0, 0.96)", "rgba(244, 0, 0, 0.87)", "rgba(0, 0, 255, 0.95)", "rgb(249, 179, 0)", "rgba(255, 165, 0, 0.87)", "rgba(128, 0, 128, 0.87)"]}/>
+            {/* Other Data Charts */}
+            <PieChart title="Trial Composition" datalabel="Items" labels={["Ham", "Phish", "Attention Checks"]} data={[summary.totalHam, summary.totalPhishing, summary.totalHam]} colors={["rgba(3, 171, 0, 0.96)", "rgb(244, 0, 0)", "rgb(137, 137, 137)"]}/>
+          </Flex>
         </Flex>
       </Flex>
     </Flex>

@@ -74,7 +74,7 @@ function createData(name: string, stats) {
                         overall: stats.overallStats.totalSenderInteraction
                     },
                     {
-                        metric: 'Total click interactions',
+                        metric: 'Suspicious Links Clicked',
                         phase1: stats.statsp1.totalClickingBehavior,
                         phase2: stats.statsp2.totalClickingBehavior,
                         phase3: stats.statsp3.totalClickingBehavior,
@@ -87,14 +87,14 @@ function createData(name: string, stats) {
                 name,
                 summaryData: [
                     {
-                        metric: 'Respond',
+                        metric: 'Report Email',
                         phase1: stats.statsp1.suggestedActionsCount.report,
                         phase2: stats.statsp2.suggestedActionsCount.report,
                         phase3: stats.statsp3.suggestedActionsCount.report,
                         overall: stats.overallStats.totalSuggestedActionsCount.report
                     },
                     {
-                        metric: 'Click Link/Open attachment',
+                        metric: 'Open attachment',
                         phase1: stats.statsp1.suggestedActionsCount.click_open,
                         phase2: stats.statsp2.suggestedActionsCount.click_open,
                         phase3: stats.statsp3.suggestedActionsCount.click_open,
@@ -122,11 +122,11 @@ function createData(name: string, stats) {
                         overall: stats.overallStats.totalSuggestedActionsCount.delete
                     },
                     {
-                        metric: 'Report email',
-                        phase1: stats.statsp1.suggestedActionsCount.report,
-                        phase2: stats.statsp2.suggestedActionsCount.report,
-                        phase3: stats.statsp3.suggestedActionsCount.report,
-                        overall: stats.overallStats.totalSuggestedActionsCount.report
+                        metric: 'Respond email',
+                        phase1: stats.statsp1.suggestedActionsCount.respond,
+                        phase2: stats.statsp2.suggestedActionsCount.respond,
+                        phase3: stats.statsp3.suggestedActionsCount.respond,
+                        overall: stats.overallStats.totalSuggestedActionsCount.respond
                     },
                 ]
             }
