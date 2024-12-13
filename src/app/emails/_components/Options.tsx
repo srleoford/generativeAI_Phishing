@@ -1,7 +1,7 @@
 'use client'
 
 import {Button, Chip, Dialog, DropdownOptions, Flex, Select} from '@/once-ui/components'
-import React from 'react'
+import React, {Dispatch, SetStateAction} from 'react'
 import {EmailData} from './EmailContainer'
 import {ActionMeta, default as ReactSelect} from "react-select"
 import {options} from "@/app/emails/emailsConfiguration";
@@ -12,7 +12,8 @@ export interface FeedbackMessage {
 }
 
 export interface OptionsProps {
-    email: EmailData,
+    emailIndex: number,
+    emailsState: [EmailData[], Dispatch<SetStateAction<EmailData[]>>],
     feedbackMessage: FeedbackMessage,
     onClose: () => void,
     isDialogOpen: boolean,
@@ -23,8 +24,9 @@ export interface OptionsProps {
 }
 
 const Options = (props: OptionsProps) => {
-    const isChoiceDisable = props.email.interactions.isCorrect !== undefined
-    const isActionDisable = props.email.interactions.suggestedActions.length > 0 && isChoiceDisable
+    const email: EmailData = props.emailsState[0][props.emailIndex]
+    const isChoiceDisable = email.interactions.isCorrect !== undefined
+    const isActionDisable = email.interactions.suggestedActions.length > 0 && isChoiceDisable && email.isSuggestedActionsClosed
     const onSelectChange = (options: readonly { label: string; value: string }[], actionMeta: ActionMeta<{ label: string; value: string }>) => {
         const values: string[] = options.map(item => item.value)
         props.onSetActions(values)
@@ -32,6 +34,12 @@ const Options = (props: OptionsProps) => {
     const selectedActions = options.filter(
         option => props.suggestedActions.includes(option.value)
     )
+    const onMenuClosedState = (isClosed: boolean)=> {
+        const newEmailsData = [...props.emailsState[0]]
+        newEmailsData[props.emailIndex].isSuggestedActionsClosed = isClosed
+        props.emailsState[1](newEmailsData)
+        props.onSetActions(props.suggestedActions)
+    }
     return (
         <Flex
             direction='row'
@@ -88,9 +96,9 @@ const Options = (props: OptionsProps) => {
                         disabled={isChoiceDisable}
                     />
                     {
-                        props.email.interactions.choice !== "" &&
+                        email.interactions.choice !== "" &&
                         <Chip
-                            label={props.email.interactions.choice}
+                            label={email.interactions.choice}
                             selected
                             onClick={()=>{}}
                         />
@@ -108,6 +116,12 @@ const Options = (props: OptionsProps) => {
                     onChange={onSelectChange}
                     value={selectedActions}
                     placeholder="Choose suggested action"
+                    onMenuClose={() => {
+                        onMenuClosedState(true)
+                    }}
+                    onMenuOpen={() => {
+                        onMenuClosedState(false)
+                    }}
                 />
             </Flex>
         </Flex>
