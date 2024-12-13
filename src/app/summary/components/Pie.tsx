@@ -14,13 +14,15 @@ ChartJS.register(Tooltip, Legend, ArcElement);
 
 // Define props for the PieChart component
 interface PieChartProps {
+  labels: {
+    [key: string]: string[];
+  }
   data: {
-    totalCorrectChoices: number;
-    totalIncorrectChoices: number;
+    [key: string]: number;
   };
 }
 
-export const PieChart: React.FC<PieChartProps> = ({ data }) => {
+export const PieChart: React.FC<PieChartProps> = ({ labels, data }) => {
   const options: ChartOptions<'pie'> = {
     responsive: true,
     plugins: {
@@ -33,13 +35,15 @@ export const PieChart: React.FC<PieChartProps> = ({ data }) => {
       },
     },
   };
+  const sampleLabels = ["Correct", "Incorrect"]
+  const sampleData = [data.totalCorrectChoices, data.totalIncorrectChoices]
 
   const pieChartData: ChartData<'pie'> = {
-    labels: ["Correct", "Incorrect"],
+    labels: labels,
     datasets: [
       {
         label: "Choices",
-        data: [data.totalCorrectChoices, data.totalIncorrectChoices],
+        data: sampleData,
         backgroundColor: ["rgba(4, 255, 0, 0.2)", "rgba(244, 0, 0, 0.2)"],
         hoverOffset: 4,
       },
