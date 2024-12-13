@@ -3,7 +3,9 @@ import React, { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import { getAnswers } from '../utils/pinecone';
 import { Heading, Flex, Background } from '@/once-ui/components';
-import CollapsibleTable from './table';
+import CollapsibleTable from './components/table';
+import { BarChart } from './components/Bar';
+import { PieChart } from './components/Pie'
 
 const calculatePhaseStats = (phaseData: any[]) => {
   let totalMouseHoverOverLinks = 0;
@@ -89,7 +91,7 @@ const calculateAllPhasesStats = (allPhasesData: any[]) => {
   });
 
   // Calculate overall average time spent
-  overallStats.avgTimeSpent = (overallStats.totalTimeSpent / overallStats.totalEmails).toFixed(2);
+  overallStats.avgTimeSpent = parseFloat((overallStats.totalTimeSpent / overallStats.totalEmails).toFixed(2));
   overallStats.totalTimeSpentInMinutes = `${Math.floor(overallStats.totalTimeSpent / 60)}:${Math.floor(overallStats.totalTimeSpent % 60).toString().padStart(2, '0')}`;
   return overallStats;
 };
@@ -142,6 +144,8 @@ const [overallStats, setOverallStats] = useState<any>(null);
   }
   const { statsp1, statsp2, statsp3, overallStats: summary } = overallStats;
 
+  
+
   return (
     <Flex fillWidth paddingTop="l" paddingX="l" direction="column" alignItems="center" flex={1}>
       <Background dots={false} />
@@ -177,9 +181,11 @@ const [overallStats, setOverallStats] = useState<any>(null);
       <Flex mobileDirection="column" fillWidth gap="24">
         <Flex position="relative" flex={4} gap="24" marginBottom="104" direction="column" align="center">
         <CollapsibleTable stats={overallStats} />
+        <BarChart data={statsp1}/>
+        <PieChart data={statsp1}/>
         </Flex>
       </Flex>
-          </Flex>
+    </Flex>
   );
 };
 
