@@ -15,6 +15,7 @@ export interface EmailData {
     emailType: string,
     feedbackMessage: string,
     interactions: EmailAnswer,
+    isSuggestedActionsClosed: boolean,
 }
 
 interface EmailContainerProps {

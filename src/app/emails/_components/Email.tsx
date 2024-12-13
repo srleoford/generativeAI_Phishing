@@ -148,7 +148,8 @@ export default function Email(props: EmailProps) {
 
     const setSuggestAction = (suggestedActions: string[]) => {
         setSuggestedAction(suggestedActions, props.emailIndex, [props.emailsInfo, props.setEmailsInfo])
-        if (props.emailsInfo[props.emailIndex].interactions.choice != '') {
+        console.log(props.emailsInfo[props.emailIndex].isSuggestedActionsClosed)
+        if (props.emailsInfo[props.emailIndex].interactions.choice != '' && props.emailsInfo[props.emailIndex].isSuggestedActionsClosed) {
             processEmail()
         }
     }
@@ -268,7 +269,8 @@ export default function Email(props: EmailProps) {
             />
 
             <Options
-                email={props.emailsInfo[props.emailIndex]}
+                emailIndex={props.emailIndex}
+                emailsState={[props.emailsInfo, props.setEmailsInfo]}
                 feedbackMessage={feedbackMessage}
                 onClose={onCloseDialog}
                 isDialogOpen={dialogStatus}
