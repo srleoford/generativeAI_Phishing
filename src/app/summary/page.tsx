@@ -19,12 +19,12 @@ const calculatePhaseStats = (phaseData: any[]) => {
   let totalEmails = phaseData.length
   const suggestedActionsCount: { [key: string]: number } = 
   {
-    report: 0,
-    delete: 0,
-    respond: 0,
-    checkSender: 0,
-    checkLink: 0,
-    click_open: 0
+    "report": 0,
+    "delete": 0,
+    "respond": 0,
+    "checkSender": 0,
+    "checkLink": 0,
+    "click_open": 0
   };
 
   phaseData.forEach((email) => {
@@ -37,7 +37,8 @@ const calculatePhaseStats = (phaseData: any[]) => {
     interactions.isCorrect ? totalCorrectChoices++ : totalIncorrectChoices++;
     interactions.choice.toLowerCase() === 'ham' ? totalHam++ : totalPhishing++;
     totalTimeSpent += interactions.timeSpent;
-    suggestedActionsCount[interactions.suggestedAction]++;
+    interactions.suggestedActions.forEach((action: string) => suggestedActionsCount[action]++);
+ 
   });
 
   const avgTimeSpent = (totalTimeSpent / phaseData.length).toFixed(2);
@@ -101,9 +102,9 @@ const [overallStats, setOverallStats] = useState<any>(null);
 
   useEffect(() => {
     // Retrieve the token using js-cookie
-    //Cookies.set('userToken','dGVzdEB0ZXN0LmNvbTkyYWVmMWVkZWMyOGI0MjhjOWJmYTE2ZTdlYzNhZGIz')
+    // Cookies.set('userToken','ZW1haWxAZW5jby5jb20zMGYzMDQwMzBlMDVmOTc3MjNkNWVkNDhlOWYzMzQ5YQ==')
     const token = Cookies.get('userToken');
-    console.log(token)
+    // console.log(token)
     if (token) {
       setUserToken(token);
     }
