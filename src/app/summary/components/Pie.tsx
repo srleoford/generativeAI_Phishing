@@ -47,6 +47,7 @@ export const PieChart: React.FC<PieChartProps> = ({title, datalabel, labels, dat
         label: datalabel,
         data: data,
         backgroundColor: colors,
+        borderColor: 'rgb(188, 187, 187)',
         hoverOffset: 10,
       },
     ],

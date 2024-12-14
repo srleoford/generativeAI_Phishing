@@ -44,7 +44,7 @@ export const BarChart: React.FC<BarChartProps> = ({ title, labels, data, colors 
         label: "Choices",
         data: data,
         backgroundColor: colors,
-        borderColor: colors,
+        borderColor: 'rgb(3, 3, 3)',
         borderWidth: 1,
       },
     ],
