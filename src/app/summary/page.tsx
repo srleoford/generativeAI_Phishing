@@ -31,13 +31,27 @@ const calculatePhaseStats = (phaseData: any[]) => {
 
   phaseData.forEach((email) => {
     const interactions = email.interactions;
+    // const emails = email.emails;
+    // console.log(emails);
 
     if (interactions.mouseHoverOverLinks) totalMouseHoverOverLinks++;
     if (interactions.clickingBehavior) totalClickingBehavior++;
     if (interactions.senderInteraction) totalSenderInteraction++;
     if (interactions.openingAttachments) totalOpeningAttachments++;
     interactions.isCorrect ? totalCorrectChoices++ : totalIncorrectChoices++;
-    interactions.choice.toLowerCase() === 'ham' ? totalHam++ : totalPhishing++;
+    if (interactions.choice.toLowerCase() === 'ham') {
+      if (interactions.isCorrect) {
+      totalHam++;
+      } else {
+      totalPhishing++;
+      }
+    } else if (interactions.choice.toLowerCase() === 'phishing') {
+      if (interactions.isCorrect) {
+      totalPhishing++;
+      } else {
+      totalHam++;
+      }
+    }
     totalTimeSpent += interactions.timeSpent;
     interactions.suggestedActions.forEach((action: string) => suggestedActionsCount[action]++);
  
@@ -63,7 +77,7 @@ const calculatePhaseStats = (phaseData: any[]) => {
   };
 };
 
-const calculateAllPhasesStats = (allPhasesData: any[]) => {
+const calculateAllPhasesStats = (allPhasesData: any[], allEmailsData: any[]) => {
   const overallStats = {
     totalMouseHoverOverLinks: allPhasesData.reduce((n, {totalMouseHoverOverLinks}) => n + totalMouseHoverOverLinks, 0),
     totalClickingBehavior: allPhasesData.reduce((n, {totalClickingBehavior}) => n + totalClickingBehavior, 0),
@@ -73,11 +87,12 @@ const calculateAllPhasesStats = (allPhasesData: any[]) => {
     totalIncorrectChoices: allPhasesData.reduce((n, {totalIncorrectChoices}) => n + totalIncorrectChoices, 0),
     totalTimeSpent: allPhasesData.reduce((n, {totalTimeSpent}) => n + totalTimeSpent, 0),
     totalTimeSpentInMinutes: '',
-    totalEmails: allPhasesData.reduce((n, {totalEmails}) => n + totalEmails, 0),
+    totalEmails: allEmailsData.reduce((n, {totalEmails}) => n + totalEmails, 0),
     avgTimeSpent: 0,
-    totalHam: allPhasesData.reduce((n, {totalHam}) => n + totalHam, 0),
-    totalPhishing: allPhasesData.reduce((n, {totalPhishing}) => n + totalPhishing, 0),
-    totalSuggestedActionsCount: {} as { [key: string]: number }
+    totalSuggestedActionsCount: {} as { [key: string]: number },
+    totalAttentionChecks: allEmailsData.reduce((n, {totalAttentionChecks}) => n + totalAttentionChecks, 0),
+    totalHamEmails: allEmailsData.reduce((n, { totalHamEmails }) => n + totalHamEmails, 0),
+    totalPhishingEmails: allEmailsData.reduce((n, { totalPhishingEmails }) => n + totalPhishingEmails, 0),
   };
 
   allPhasesData.forEach((phaseStats) => {
@@ -96,9 +111,36 @@ const calculateAllPhasesStats = (allPhasesData: any[]) => {
   return overallStats;
 };
 
+const calculateEmailStats = (allPhasesEmailData: any[]) => {
+  const overallEmailStats = {
+    totalHamEmails: 0,
+    totalPhishingEmails: 0,
+    totalAttentionChecks: 0,
+    totalEmails: 0
+  };
+
+  allPhasesEmailData.forEach((email) => {
+    switch (email.email?.type) {
+      case "Ham":
+        overallEmailStats.totalHamEmails++;
+        break;
+      case "Phishing":
+        overallEmailStats.totalPhishingEmails++;
+        break;
+      case "attention_check":
+        overallEmailStats.totalAttentionChecks++;
+        break;
+      default:
+        break; // Ignore unknown types
+    }
+  });
+  overallEmailStats.totalEmails = overallEmailStats.totalHamEmails + overallEmailStats.totalPhishingEmails;
+  return overallEmailStats;
+};
+
 const SummaryPage = () => {
   const [answers, setAnswers] = useState<any[]>([]);
-const [overallStats, setOverallStats] = useState<any>(null);
+  const [overallStats, setOverallStats] = useState<any>(null);
   const [userToken, setUserToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -118,21 +160,33 @@ const [overallStats, setOverallStats] = useState<any>(null);
         await new Promise((resolve) => setTimeout(resolve, 3000)); // 3-second delay
         const response = await getAnswers(userToken);        
         setAnswers(response);
+        // console.log(response);
 
         const phase1Response = response[0].matches[0].metadata?.results as string;
+        const phase1Emails = response[0].matches[0].metadata?.emails as string;
         const phase2Response = response[1].matches[0].metadata?.results as string;
+        const phase2Emails = response[1].matches[0].metadata?.emails as string;
         const phase3Response = response[2].matches[0].metadata?.results as string;
+        const phase3Emails = response[2].matches[0].metadata?.emails as string;
+
         const statsp1 = calculatePhaseStats(JSON.parse(phase1Response));
         const statsp2 = calculatePhaseStats(JSON.parse(phase2Response));
         const statsp3 = calculatePhaseStats(JSON.parse(phase3Response));
+        const emailsp1 = calculateEmailStats(JSON.parse(phase1Emails))
+        const emailsp2 = calculateEmailStats(JSON.parse(phase2Emails))
+        const emailsp3 = calculateEmailStats(JSON.parse(phase3Emails))
+
 
         const allPhasesData = [statsp1, statsp2, statsp3];
-        const overallStats = calculateAllPhasesStats(allPhasesData);
-
+        const allEmailsData = [emailsp1, emailsp2, emailsp3];
+        const overallStats = calculateAllPhasesStats(allPhasesData, allEmailsData);
         setOverallStats({
-           statsp1,
-           statsp2,
-           statsp3,
+          statsp1,
+          statsp2,
+          statsp3,
+          emailsp1,
+          emailsp2,
+          emailsp3,
           overallStats,
         });
       })();
@@ -142,7 +196,7 @@ const [overallStats, setOverallStats] = useState<any>(null);
   if (!overallStats) {
     return <p>Loading statistics...</p>;
   }
-  const { statsp1, statsp2, statsp3, overallStats: summary } = overallStats;
+  const { statsp1, statsp2, statsp3, emailsp1, emailsp2, emailsp3, overallStats: summary } = overallStats;
   
 
   return (
@@ -189,7 +243,7 @@ const [overallStats, setOverallStats] = useState<any>(null);
             {/* Risk Actions Charts */}
             <PieChart title="Risk Actions" datalabel="Selections" labels={["Respond", "Open Attachment", "Check Sender", "Check Link", "Delete Email", "Report"]} data={[summary.totalSuggestedActionsCount["respond"], summary.totalSuggestedActionsCount["click_open"], summary.totalSuggestedActionsCount["checkSender"], summary.totalSuggestedActionsCount["checkLink"], summary.totalSuggestedActionsCount["delete"], summary.totalSuggestedActionsCount["report"],]} colors={["rgba(3, 171, 0, 0.96)", "rgba(244, 0, 0, 0.87)", "rgba(0, 0, 255, 0.95)", "rgb(249, 179, 0)", "rgba(255, 165, 0, 0.87)", "rgba(128, 0, 128, 0.87)"]}/>
             {/* Other Data Charts */}
-            <PieChart title="Trial Composition" datalabel="Items" labels={["Ham", "Phish", "Attention Checks"]} data={[summary.totalHam, summary.totalPhishing, summary.totalHam]} colors={["rgba(3, 171, 0, 0.96)", "rgb(244, 0, 0)", "rgb(137, 137, 137)"]}/>
+            <PieChart title="Trial Composition" datalabel="Items" labels={["Ham", "Phish", "Attention Checks"]} data={[summary.totalHamEmails, summary.totalPhishingEmails, summary.totalAttentionChecks]} colors={["rgba(3, 171, 0, 0.96)", "rgb(244, 0, 0)", "rgb(137, 137, 137)"]}/>
           </Flex>
         </Flex>
       </Flex>

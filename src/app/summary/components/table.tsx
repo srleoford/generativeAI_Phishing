@@ -136,23 +136,30 @@ function createData(name: string, stats) {
                 summaryData: [
                     {
                         metric: 'Total Phishing emails',
-                        phase1: stats.statsp1.totalPhishing,
-                        phase2: stats.statsp2.totalPhishing,
-                        phase3: stats.statsp3.totalPhishing,
-                        overall: stats.overallStats.totalPhishing
+                        phase1: stats.emailsp1.totalPhishingEmails,
+                        phase2: stats.emailsp2.totalPhishingEmails,
+                        phase3: stats.emailsp3.totalPhishingEmails,
+                        overall: stats.overallStats.totalPhishingEmails
                     },
                     {
                         metric: 'Total Real emails',
-                        phase1: stats.statsp1.totalHam,
-                        phase2: stats.statsp2.totalHam,
-                        phase3: stats.statsp3.totalHam,
-                        overall: stats.overallStats.totalHam
+                        phase1: stats.emailsp1.totalHamEmails,
+                        phase2: stats.emailsp2.totalHamEmails,
+                        phase3: stats.emailsp3.totalHamEmails,
+                        overall: stats.overallStats.totalHamEmails
+                    },
+                    {
+                        metric: 'Total Attention Checks',
+                        phase1: stats.emailsp1.totalAttentionChecks,
+                        phase2: stats.emailsp2.totalAttentionChecks,
+                        phase3: stats.emailsp3.totalAttentionChecks,
+                        overall: stats.overallStats.totalAttentionChecks
                     },
                     {
                         metric: 'Total Emails',
-                        phase1: stats.statsp1.totalEmails,
-                        phase2: stats.statsp2.totalEmails,
-                        phase3: stats.statsp3.totalEmails,
+                        phase1: stats.emailsp1.totalEmails,
+                        phase2: stats.emailsp2.totalEmails,
+                        phase3: stats.emailsp3.totalEmails,
                         overall: stats.overallStats.totalEmails
                     },
                 ]
