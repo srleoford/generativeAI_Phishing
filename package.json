@@ -9,6 +9,7 @@
 		"lint": "next lint"
 	},
 	"dependencies": {
+		"@emotion/cache": "^11.14.0",
 		"@emotion/react": "^11.14.0",
 		"@emotion/styled": "^11.14.0",
 		"@floating-ui/react-dom": "^2.1.2",
@@ -16,6 +17,7 @@
 		"@huggingface/inference": "^2.8.1",
 		"@mui/icons-material": "^6.2.0",
 		"@mui/material": "^6.2.0",
+		"@mui/material-nextjs": "^6.2.0",
 		"@pinecone-database/pinecone": "^3.0.3",
 		"bootstrap": "^5.3.3",
 		"chart.js": "^4.4.7",
@@ -36,7 +38,6 @@
 		"react-chartjs-2": "^5.2.0",
 		"react-dom": "^18.3.1",
 		"react-icons": "^5.2.1",
-		"react-select": "^5.9.0",
 		"sass": "^1.77.6",
 		"sharp": "^0.33.4",
 		"survey-react-ui": "^1.12.3",

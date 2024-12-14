@@ -5,6 +5,7 @@ import { Flex } from '@/once-ui/components'
 import classNames from 'classnames';
 import { Source_Code_Pro } from 'next/font/google';
 import { Jura, Crimson_Text } from 'next/font/google';
+import {AppRouterCacheProvider} from "@mui/material-nextjs/v14-appRouter";
 
 const primary = Jura({
 	variable: '--font-primary',
@@ -60,10 +61,12 @@ export default function RootLayout({
 			<Flex
 				as="body"
 				fillWidth fillHeight margin="0" padding="0">
-				<Flex
-					flex={1} direction="column">
-					{children}
-				</Flex>
+				<AppRouterCacheProvider>
+					<Flex
+						flex={1} direction="column">
+						{children}
+					</Flex>
+				</AppRouterCacheProvider>
 			</Flex>
 		</Flex>
 	);
