@@ -31,8 +31,6 @@ interface EmailProps {
 }
 
 let progress = 0
-let startTime = new Date().getTime()
-let timeElapse = 0
 
 export default function Email(props: EmailProps) {
     const token = Cookies.get("userToken") || ""
@@ -116,8 +114,6 @@ export default function Email(props: EmailProps) {
             if (props.phase === 'phase_1' || props.phase === 'phase_2'){
                 router.push("/instructions")
             }
-        } else {
-            startTime = new Date().getTime()
         }
     }
 
@@ -148,7 +144,6 @@ export default function Email(props: EmailProps) {
 
     const setSuggestAction = (suggestedActions: string[]) => {
         setSuggestedAction(suggestedActions, props.emailIndex, [props.emailsInfo, props.setEmailsInfo])
-        console.log(props.emailsInfo[props.emailIndex].isSuggestedActionsClosed)
         if (props.emailsInfo[props.emailIndex].interactions.choice != '' && props.emailsInfo[props.emailIndex].isSuggestedActionsClosed) {
             processEmail()
         }
@@ -165,8 +160,8 @@ export default function Email(props: EmailProps) {
 
     const processEmail = () => {
         handleAttentionChecks()
-        timeElapse = new Date().getTime() - startTime
-        let timeInSeconds = timeElapse / 1000
+        const timeElapsed = new Date().getTime() - props.emailsInfo[props.emailIndex].startedTime + props.emailsInfo[props.emailIndex].savedTime
+        let timeInSeconds = timeElapsed / 1000
         setTimeSpent(timeInSeconds, props.emailIndex, [props.emailsInfo, props.setEmailsInfo])
 
         if (props.phase === "phase_2") {
