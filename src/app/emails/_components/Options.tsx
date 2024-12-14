@@ -1,10 +1,10 @@
 'use client'
 
-import {Button, Chip, Dialog, DropdownOptions, Flex, Select} from '@/once-ui/components'
-import React, {Dispatch, SetStateAction} from 'react'
+import {Button, Chip, Dialog, Flex} from '@/once-ui/components'
+import React, {Dispatch, SetStateAction, SyntheticEvent} from 'react'
 import {EmailData} from './EmailContainer'
-import {ActionMeta, default as ReactSelect} from "react-select"
 import {options} from "@/app/emails/emailsConfiguration";
+import {Autocomplete, TextField} from "@mui/material";
 
 export interface FeedbackMessage {
     title: string,
@@ -27,8 +27,8 @@ const Options = (props: OptionsProps) => {
     const email: EmailData = props.emailsState[0][props.emailIndex]
     const isChoiceDisable = email.interactions.isCorrect !== undefined
     const isActionDisable = email.interactions.suggestedActions.length > 0 && isChoiceDisable && email.isSuggestedActionsClosed
-    const onSelectChange = (options: readonly { label: string; value: string }[], actionMeta: ActionMeta<{ label: string; value: string }>) => {
-        const values: string[] = options.map(item => item.value)
+    const onSelectChange = (event: SyntheticEvent<Element, Event>, value: { label: string; value: string }[]) => {
+        const values: string[] = value.map(item => item.value)
         props.onSetActions(values)
     }
     const selectedActions = options.filter(
@@ -38,7 +38,6 @@ const Options = (props: OptionsProps) => {
         const newEmailsData = [...props.emailsState[0]]
         newEmailsData[props.emailIndex].isSuggestedActionsClosed = isClosed
         props.emailsState[1](newEmailsData)
-        props.onSetActions(props.suggestedActions)
     }
     return (
         <Flex
@@ -106,22 +105,26 @@ const Options = (props: OptionsProps) => {
 
                 </Flex>
 
-                <ReactSelect
+                <Autocomplete
+                    multiple
+                    disabled={isActionDisable}
+                    disableCloseOnSelect
+                    id="tags-outlined"
                     options={options}
-                    menuPlacement='top'
-                    isMulti
-                    closeMenuOnSelect={false}
-                    hideSelectedOptions={false}
-                    isDisabled={isActionDisable}
                     onChange={onSelectChange}
                     value={selectedActions}
-                    placeholder="Choose suggested action"
-                    onMenuClose={() => {
+                    getOptionLabel={(option) => option.label}
+                    renderInput={(params) => (
+                        <TextField {...params} label="Choose suggested action" />
+                    )}
+                    onClose={() => {
                         onMenuClosedState(true)
+                        props.onSetActions(props.suggestedActions)
                     }}
-                    onMenuOpen={() => {
+                    onOpen={() => {
                         onMenuClosedState(false)
                     }}
+                    sx={{ width: '500px' }}
                 />
             </Flex>
         </Flex>
