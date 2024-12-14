@@ -14,7 +14,9 @@ const mapEmails = (emailData: any): EmailData => {
         emailType: emailData.Email_type,
         feedbackMessage: "",
         interactions: emptyEmailAnswer(),
-        isSuggestedActionsClosed: true
+        isSuggestedActionsClosed: true,
+        startedTime: 0,
+        savedTime: 0
     }
 }
 

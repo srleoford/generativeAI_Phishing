@@ -16,6 +16,8 @@ export interface EmailData {
     feedbackMessage: string,
     interactions: EmailAnswer,
     isSuggestedActionsClosed: boolean,
+    startedTime: number,
+    savedTime: number
 }
 
 interface EmailContainerProps {
@@ -58,6 +60,7 @@ const EmailContainer = (props: EmailContainerProps) => {
             {/* Sidebar component for email selection */}
             <SideBar
                 emailsInfo={emailsData}
+                setEmailsInfo={setEmailsData}
                 emailIndex={emailIndex}
                 setEmailIndex={setEmailIndex}
             />

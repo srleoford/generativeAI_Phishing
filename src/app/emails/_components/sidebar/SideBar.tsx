@@ -1,10 +1,11 @@
 import {Accordion, Flex, Text} from '@/once-ui/components'
-import React, {useState} from 'react'
+import React, {Dispatch, SetStateAction, useState} from 'react'
 import EmailItem from './EmailItem'
 import {EmailData} from '../EmailContainer'
 
 interface SideBarProps {
     emailsInfo: EmailData[],
+    setEmailsInfo: Dispatch<SetStateAction<EmailData[]>>,
     emailIndex: number,
     setEmailIndex: (index: number) => void
 }
@@ -18,6 +19,19 @@ interface SideBarProps {
 const SideBar = (props: SideBarProps) => {
     /** State to manage whether the "Read - Solved" section is expanded. */
     const [isReadOpen, setIsReadOpen] = useState(false)
+    const changeStartedTime = (index: number) => {
+        const newEmailsData = [...props.emailsInfo]
+        newEmailsData[index].startedTime = new Date().getTime()
+        props.setEmailsInfo(newEmailsData)
+    }
+
+    const saveTime = () => {
+        if (props.emailIndex !== -1) {
+            const newEmailsData = [...props.emailsInfo]
+            newEmailsData[props.emailIndex].savedTime = new Date().getTime() - newEmailsData[props.emailIndex].startedTime
+            props.setEmailsInfo(newEmailsData)
+        }
+    }
     return (
         <Flex
             gap='4'
@@ -55,6 +69,8 @@ const SideBar = (props: SideBarProps) => {
                                     isSelected={index === props.emailIndex}
                                     onSelected={
                                         () => {
+                                            changeStartedTime(index)
+                                            saveTime()
                                             props.setEmailIndex(index)
                                         }
                                     }
@@ -81,6 +97,7 @@ const SideBar = (props: SideBarProps) => {
                                     isSelected={index === props.emailIndex}
                                     onSelected={
                                         () => {
+                                            saveTime()
                                             props.setEmailIndex(index)
                                         }
                                     }

@@ -40,7 +40,9 @@ export async function POST(requestBody: NextRequest) {
             emailType: email.emailType,
             feedbackMessage: email.feedbackMessage,
             interactions: emptyEmailAnswer(),
-            isSuggestedActionsClosed: true
+            isSuggestedActionsClosed: true,
+            startedTime: 0,
+            savedTime: 0
         }
     ))
 
