@@ -11,8 +11,8 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-
-function createData(name: string, stats) {
+export function createData(name: string, stats: any)
+{
     switch(name) {
         case 'Performance Overview':
             return {
@@ -74,7 +74,7 @@ function createData(name: string, stats) {
                         overall: stats.overallStats.totalSenderInteraction
                     },
                     {
-                        metric: 'Total click interactions',
+                        metric: 'Suspicious Links Clicked',
                         phase1: stats.statsp1.totalClickingBehavior,
                         phase2: stats.statsp2.totalClickingBehavior,
                         phase3: stats.statsp3.totalClickingBehavior,
@@ -87,14 +87,14 @@ function createData(name: string, stats) {
                 name,
                 summaryData: [
                     {
-                        metric: 'Respond',
+                        metric: 'Report Email',
                         phase1: stats.statsp1.suggestedActionsCount.report,
                         phase2: stats.statsp2.suggestedActionsCount.report,
                         phase3: stats.statsp3.suggestedActionsCount.report,
                         overall: stats.overallStats.totalSuggestedActionsCount.report
                     },
                     {
-                        metric: 'Click Link/Open attachment',
+                        metric: 'Open attachment',
                         phase1: stats.statsp1.suggestedActionsCount.click_open,
                         phase2: stats.statsp2.suggestedActionsCount.click_open,
                         phase3: stats.statsp3.suggestedActionsCount.click_open,
@@ -122,37 +122,44 @@ function createData(name: string, stats) {
                         overall: stats.overallStats.totalSuggestedActionsCount.delete
                     },
                     {
-                        metric: 'Report email',
-                        phase1: stats.statsp1.suggestedActionsCount.report,
-                        phase2: stats.statsp2.suggestedActionsCount.report,
-                        phase3: stats.statsp3.suggestedActionsCount.report,
-                        overall: stats.overallStats.totalSuggestedActionsCount.report
+                        metric: 'Respond email',
+                        phase1: stats.statsp1.suggestedActionsCount.respond,
+                        phase2: stats.statsp2.suggestedActionsCount.respond,
+                        phase3: stats.statsp3.suggestedActionsCount.respond,
+                        overall: stats.overallStats.totalSuggestedActionsCount.respond
                     },
                 ]
             }
-        case 'Other Data':
+        default:
             return {
                 name,
                 summaryData: [
                     {
                         metric: 'Total Phishing emails',
-                        phase1: stats.statsp1.totalPhishing,
-                        phase2: stats.statsp2.totalPhishing,
-                        phase3: stats.statsp3.totalPhishing,
-                        overall: stats.overallStats.totalPhishing
+                        phase1: stats.emailsp1.totalPhishingEmails,
+                        phase2: stats.emailsp2.totalPhishingEmails,
+                        phase3: stats.emailsp3.totalPhishingEmails,
+                        overall: stats.overallStats.totalPhishingEmails
                     },
                     {
                         metric: 'Total Real emails',
-                        phase1: stats.statsp1.totalHam,
-                        phase2: stats.statsp2.totalHam,
-                        phase3: stats.statsp3.totalHam,
-                        overall: stats.overallStats.totalHam
+                        phase1: stats.emailsp1.totalHamEmails,
+                        phase2: stats.emailsp2.totalHamEmails,
+                        phase3: stats.emailsp3.totalHamEmails,
+                        overall: stats.overallStats.totalHamEmails
+                    },
+                    {
+                        metric: 'Total Attention Checks',
+                        phase1: stats.emailsp1.totalAttentionChecks,
+                        phase2: stats.emailsp2.totalAttentionChecks,
+                        phase3: stats.emailsp3.totalAttentionChecks,
+                        overall: stats.overallStats.totalAttentionChecks
                     },
                     {
                         metric: 'Total Emails',
-                        phase1: stats.statsp1.totalEmails,
-                        phase2: stats.statsp2.totalEmails,
-                        phase3: stats.statsp3.totalEmails,
+                        phase1: stats.emailsp1.totalEmails,
+                        phase2: stats.emailsp2.totalEmails,
+                        phase3: stats.emailsp3.totalEmails,
                         overall: stats.overallStats.totalEmails
                     },
                 ]
@@ -162,7 +169,7 @@ function createData(name: string, stats) {
 
 function Row(props: { row: ReturnType<typeof createData> }) {
   const { row } = props;
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
 
   return (
     <React.Fragment>
@@ -216,23 +223,19 @@ function Row(props: { row: ReturnType<typeof createData> }) {
   );
 }
 
-export default function CollapsibleTable({stats}) {
+interface CollapsibleTableProps {
+    name: string,
+    stats: any
+}
+
+export default function CollapsibleTable({name, stats}: CollapsibleTableProps) {
     console.log(stats)
-    const rows = [
-        createData('Performance Overview', stats),
-        createData('User Interaction',stats),
-        createData('Risk Actions',stats),
-        createData('Other Data',stats)
-      ];
+    const row = createData(name, stats)
   return (
     <TableContainer component={Paper}>
       <Table aria-label="collapsible table">
-        <TableHead>
-        </TableHead>
         <TableBody>
-          {rows.map((row) => (
             <Row key={row.name} row={row} />
-          ))}
         </TableBody>
       </Table>
     </TableContainer>
