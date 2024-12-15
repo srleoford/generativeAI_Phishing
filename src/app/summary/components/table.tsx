@@ -11,8 +11,8 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-
-function createData(name: string, stats) {
+export function createData(name: string, stats: any)
+{
     switch(name) {
         case 'Performance Overview':
             return {
@@ -130,7 +130,7 @@ function createData(name: string, stats) {
                     },
                 ]
             }
-        case 'Other Data':
+        default:
             return {
                 name,
                 summaryData: [
@@ -169,7 +169,7 @@ function createData(name: string, stats) {
 
 function Row(props: { row: ReturnType<typeof createData> }) {
   const { row } = props;
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
 
   return (
     <React.Fragment>
@@ -223,23 +223,19 @@ function Row(props: { row: ReturnType<typeof createData> }) {
   );
 }
 
-export default function CollapsibleTable({stats}) {
+interface CollapsibleTableProps {
+    name: string,
+    stats: any
+}
+
+export default function CollapsibleTable({name, stats}: CollapsibleTableProps) {
     console.log(stats)
-    const rows = [
-        createData('Performance Overview', stats),
-        createData('User Interaction',stats),
-        createData('Risk Actions',stats),
-        createData('Other Data',stats)
-      ];
+    const row = createData(name, stats)
   return (
     <TableContainer component={Paper}>
       <Table aria-label="collapsible table">
-        <TableHead>
-        </TableHead>
         <TableBody>
-          {rows.map((row) => (
             <Row key={row.name} row={row} />
-          ))}
         </TableBody>
       </Table>
     </TableContainer>
