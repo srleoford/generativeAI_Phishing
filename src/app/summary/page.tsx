@@ -1,11 +1,7 @@
-'use client'
-import React, { useEffect, useState } from 'react';
-import Cookies from 'js-cookie';
-import { getAnswers } from '../utils/pinecone';
-import { Heading, Flex, Background } from '@/once-ui/components';
-import CollapsibleTable from './components/table';
-import { BarChart } from './components/Bar';
-import { PieChart } from './components/Pie'
+import Summary from "@/app/summary/components/Summary";
+import {cookies} from "next/headers";
+import {getAnswers} from "@/app/utils/pinecone";
+import {useRouter} from "next/navigation";
 
 const calculatePhaseStats = (phaseData: any[]) => {
   let totalMouseHoverOverLinks = 0;
@@ -138,117 +134,48 @@ const calculateEmailStats = (allPhasesEmailData: any[]) => {
   return overallEmailStats;
 };
 
-const SummaryPage = () => {
-  const [answers, setAnswers] = useState<any[]>([]);
-  const [overallStats, setOverallStats] = useState<any>(null);
-  const [userToken, setUserToken] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+const SummaryPage = async () => {
 
-  useEffect(() => {
-    // Retrieve the token using js-cookie
-    // Cookies.set('userToken','ZW1haWxAZW5jby5jb20zMGYzMDQwMzBlMDVmOTc3MjNkNWVkNDhlOWYzMzQ5YQ==')
-    const token = Cookies.get('userToken');
-    // console.log(token)
-    if (token) {
-      setUserToken(token);
-    }
-  }, []);
+  const cookieStore = await cookies()
+  const userToken = cookieStore.get('userToken')?.value || ""
 
-  useEffect(() => {
-    if (userToken) {
-      (async () => {
-        await new Promise((resolve) => setTimeout(resolve, 3000)); // 3-second delay
-        const response = await getAnswers(userToken);        
-        setAnswers(response);
-        // console.log(response);
+  let response = await getAnswers(userToken)
 
-        const phase1Response = response[0].matches[0].metadata?.results as string;
-        const phase1Emails = response[0].matches[0].metadata?.emails as string;
-        const phase2Response = response[1].matches[0].metadata?.results as string;
-        const phase2Emails = response[1].matches[0].metadata?.emails as string;
-        const phase3Response = response[2].matches[0].metadata?.results as string;
-        const phase3Emails = response[2].matches[0].metadata?.emails as string;
-
-        const statsp1 = calculatePhaseStats(JSON.parse(phase1Response));
-        const statsp2 = calculatePhaseStats(JSON.parse(phase2Response));
-        const statsp3 = calculatePhaseStats(JSON.parse(phase3Response));
-        const emailsp1 = calculateEmailStats(JSON.parse(phase1Emails))
-        const emailsp2 = calculateEmailStats(JSON.parse(phase2Emails))
-        const emailsp3 = calculateEmailStats(JSON.parse(phase3Emails))
-
-
-        const allPhasesData = [statsp1, statsp2, statsp3];
-        const allEmailsData = [emailsp1, emailsp2, emailsp3];
-        const overallStats = calculateAllPhasesStats(allPhasesData, allEmailsData);
-        setOverallStats({
-          statsp1,
-          statsp2,
-          statsp3,
-          emailsp1,
-          emailsp2,
-          emailsp3,
-          overallStats,
-        });
-      })();
-    }
-  }, [userToken]);
-
-  if (!overallStats) {
-    return <p>Loading statistics...</p>;
+  // Wait until Pinecone finish the upsert of all phases
+  while (response[0].matches.length === 0 || response[1].matches.length === 0 || response[2].matches.length === 0) {
+    response = await getAnswers(userToken)
   }
-  const { statsp1, statsp2, statsp3, emailsp1, emailsp2, emailsp3, overallStats: summary } = overallStats;
-  
+
+  const phase1Response = response[0].matches[0].metadata?.results as string;
+  const phase1Emails = response[0].matches[0].metadata?.emails as string;
+  const phase2Response = response[1].matches[0].metadata?.results as string;
+  const phase2Emails = response[1].matches[0].metadata?.emails as string;
+  const phase3Response = response[2].matches[0].metadata?.results as string;
+  const phase3Emails = response[2].matches[0].metadata?.emails as string;
+
+  const statsp1 = calculatePhaseStats(JSON.parse(phase1Response));
+  const statsp2 = calculatePhaseStats(JSON.parse(phase2Response));
+  const statsp3 = calculatePhaseStats(JSON.parse(phase3Response));
+  const emailsp1 = calculateEmailStats(JSON.parse(phase1Emails))
+  const emailsp2 = calculateEmailStats(JSON.parse(phase2Emails))
+  const emailsp3 = calculateEmailStats(JSON.parse(phase3Emails))
+
+
+  const allPhasesData = [statsp1, statsp2, statsp3];
+  const allEmailsData = [emailsp1, emailsp2, emailsp3];
+  const overallStats = calculateAllPhasesStats(allPhasesData, allEmailsData);
 
   return (
-    <Flex fillWidth paddingTop="l" paddingX="l" direction="column" alignItems="center" flex={1}>
-      <Background dots={false} />
-      <Flex
-        position="relative"
-        as="section"
-        overflow="hidden"
-        fillWidth
-        minHeight="0"
-        maxWidth={68}
-        direction="column"
-        alignItems="center"
-        flex={1}
-      >
-        <Flex
-          as="main"
-          direction="column"
-          justifyContent="center"
-          fillWidth
-          fillHeight
-          padding="l"
-          gap="l"
-        >
-          <Flex mobileDirection="column" fillWidth gap="24">
-            <Flex position="relative" flex={4} gap="24" direction="column">
-              <Heading variant="display-strong-s" align="center" wrap="balance">
-                <p><span className="font-code">Summary</span></p>
-              </Heading>
-            </Flex>
-          </Flex>
-        </Flex>
-      </Flex>
-      <Flex mobileDirection="column" fillWidth gap="24">
-        <Flex position="relative" flex={4} gap="24" marginBottom="104" direction="row" align="center">
-          <CollapsibleTable stats={overallStats} />
-          <Flex direction="column" gap="24">
-            {/* Performance Overview Charts */}
-            <BarChart title="Correct vs Incorrect Choices" labels={["Correct", "Incorrect"]} data={[summary.totalCorrectChoices, summary.totalIncorrectChoices]} colors={["rgba(3, 171, 0, 0.96))", "rgb(203, 15, 56)"]}/>
-            <PieChart title="Time Spent on Each Phase" datalabel="Seconds" labels={["Phase 1", "Phase 2", "Phase 3"]} data={[statsp1.totalTimeSpent, statsp2.totalTimeSpent, statsp3.totalTimeSpent]} colors={["rgba(3, 171, 0, 0.96)", "rgb(244, 0, 0)", "rgb(0, 0, 255)"]}/>
-            {/* User Interaction Charts */}
-            <PieChart title="User Interactions" datalabel="Interactions" labels={["Link Hovers", "Attachments Opened", "Checked Sender", "Links Clicked"]} data={[summary.totalMouseHoverOverLinks, summary.totalOpeningAttachments, summary.totalSenderInteraction, summary.totalClickingBehavior]} colors={["rgba(3, 171, 0, 0.96)", "rgba(244, 0, 0, 0.87)", "rgba(0, 0, 255, 0.95)", "rgb(249, 179, 0)"]}/>
-            {/* Risk Actions Charts */}
-            <PieChart title="Risk Actions" datalabel="Selections" labels={["Respond", "Open Attachment", "Check Sender", "Check Link", "Delete Email", "Report"]} data={[summary.totalSuggestedActionsCount["respond"], summary.totalSuggestedActionsCount["click_open"], summary.totalSuggestedActionsCount["checkSender"], summary.totalSuggestedActionsCount["checkLink"], summary.totalSuggestedActionsCount["delete"], summary.totalSuggestedActionsCount["report"],]} colors={["rgba(3, 171, 0, 0.96)", "rgba(244, 0, 0, 0.87)", "rgba(0, 0, 255, 0.95)", "rgb(249, 179, 0)", "rgba(255, 165, 0, 0.87)", "rgba(128, 0, 128, 0.87)"]}/>
-            {/* Other Data Charts */}
-            <PieChart title="Trial Composition" datalabel="Items" labels={["Ham", "Phish", "Attention Checks"]} data={[summary.totalHamEmails, summary.totalPhishingEmails, summary.totalAttentionChecks]} colors={["rgba(3, 171, 0, 0.96)", "rgb(244, 0, 0)", "rgb(137, 137, 137)"]}/>
-          </Flex>
-        </Flex>
-      </Flex>
-    </Flex>
-  );
-};
+      <Summary
+          statsp1={statsp1}
+          statsp2={statsp2}
+          statsp3={statsp3}
+          emailsp1={emailsp1}
+          emailsp2={emailsp2}
+          emailsp3={emailsp3}
+          overallStats={overallStats}
+      />
+  )
+}
 
 export default SummaryPage;
