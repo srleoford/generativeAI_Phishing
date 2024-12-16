@@ -4,20 +4,24 @@ import { cookies } from 'next/headers'
 import {RequestCookie} from "next/dist/compiled/@edge-runtime/cookies";
 
 /**
- * Sets a cookie with a specified key and value.
+ * Sets multiple cookies with specified keys and values.
  *
- * This function asynchronously retrieves the cookie store and sets a cookie
- * with the given key and value.
+ * This function asynchronously retrieves the cookie store and sets multiple cookies
+ * based on the provided key-value pairs.
  *
- * @param {string} key - The name of the cookie to set.
- * @param {string} value - The value to assign to the cookie.
+ * @param {Array<{key: string, value: string}>} cookiesData - An array of objects containing cookie keys and values.
  *
  * @example
- * await setNextCookie('userToken', 'abc123');
+ * await setMultipleCookies([
+ *   { key: 'userToken', value: 'abc123' },
+ *   { key: 'sessionId', value: 'xyz789' }
+ * ]);
  */
-export async function setNextCookie(key: string, value: string) {
+export async function setMultipleCookies(cookiesData: { key: string; value: string }[]) {
     const cookieStore = await cookies()
-    cookieStore.set(key, value)
+    cookiesData.forEach(({ key, value }) => {
+        cookieStore.set(key, value)
+    })
 }
 
 /**

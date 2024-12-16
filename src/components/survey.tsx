@@ -11,7 +11,8 @@ import Cookies from 'js-cookie';
 import { loadPreviousAnswers } from '@/app/utils/cookies'
 import { useEffect } from 'react';
 import { insertSurveyData } from '@/app/utils/pinecone'
-import {setNextCookie} from "@/app/actions/nextJsCookies";
+import { setMultipleCookies } from "@/app/actions/nextJsCookies";
+import {handleAction} from "next/dist/server/app-render/action-handler";
 
 
 export default function SurveyForm() {
@@ -415,9 +416,16 @@ export default function SurveyForm() {
 
         console.log(JSON.stringify(selectedChoicesText));
         insertSurveyData(JSON.stringify(selectedChoicesText), Cookies.get('email'), Cookies.get('userToken'))
-        setNextCookie("token", Cookies.get('userToken'))
-        setNextCookie("survey", JSON.stringify(selectedChoicesText))
-        router.push("/instructions");
+        const handleAction = async () => {
+          await setMultipleCookies(
+              [
+                {key: "token", value: Cookies.get('userToken') || ""},
+                {key: "survey", value: JSON.stringify(selectedChoicesText)}
+              ]
+          ) // Server Action
+          router.push('/instructions') // Client-side navigation
+        }
+        handleAction()
       } else {
         // Display the "Error" message (pass a string value to display a custom message)
         options.showSaveError();
