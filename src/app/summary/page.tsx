@@ -123,7 +123,7 @@ const calculateEmailStats = (allPhasesEmailData: any[]) => {
       case "Phishing":
         overallEmailStats.totalPhishingEmails++;
         break;
-      case "attention_check":
+      case "Attention_check":
         overallEmailStats.totalAttentionChecks++;
         break;
       default:
@@ -137,7 +137,7 @@ const calculateEmailStats = (allPhasesEmailData: any[]) => {
 const SummaryPage = async () => {
 
   const cookieStore = await cookies()
-  const userToken = cookieStore.get('userToken')?.value || ""
+  const userToken = cookieStore.get('token')?.value || ""
 
   let response = await getAnswers(userToken)
 

@@ -320,19 +320,16 @@ export const getAnswers = async (
             const queryResponse1 = await thisIndex.namespace('phase_1').query({
                 id: token,
                 topK: 1,
-                includeValues: true,
                 includeMetadata: true
             });
             const queryResponse2 = await thisIndex.namespace('phase_2').query({
                 id: token,
                 topK: 1,
-                includeValues: true,
                 includeMetadata: true
             });
             const queryResponse3 = await thisIndex.namespace('phase_3').query({
                 id: token,
                 topK: 1,
-                includeValues: true,
                 includeMetadata: true
             });
             return [queryResponse1, queryResponse2, queryResponse3]
@@ -360,6 +357,7 @@ export const submitAnswers = async (
 
     const emailInteractions = answers.map(answer => (
         {
+            emailId: answer.id,
             interactions: answer.interactions
         }
     ))
