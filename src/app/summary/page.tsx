@@ -1,7 +1,6 @@
 import Summary from "@/app/summary/components/Summary";
 import {cookies} from "next/headers";
 import {getAnswers} from "@/app/utils/pinecone";
-import {useRouter} from "next/navigation";
 
 const calculatePhaseStats = (phaseData: any[]) => {
   let totalMouseHoverOverLinks = 0;
@@ -34,7 +33,9 @@ const calculatePhaseStats = (phaseData: any[]) => {
     if (interactions.clickingBehavior) totalClickingBehavior++;
     if (interactions.senderInteraction) totalSenderInteraction++;
     if (interactions.openingAttachments) totalOpeningAttachments++;
-    interactions.isCorrect ? totalCorrectChoices++ : totalIncorrectChoices++;
+    if (email.type !== "Attention_check") {
+      interactions.isCorrect ? totalCorrectChoices++ : totalIncorrectChoices++
+    }
     if (interactions.choice.toLowerCase() === 'ham') {
       if (interactions.isCorrect) {
       totalHam++;
@@ -49,7 +50,9 @@ const calculatePhaseStats = (phaseData: any[]) => {
       }
     }
     totalTimeSpent += interactions.timeSpent;
-    interactions.suggestedActions.forEach((action: string) => suggestedActionsCount[action]++);
+    interactions.suggestedActions.forEach((action: string) => {
+      if (email.type !== "Attention_check") suggestedActionsCount[action]++
+    });
  
   });
 
@@ -138,6 +141,7 @@ const SummaryPage = async () => {
 
   const cookieStore = await cookies()
   const userToken = cookieStore.get('token')?.value || ""
+  console.log(userToken)
 
   let response = await getAnswers(userToken)
 

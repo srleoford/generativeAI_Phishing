@@ -22,7 +22,7 @@ const EmailItem = (props: EmailItemProps) => {
         onBackground: undefined,
         background: undefined
     }
-    if (props.emailInfo.interactions.isCorrect !== undefined) {
+    if (props.emailInfo.interactions.isCorrect !== undefined && props.emailInfo.interactions.suggestedActions.length !== 0) {
         background = {
             onBackground: "success-strong",
             background: "success-medium"
