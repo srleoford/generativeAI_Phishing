@@ -358,6 +358,7 @@ export const submitAnswers = async (
     const emailInteractions = answers.map(answer => (
         {
             emailId: answer.id,
+            type: answer.emailType,
             interactions: answer.interactions
         }
     ))

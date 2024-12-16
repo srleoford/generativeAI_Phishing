@@ -49,10 +49,10 @@ const EmailBody = (props: EmailBodyProps) => {
             if (domNode instanceof Element && domNode.name === "a") {
                 const props = attributesToProps(domNode.attribs)
                 return <a
-                    style={{color: "blue"}}
+                    {...props}
+                    style={{...props.style, color: "blue"}}
                     onMouseEnter={handleMouseEnter}
                     onClick={handleClick}
-                    {...props}
                 >
                     {domToReact(domNode.children as DOMNode[], options)}
                 </a>
